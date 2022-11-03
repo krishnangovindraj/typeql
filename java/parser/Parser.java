@@ -34,14 +34,12 @@ import com.vaticle.typeql.lang.pattern.Definable;
 import com.vaticle.typeql.lang.pattern.Disjunction;
 import com.vaticle.typeql.lang.pattern.Negation;
 import com.vaticle.typeql.lang.pattern.Pattern;
+import com.vaticle.typeql.lang.pattern.constraint.EvaluableConstraint;
+import com.vaticle.typeql.lang.pattern.constraint.EvaluableConstraint.EvaluableExpression;
 import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
 import com.vaticle.typeql.lang.pattern.constraint.TypeConstraint;
 import com.vaticle.typeql.lang.pattern.schema.Rule;
-import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
-import com.vaticle.typeql.lang.pattern.variable.ConceptVariable;
-import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
-import com.vaticle.typeql.lang.pattern.variable.TypeVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
+import com.vaticle.typeql.lang.pattern.variable.*;
 import com.vaticle.typeql.lang.query.TypeQLDefine;
 import com.vaticle.typeql.lang.query.TypeQLDelete;
 import com.vaticle.typeql.lang.query.TypeQLInsert;
@@ -435,6 +433,7 @@ public class Parser extends TypeQLBaseVisitor {
         else return new Negation<>(new Conjunction<>(patterns));
     }
 
+
     // QUERY DEFINABLES ========================================================
 
     @Override
@@ -759,6 +758,47 @@ public class Parser extends TypeQLBaseVisitor {
             throw TypeQLException.of(ILLEGAL_GRAMMAR.message(ctx.getText()));
         }
     }
+
+    // Arithmetic
+    @Override
+    public EvaluableConstraint visitVariable_evaluable(TypeQLParser.Variable_evaluableContext ctx) {
+        return new EvaluableConstraint(new EvaluableVariable(ctx.VVAR_()), this.visitExpr(ctx.expr()));
+    }
+
+    @Override
+    public EvaluableExpression visitExpr(TypeQLParser.ExprContext ctx) {
+        if (ctx.TIMES() != null) {
+            return new EvaluableExpression.Operation(EvaluableExpression.Operation.OP.POW, ctx.expr(0), ctx.expr(1));
+        } else if (ctx.DIV() != null) {
+            return new EvaluableExpression.Operation(EvaluableExpression.Operation.OP.DIV, ctx.expr(0), ctx.expr(1));
+        } else if (ctx.TIMES() != null) {
+            return new EvaluableExpression.Operation(EvaluableExpression.Operation.OP.TIMES, ctx.expr(0), ctx.expr(1));
+        } else if (ctx.atom() != null) {
+            EvaluableExpression.EvaluableAtom atom = visitAtom(ctx.atom());
+            if (ctx.MINUS() != null) {
+                return new EvaluableExpression.Operation(EvaluableExpression.Operation.OP.MINUS, EvaluableAtom.NumericConstant(0), atom);
+            } else {
+                return atom;
+            }
+        } else if (ctx.PLUS() != null) {
+            return new EvaluableExpression.Operation(EvaluableExpression.Operation.OP.PLUS, ctx.expr(0), ctx.expr(1));
+        } else if (ctx.TIMES() != null) {
+            return new EvaluableExpression.Operation(EvaluableExpression.Operation.OP.MINUS, ctx.expr(0), ctx.expr(1));
+        } else if (ctx.LPAREN() != null || ctx.RPAREN() != null) {
+            assert ctx.LPAREN() != null && ctx.RPAREN() != null;
+            return visitExpr(ctx.expr(0));
+        } else if (ctx.LPAREN() != null || ctx.RPAREN() != null) {
+            return visitExpr(ctx.expr(0));
+        } else {
+            throw TypeQLException.of(ILLEGAL_GRAMMAR.message(ctx.getText()));
+        }
+    }
+
+    @Override
+    public EvaluableExpression.EvaluableAtom visitAtom(TypeQLParser.AtomContext ctx) { /*TODO*/ return visitChildren(ctx); }
+
+    @Override
+    public EvaluableFunction visitFunc(TypeQLParser.FuncContext ctx) { /*TODO*/  return visitChildren(ctx); }
 
     private String getString(TerminalNode string) {
         String str = string.getText();
