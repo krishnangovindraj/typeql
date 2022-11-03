@@ -103,7 +103,7 @@ pattern_negation      :   NOT '{' patterns '}'                        ;
 pattern_variable      :   variable_concept
                       |   variable_type
                       |   variable_thing_any
-                      |   variable_value
+                      |   variable_evaluable
                       ;
 
 // CONCEPT VARAIBLES ===========================================================
@@ -287,14 +287,14 @@ LABEL_SCOPED_   : LABEL_ ':' LABEL_ ;
 // ARITHMETIC
 ASSIGN              : '<-' ;
 VVAR_               : '?' [a-zA-Z0-9][a-zA-Z0-9_-]* ;
-FUNC_ID                   :     [a-zA-Z0-9][a-zA-Z0-9_-]* ;
+FUNC_ID             :     [a-zA-Z0-9][a-zA-Z0-9_-]* ;
 
 POW                 : '^'         ;
 DIV                 : '/'         ;     TIMES               : '*'         ;
 PLUS                : '+'         ;     MINUS               : '-'         ;
 LPAREN              : '('         ;     RPAREN              : ')'         ;
 
-variable_value            : VVAR_ ASSIGN expr;
+variable_evaluable        : VVAR_ ASSIGN expr;
 
 expr                      :  expr  POW expr
                           |  expr  (TIMES | DIV)  expr
