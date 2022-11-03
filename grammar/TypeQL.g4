@@ -102,7 +102,9 @@ pattern_negation      :   NOT '{' patterns '}'                        ;
 
 pattern_variable      :   variable_concept
                       |   variable_type
-                      |   variable_thing_any   ;
+                      |   variable_thing_any
+                      |   variable_value
+                      ;
 
 // CONCEPT VARAIBLES ===========================================================
 
@@ -281,6 +283,27 @@ IID_            : '0x'[0-9a-f]+ ;
 LABEL_          : TYPE_CHAR_H_ TYPE_CHAR_T_* ;
 LABEL_SCOPED_   : LABEL_ ':' LABEL_ ;
 
+
+// ARITHMETIC
+ASSIGN              : '<-' ;
+VVAR_               : '?' [a-zA-Z0-9][a-zA-Z0-9_-]* ;
+FUNC_ID                   :     [a-zA-Z0-9][a-zA-Z0-9_-]* ;
+
+POW                 : '^'         ;
+DIV                 : '/'         ;     TIMES               : '*'         ;
+PLUS                : '+'         ;     MINUS               : '-'         ;
+LPAREN              : '('         ;     RPAREN              : ')'         ;
+
+variable_value            : VVAR_ ASSIGN expr;
+
+expr                      :  expr  POW expr
+                          |  expr  (TIMES | DIV)  expr
+                          |  expr  (PLUS | MINUS) expr
+                          |  '(' expr ')'
+                          |  (PLUS | MINUS)* atom
+                          ;
+atom                      :     value   |   func    |   VVAR_    |   VAR_NAMED_ ;
+func                      :     FUNC_ID   '('  expr   (',' expr)*    ')' ;
 
 // FRAGMENTS OF KEYWORDS =======================================================
 
