@@ -183,10 +183,7 @@ public class Parser extends TypeQLBaseVisitor {
     private UnboundVariable getVar(TerminalNode variable) {
         // Remove '$' prefix
         String name = variable.getSymbol().getText().substring(1);
-        char prefix = variable.getSymbol().getText().charAt(0);
-        if (prefix == '?') {
-            return UnboundVariable.value(name);
-        } else if (name.equals(TypeQLToken.Char.UNDERSCORE.toString())) {
+        if (name.equals(TypeQLToken.Char.UNDERSCORE.toString())) {
             return UnboundVariable.anonymous();
         } else {
             return UnboundVariable.named(name);
@@ -765,7 +762,7 @@ public class Parser extends TypeQLBaseVisitor {
     // Arithmetic
     @Override
     public EvaluableVariable visitVariable_evaluable(TypeQLParser.Variable_evaluableContext ctx) {
-        UnboundVariable unscoped = getVar(ctx.VVAR_());
+        UnboundVariable unscoped = getVar(ctx.VAR_());
         return unscoped.constrain(new EvaluableConstraint(this.visitExpr(ctx.expr())));
     }
 
@@ -794,9 +791,7 @@ public class Parser extends TypeQLBaseVisitor {
     @Override
     public EvaluableExpression.EvaluableAtom visitAtom(TypeQLParser.AtomContext ctx) {
         if (ctx.VAR_() != null) {
-            return new EvaluableExpression.EvaluableAtom.ConceptVariable(getVar(ctx.VAR_()));
-        } else if (ctx.VVAR_() != null) {
-            return new EvaluableExpression.EvaluableAtom.ValueVariable(getVar(ctx.VVAR_()));
+            return new EvaluableExpression.EvaluableAtom.Variable(getVar(ctx.VAR_()).toEvaluable());
         } else if (ctx.value() != null) {
             return new EvaluableExpression.EvaluableAtom.Constant.Numeric((Double)visitValue(ctx.value())); // TODO: Other types
         } else {

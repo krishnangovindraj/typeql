@@ -36,7 +36,7 @@ public abstract class Reference {
     final Type type;
     final boolean isVisible;
 
-    enum Type {NAME, LABEL, ANONYMOUS, VALUE }
+    enum Type {NAME, LABEL, ANONYMOUS}
 
     Reference(Type type, boolean isVisible) {
         this.type = type;
@@ -54,8 +54,6 @@ public abstract class Reference {
     public static Reference.Anonymous anonymous(boolean isVisible) {
         return new Reference.Anonymous(isVisible);
     }
-
-    public static Reference.Value value(String name) { return new Reference.Value(name); }
 
     protected Reference.Type type() {
         return type;
@@ -87,8 +85,6 @@ public abstract class Reference {
         return type == Type.ANONYMOUS;
     }
 
-    public boolean isValue() { return type == Type.VALUE; }
-
     public Referable asReferable() {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Referable.class)));
     }
@@ -103,10 +99,6 @@ public abstract class Reference {
 
     public Reference.Anonymous asAnonymous() {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Anonymous.class)));
-    }
-
-    public Reference.Value asValue() {
-        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Value.class)));
     }
 
     @Override
@@ -239,46 +231,6 @@ public abstract class Reference {
             if (o == null || getClass() != o.getClass()) return false;
             Anonymous that = (Anonymous) o;
             return (this.type == that.type && this.isVisible == that.isVisible);
-        }
-
-        @Override
-        public int hashCode() {
-            return hash;
-        }
-    }
-
-    public static class Value extends Referable {
-
-        private static final Pattern REGEX = Pattern.compile("[a-zA-Z0-9][a-zA-Z0-9_-]*");
-        protected final String name;
-        private final int hash;
-
-        protected Value(String name) {
-            super(Type.VALUE, true);
-            if (!REGEX.matcher(name).matches()) {
-                throw TypeQLException.of(INVALID_VARIABLE_NAME.message(name, REGEX.toString()));
-            }
-            this.name = name;
-            this.hash = Objects.hash(this.type, this.isVisible, this.name);
-        }
-
-        @Override
-        public String name() {
-            return name;
-        }
-
-        @Override
-        public Value asValue() {
-            return this;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Value that = (Value) o;
-            return (this.type == that.type &&
-                    this.name.equals(that.name));
         }
 
         @Override

@@ -418,15 +418,15 @@ public class ParserTest {
                 "$x isa commodity,\n" +
                 "    has price $p;\n" +
                 "(commodity: $x, qty: $q) isa order;\n" +
-                "?net <- $p * $q;\n" +
-                "?gross <- ?net * 1.21;" +
+                "$net <- $p * $q;\n" +
+                "$gross <- $net * 1.21;" +
                 "" ;
         TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
         TypeQLMatch expected = match(
                 var("x").isa("commodity").has("price", var("p")),
                 rel("commodity", "x").rel("qty", "q").isa("order"),
-                var("net").assign(EvaluableExpression.op(OP.TIMES, EvaluableExpression.conceptVariable(var("p")), EvaluableExpression.conceptVariable(var("q")))),
-                var("gross").assign(EvaluableExpression.op(OP.TIMES, EvaluableExpression.valueVariable(var("net")), EvaluableExpression.constant(1.21))));
+                var("net").assign(EvaluableExpression.op(OP.TIMES, EvaluableExpression.var(var("p").toEvaluable()), EvaluableExpression.var(var("q").toEvaluable()))),
+                var("gross").assign(EvaluableExpression.op(OP.TIMES, EvaluableExpression.var(var("net").toEvaluable()), EvaluableExpression.constant(1.21))));
 
         assertQueryEquals(expected, parsed, query);
     }

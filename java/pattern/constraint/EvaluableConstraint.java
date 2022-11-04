@@ -1,7 +1,7 @@
 package com.vaticle.typeql.lang.pattern.constraint;
 
 import com.vaticle.typeql.lang.pattern.variable.EvaluableVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
+import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 
 import java.util.List;
 import java.util.Set;
@@ -43,12 +43,8 @@ public class EvaluableConstraint extends Constraint<EvaluableVariable> {
             return new EvaluableExpression.EvaluableFunction(funcId, args);
         }
 
-        public static EvaluableExpression.EvaluableAtom.ConceptVariable conceptVariable(UnboundVariable variable) {
-            return new EvaluableExpression.EvaluableAtom.ConceptVariable(variable);
-        }
-
-        public static EvaluableAtom.ValueVariable valueVariable(UnboundVariable variable) {
-            return new EvaluableAtom.ValueVariable(variable);
+        public static EvaluableAtom.Variable var(EvaluableVariable variable) {
+            return new EvaluableAtom.Variable(variable);
         }
 
         public static EvaluableExpression.EvaluableAtom.Constant.Numeric constant(double value) {
@@ -95,30 +91,16 @@ public class EvaluableConstraint extends Constraint<EvaluableVariable> {
 
         public abstract static class EvaluableAtom extends EvaluableExpression {
 
-            public static class ValueVariable extends EvaluableAtom {
-                private final UnboundVariable variable;
+            public static class Variable extends EvaluableAtom {
+                private final EvaluableVariable variable;
 
-                public ValueVariable(UnboundVariable variable) {
-                    assert variable.reference().isValue();
+                public Variable(EvaluableVariable variable) {
                     this.variable = variable;
                 }
 
                 @Override
                 public String toString() {
-                    return variable.toString();
-                }
-            }
-
-            public static class ConceptVariable extends EvaluableAtom {
-                private final UnboundVariable variable;
-
-                public ConceptVariable(UnboundVariable variable) {
-                    this.variable = variable;
-                }
-
-                @Override
-                public String toString() {
-                    return variable.toString();
+                    return variable.reference().toString();
                 }
             }
 
