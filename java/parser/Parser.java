@@ -774,8 +774,6 @@ public class Parser extends TypeQLBaseVisitor {
             return new EvaluableExpression.Operation(EvaluableExpression.Operation.OP.DIV, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
         } else if (ctx.TIMES() != null) {
             return new EvaluableExpression.Operation(EvaluableExpression.Operation.OP.TIMES, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
-        } else if (ctx.atom() != null) {
-            return visitAtom(ctx.atom());
         } else if (ctx.PLUS() != null) {
             return new EvaluableExpression.Operation(EvaluableExpression.Operation.OP.PLUS, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
         } else if (ctx.MINUS() != null) {
@@ -783,18 +781,12 @@ public class Parser extends TypeQLBaseVisitor {
         } else if (ctx.LPAREN() != null || ctx.RPAREN() != null) {
             assert ctx.LPAREN() != null && ctx.RPAREN() != null;
             return visitExpr(ctx.expr(0));
-        } else {
-            throw TypeQLException.of(ILLEGAL_GRAMMAR.message(ctx.getText()));
-        }
-    }
-
-    @Override
-    public EvaluableExpression.EvaluableAtom visitAtom(TypeQLParser.AtomContext ctx) {
-        if (ctx.VAR_() != null) {
+        } else if (ctx.VAR_() != null) {
             return new EvaluableExpression.EvaluableAtom.Variable(getVar(ctx.VAR_()).toEvaluable());
         } else if (ctx.value() != null) {
             return new EvaluableExpression.EvaluableAtom.Constant.Numeric((Double)visitValue(ctx.value())); // TODO: Other types
-        } else {
+        }
+        else {
             throw TypeQLException.of(ILLEGAL_GRAMMAR.message(ctx.getText()));
         }
     }

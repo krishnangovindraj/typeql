@@ -299,9 +299,8 @@ expr                      :  expr  POW expr
                           |  expr  (TIMES | DIV)  expr
                           |  expr  (PLUS | MINUS) expr
                           |  '(' expr ')'
-                          |  func | atom
+                          |  func |     VAR_    |   value
                           ;
-atom                      :     VAR_    |   value   ;
 func                      :     FUNC_ID   '('  arg_list? ')' ;
 arg_list                  :     expr   (',' expr)*    ;
 
