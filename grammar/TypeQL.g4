@@ -286,7 +286,6 @@ LABEL_SCOPED_   : LABEL_ ':' LABEL_ ;
 
 // ARITHMETIC
 ASSIGN              : '<-' ;
-VVAR_               : '?' [a-zA-Z0-9][a-zA-Z0-9_-]* ;
 FUNC_ID             :     [a-zA-Z0-9][a-zA-Z0-9_-]* ;
 
 POW                 : '^'         ;
@@ -294,7 +293,7 @@ DIV                 : '/'         ;     TIMES               : '*'         ;
 PLUS                : '+'         ;     MINUS               : '-'         ;
 LPAREN              : '('         ;     RPAREN              : ')'         ;
 
-variable_evaluable        : VVAR_ ASSIGN expr;
+variable_evaluable        : VAR_ ASSIGN expr;
 
 expr                      :  expr  POW expr
                           |  expr  (TIMES | DIV)  expr
@@ -302,7 +301,7 @@ expr                      :  expr  POW expr
                           |  '(' expr ')'
                           |  func | atom
                           ;
-atom                      :     VAR_    |  VVAR_   |   value   ;
+atom                      :     VAR_    |   value   ;
 func                      :     FUNC_ID   '('  arg_list? ')' ;
 arg_list                  :     expr   (',' expr)*    ;
 

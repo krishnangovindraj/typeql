@@ -50,10 +50,6 @@ public class UnboundVariable extends Variable implements ConceptVariableBuilder,
         return new UnboundVariable(Reference.anonymous(true));
     }
 
-    public static UnboundVariable value(String name) {
-        return new UnboundVariable(Reference.value(name));
-    }
-
     public static UnboundVariable hidden() {
         return new UnboundVariable(Reference.anonymous(false));
     }
@@ -75,6 +71,8 @@ public class UnboundVariable extends Variable implements ConceptVariableBuilder,
     public TypeVariable toType() {
         return new TypeVariable(reference);
     }
+
+    public EvaluableVariable toEvaluable() { return new EvaluableVariable(reference); }
 
     public ThingVariable<?> toThing() {
         return new ThingVariable.Thing(reference);

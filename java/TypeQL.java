@@ -174,7 +174,7 @@ public class TypeQL {
     }
 
     public static EvaluableVariable evaluable(String name) {
-        return new EvaluableVariable(Reference.value(name));
+        return new EvaluableVariable(Reference.name(name));
     }
 
     public static ThingVariable.Relation rel(String playerVar) {

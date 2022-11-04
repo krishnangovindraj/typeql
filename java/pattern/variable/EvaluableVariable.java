@@ -41,7 +41,7 @@ public class EvaluableVariable extends BoundVariable {
 
     @Override
     public String toString(boolean pretty) {
-        return '?' + reference().name() + " <- " + assignment;
+        return reference().syntax() + " <- " + assignment;
     }
 
     @Override
