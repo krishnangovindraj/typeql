@@ -26,6 +26,8 @@ import com.vaticle.typeql.lang.common.TypeQLArg;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.Conjunction;
 import com.vaticle.typeql.lang.pattern.Pattern;
+import com.vaticle.typeql.lang.pattern.constraint.EvaluableConstraint.EvaluableExpression;
+import com.vaticle.typeql.lang.pattern.constraint.EvaluableConstraint.EvaluableExpression.Operation.OP;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 import com.vaticle.typeql.lang.query.TypeQLDefine;
 import com.vaticle.typeql.lang.query.TypeQLDelete;
@@ -407,6 +409,28 @@ public class ParserTest {
 
         assertQueryEquals(expected, parsed, query);
     }
+
+
+    @Test
+    public void testAssignIncompleteQuery() {
+        // TODO: Replace with realistic use of result
+        final String query = "match\n" +
+                "$x isa commodity,\n" +
+                "    has price $p;\n" +
+                "(commodity: $x, qty: $q) isa order;\n" +
+                "?net <- $p * $q;\n" +
+                "?gross <- ?net * 1.21;" +
+                "" ;
+        TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
+        TypeQLMatch expected = match(
+                var("x").isa("commodity").has("price", var("p")),
+                rel("commodity", "x").rel("qty", "q").isa("order"),
+                var("net").assign(EvaluableExpression.op(OP.TIMES, EvaluableExpression.conceptVariable(var("p")), EvaluableExpression.conceptVariable(var("q")))),
+                var("gross").assign(EvaluableExpression.op(OP.TIMES, EvaluableExpression.valueVariable(var("net")), EvaluableExpression.constant(1.21))));
+
+        assertQueryEquals(expected, parsed, query);
+    }
+
 
     @Test
     public void testSchemaQuery() {

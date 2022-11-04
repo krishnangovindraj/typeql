@@ -31,7 +31,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class UnboundVariable extends Variable implements ConceptVariableBuilder,
-                                                         EvaluableVariableBuilder,
+                                                         EvaluableVariableBuilder, // TODO: This isn't right, since it treats all syntactic variables as equal - Untrue, ConceptVariables and ValueVariables can't mix.
                                                          TypeVariableBuilder,
                                                          ThingVariableBuilder.Common<ThingVariable.Thing>,
                                                          ThingVariableBuilder.Thing,

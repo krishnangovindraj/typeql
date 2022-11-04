@@ -13,9 +13,14 @@ public class EvaluableVariable extends BoundVariable {
     private EvaluableConstraint assignment;
     private final List<EvaluableConstraint> constraints;
 
-    EvaluableVariable(Reference reference, EvaluableConstraint constraint) {
+    public EvaluableVariable(Reference reference) {
         super(reference);
         this.constraints = new ArrayList<>();
+    }
+
+    public EvaluableVariable(Reference reference, EvaluableConstraint constraint) {
+        this(reference);
+        constrain(constraint);
     }
 
     public EvaluableConstraint evaluable() {
@@ -36,7 +41,7 @@ public class EvaluableVariable extends BoundVariable {
 
     @Override
     public String toString(boolean pretty) {
-        return "TODO: EvaluableVariable::toString(boolean)";
+        return '?' + reference().name() + " <- " + assignment;
     }
 
     @Override

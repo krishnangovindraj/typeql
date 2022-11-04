@@ -32,10 +32,7 @@ import com.vaticle.typeql.lang.pattern.Negation;
 import com.vaticle.typeql.lang.pattern.Pattern;
 import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
 import com.vaticle.typeql.lang.pattern.schema.Rule;
-import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
-import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
-import com.vaticle.typeql.lang.pattern.variable.TypeVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
+import com.vaticle.typeql.lang.pattern.variable.*;
 import com.vaticle.typeql.lang.query.TypeQLDefine;
 import com.vaticle.typeql.lang.query.TypeQLInsert;
 import com.vaticle.typeql.lang.query.TypeQLMatch;
@@ -174,6 +171,10 @@ public class TypeQL {
 
     public static TypeVariable type(String label) {
         return hidden().type(label);
+    }
+
+    public static EvaluableVariable evaluable(String name) {
+        return new EvaluableVariable(Reference.value(name));
     }
 
     public static ThingVariable.Relation rel(String playerVar) {
@@ -347,5 +348,4 @@ public class TypeQL {
     public static ThingConstraint.Value.String like(String value) {
         return new ThingConstraint.Value.String(LIKE, value);
     }
-
 }
