@@ -21,11 +21,9 @@
 
 package com.vaticle.typeql.lang.pattern.variable;
 
-import com.vaticle.typeql.lang.pattern.constraint.ConceptConstraint;
-import com.vaticle.typeql.lang.pattern.constraint.Constraint;
-import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
-import com.vaticle.typeql.lang.pattern.constraint.TypeConstraint;
+import com.vaticle.typeql.lang.pattern.constraint.*;
 import com.vaticle.typeql.lang.pattern.variable.builder.ConceptVariableBuilder;
+import com.vaticle.typeql.lang.pattern.variable.builder.EvaluableVariableBuilder;
 import com.vaticle.typeql.lang.pattern.variable.builder.ThingVariableBuilder;
 import com.vaticle.typeql.lang.pattern.variable.builder.TypeVariableBuilder;
 
@@ -33,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class UnboundVariable extends Variable implements ConceptVariableBuilder,
+                                                         EvaluableVariableBuilder,
                                                          TypeVariableBuilder,
                                                          ThingVariableBuilder.Common<ThingVariable.Thing>,
                                                          ThingVariableBuilder.Thing,
@@ -49,6 +48,10 @@ public class UnboundVariable extends Variable implements ConceptVariableBuilder,
 
     public static UnboundVariable anonymous() {
         return new UnboundVariable(Reference.anonymous(true));
+    }
+
+    public static UnboundVariable value(String name) {
+        return new UnboundVariable(Reference.value(name));
     }
 
     public static UnboundVariable hidden() {
@@ -156,6 +159,11 @@ public class UnboundVariable extends Variable implements ConceptVariableBuilder,
 
     public ThingVariable.Relation constrain(ThingConstraint.Relation constraint) {
         return new ThingVariable.Relation(reference, constraint);
+    }
+
+    @Override
+    public EvaluableVariable constrain(EvaluableConstraint constraint) {
+        return new EvaluableVariable(reference, constraint);
     }
 
     @Override

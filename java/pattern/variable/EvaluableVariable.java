@@ -1,18 +1,32 @@
 package com.vaticle.typeql.lang.pattern.variable;
 
-import com.vaticle.typeql.lang.pattern.constraint.Constraint;
+import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.constraint.EvaluableConstraint;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-import static com.vaticle.typedb.common.collection.Collections.set;
+import static com.vaticle.typeql.lang.common.exception.ErrorMessage.ILLEGAL_CONSTRAINT_REPETITION;
 
 public class EvaluableVariable extends BoundVariable {
+    private EvaluableConstraint assignment;
+    private final List<EvaluableConstraint> constraints;
 
-    private List<EvaluableConstraint> constraints;
-
-    EvaluableVariable(Reference reference) {
+    EvaluableVariable(Reference reference, EvaluableConstraint constraint) {
         super(reference);
+        this.constraints = new ArrayList<>();
+    }
+
+    public EvaluableConstraint evaluable() {
+        return constraints.get(0);
+    }
+
+    public EvaluableVariable constrain(EvaluableConstraint constraint) {
+        if (assignment != null) {throw TypeQLException.of(ILLEGAL_CONSTRAINT_REPETITION.message(reference, EvaluableConstraint.class, constraint));}
+        this.assignment = constraint;
+        this.constraints.add(constraint);
+        return this;
     }
 
     @Override
@@ -30,12 +44,11 @@ public class EvaluableVariable extends BoundVariable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EvaluableVariable that = (EvaluableVariable) o;
-        return (this.reference.equals(that.reference) &&
-                set(this.constraints).equals(set(that.constraints)));
+        return (this.reference.equals(that.reference)); // TODO: // && set(this.constraints).equals(set(that.constraints)));
     }
 
     @Override
     public int hashCode() {
-        return 0;
+        return Objects.hash(reference); //TODO: //, constraints);
     }
 }

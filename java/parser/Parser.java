@@ -39,11 +39,7 @@ import com.vaticle.typeql.lang.pattern.constraint.EvaluableConstraint.EvaluableE
 import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
 import com.vaticle.typeql.lang.pattern.constraint.TypeConstraint;
 import com.vaticle.typeql.lang.pattern.schema.Rule;
-import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
-import com.vaticle.typeql.lang.pattern.variable.ConceptVariable;
-import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
-import com.vaticle.typeql.lang.pattern.variable.TypeVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
+import com.vaticle.typeql.lang.pattern.variable.*;
 import com.vaticle.typeql.lang.query.TypeQLDefine;
 import com.vaticle.typeql.lang.query.TypeQLDelete;
 import com.vaticle.typeql.lang.query.TypeQLInsert;
@@ -193,11 +189,6 @@ public class Parser extends TypeQLBaseVisitor {
         } else {
             return UnboundVariable.named(name);
         }
-    }
-
-    private EvaluableExpression.EvaluableAtom.EvaluableVariable getEvaluableVar(TerminalNode valueVariable) {
-        // Remove '?' prefix
-        return new EvaluableExpression.EvaluableAtom.EvaluableVariable(valueVariable.getSymbol().getText().substring(1));
     }
 
     // PARSER VISITORS =========================================================
@@ -769,8 +760,9 @@ public class Parser extends TypeQLBaseVisitor {
 
     // Arithmetic
     @Override
-    public EvaluableConstraint visitVariable_evaluable(TypeQLParser.Variable_evaluableContext ctx) {
-        return new EvaluableConstraint(getEvaluableVar(ctx.VVAR_()), this.visitExpr(ctx.expr()));
+    public EvaluableVariable visitVariable_evaluable(TypeQLParser.Variable_evaluableContext ctx) {
+        UnboundVariable unscoped = getVar(ctx.VVAR_());
+        return unscoped.constrain(new EvaluableConstraint(this.visitExpr(ctx.expr())));
     }
 
     @Override
@@ -805,7 +797,7 @@ public class Parser extends TypeQLBaseVisitor {
         if (ctx.VAR_NAMED_() != null) {
             return new EvaluableExpression.EvaluableAtom.AttributeVariable(getVar(ctx.VAR_NAMED_()));
         } else if (ctx.VVAR_() != null) {
-            return getEvaluableVar(ctx.VVAR_());
+            return new EvaluableExpression.EvaluableAtom.EvaluableVariable(getVar(ctx.VVAR_()));
         } else if (ctx.value() != null) {
             return new EvaluableExpression.EvaluableAtom.Constant(visitValue(ctx.value()));
         } else {

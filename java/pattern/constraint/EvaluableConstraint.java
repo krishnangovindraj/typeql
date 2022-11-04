@@ -7,11 +7,9 @@ import java.util.List;
 import java.util.Set;
 
 public class EvaluableConstraint extends Constraint<EvaluableVariable> {
-    private final EvaluableExpression.EvaluableAtom.EvaluableVariable assignTo;
     private final EvaluableExpression expression;
 
-    public EvaluableConstraint(EvaluableExpression.EvaluableAtom.EvaluableVariable assignTo, EvaluableExpression expression) {
-        this.assignTo = assignTo;
+    public EvaluableConstraint(EvaluableExpression expression) {
         this.expression = expression;
     }
 
@@ -62,12 +60,11 @@ public class EvaluableConstraint extends Constraint<EvaluableVariable> {
                 }
             }
 
-            // TODO: Unify them a bit better
             public static class EvaluableVariable extends EvaluableAtom {
-                private final String id;
+                private final UnboundVariable variable;
 
-                public EvaluableVariable(String id) {
-                    this.id = id;
+                public EvaluableVariable(UnboundVariable variable)  {
+                    this.variable = variable;
                 }
             }
 
