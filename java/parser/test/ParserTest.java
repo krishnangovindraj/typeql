@@ -410,7 +410,6 @@ public class ParserTest {
         assertQueryEquals(expected, parsed, query);
     }
 
-
     @Test
     public void testAssignIncompleteQuery() {
         // TODO: Replace with realistic use of result
@@ -431,6 +430,19 @@ public class ParserTest {
         assertQueryEquals(expected, parsed, query);
     }
 
+    @Test
+    public void testSomethingThatsBothTypeAndThing() {
+        // TODO: Remove this once it serves it's purpose
+        // It's purpose being to demonstrate that thing-type (incompatible) duality is not resolved during parsing.
+        final String query = "match\n" +
+                "$x isa commodity;\n" +
+                "$x sub buyable;";
+        TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
+        TypeQLMatch expected = match(
+                var("x").isa("commodity"),
+                var("x").sub("buyable"));
+        assertQueryEquals(expected, parsed, query);
+    }
 
     @Test
     public void testSchemaQuery() {
