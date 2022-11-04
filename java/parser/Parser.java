@@ -183,8 +183,10 @@ public class Parser extends TypeQLBaseVisitor {
     private UnboundVariable getVar(TerminalNode variable) {
         // Remove '$' prefix
         String name = variable.getSymbol().getText().substring(1);
-
-        if (name.equals(TypeQLToken.Char.UNDERSCORE.toString())) {
+        char prefix = variable.getSymbol().getText().charAt(0);
+        if (prefix == '?') {
+            return UnboundVariable.value(name);
+        } else if (name.equals(TypeQLToken.Char.UNDERSCORE.toString())) {
             return UnboundVariable.anonymous();
         } else {
             return UnboundVariable.named(name);
@@ -460,6 +462,8 @@ public class Parser extends TypeQLBaseVisitor {
             return visitVariable_type(ctx.variable_type());
         } else if (ctx.variable_concept() != null) {
             return visitVariable_concept(ctx.variable_concept());
+        } else if (ctx.variable_evaluable() != null) {
+            return visitVariable_evaluable(ctx.variable_evaluable());
         } else {
             throw TypeQLException.of(ILLEGAL_GRAMMAR.message(ctx.getText()));
         }
@@ -774,12 +778,7 @@ public class Parser extends TypeQLBaseVisitor {
         } else if (ctx.TIMES() != null) {
             return new EvaluableExpression.Operation(EvaluableExpression.Operation.OP.TIMES, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
         } else if (ctx.atom() != null) {
-            EvaluableExpression.EvaluableAtom atom = visitAtom(ctx.atom());
-            if (ctx.MINUS() != null) {
-                return new EvaluableExpression.Operation(EvaluableExpression.Operation.OP.MINUS, new EvaluableExpression.EvaluableAtom.NumericConstant(0), atom);
-            } else {
-                return atom;
-            }
+            return visitAtom(ctx.atom());
         } else if (ctx.PLUS() != null) {
             return new EvaluableExpression.Operation(EvaluableExpression.Operation.OP.PLUS, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
         } else if (ctx.MINUS() != null) {
@@ -794,12 +793,12 @@ public class Parser extends TypeQLBaseVisitor {
 
     @Override
     public EvaluableExpression.EvaluableAtom visitAtom(TypeQLParser.AtomContext ctx) {
-        if (ctx.VAR_NAMED_() != null) {
-            return new EvaluableExpression.EvaluableAtom.AttributeVariable(getVar(ctx.VAR_NAMED_()));
+        if (ctx.VAR_() != null) {
+            return new EvaluableExpression.EvaluableAtom.ConceptVariable(getVar(ctx.VAR_()));
         } else if (ctx.VVAR_() != null) {
-            return new EvaluableExpression.EvaluableAtom.EvaluableVariable(getVar(ctx.VVAR_()));
+            return new EvaluableExpression.EvaluableAtom.ValueVariable(getVar(ctx.VVAR_()));
         } else if (ctx.value() != null) {
-            return new EvaluableExpression.EvaluableAtom.Constant(visitValue(ctx.value()));
+            return new EvaluableExpression.EvaluableAtom.Constant.Numeric((Double)visitValue(ctx.value())); // TODO: Other types
         } else {
             throw TypeQLException.of(ILLEGAL_GRAMMAR.message(ctx.getText()));
         }
