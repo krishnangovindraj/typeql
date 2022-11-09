@@ -100,10 +100,10 @@ pattern_negation      :   NOT '{' patterns '}'                        ;
 
 // VARIABLE PATTERNS ===========================================================
 
-pattern_variable      :   variable_concept
+pattern_variable      :   variable_evaluable
+                      |   variable_concept
                       |   variable_type
                       |   variable_thing_any
-                      |   variable_evaluable
                       ;
 
 // CONCEPT VARAIBLES ===========================================================
@@ -286,7 +286,6 @@ LABEL_SCOPED_   : LABEL_ ':' LABEL_ ;
 
 // ARITHMETIC
 ASSIGN              : '<-' ;
-FUNC_ID             :     [a-zA-Z0-9][a-zA-Z0-9_-]* ;
 
 POW                 : '^'         ;
 DIV                 : '/'         ;     TIMES               : '*'         ;
@@ -295,13 +294,13 @@ LPAREN              : '('         ;     RPAREN              : ')'         ;
 
 variable_evaluable        : VAR_ ASSIGN expr;
 
-expr                      :  expr  POW expr
+expr                      :  func   |  VAR_   |   value
+                          |  '(' expr ')'
+                          |  expr  POW expr
                           |  expr  (TIMES | DIV)  expr
                           |  expr  (PLUS | MINUS) expr
-                          |  '(' expr ')'
-                          |  func |     VAR_    |   value
                           ;
-func                      :     FUNC_ID   '('  arg_list? ')' ;
+func                      :     LABEL_   '('  arg_list? ')' ;
 arg_list                  :     expr   (',' expr)*    ;
 
 // FRAGMENTS OF KEYWORDS =======================================================

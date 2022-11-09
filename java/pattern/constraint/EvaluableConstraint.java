@@ -51,6 +51,10 @@ public class EvaluableConstraint extends Constraint<EvaluableVariable> {
             return new EvaluableExpression.EvaluableAtom.Constant.Numeric(value);
         }
 
+        public static EvaluableExpression bracketed(EvaluableExpression nestedExpr) {
+            return new EvaluableExpression.Bracketed(nestedExpr);
+        }
+
         public static class Operation extends EvaluableExpression {
             @Override
             public String toString() {
@@ -118,6 +122,17 @@ public class EvaluableConstraint extends Constraint<EvaluableVariable> {
                     public Numeric(Double value) { super(value); }
                 }
             }
+        }
+
+        private static class Bracketed extends EvaluableExpression {
+            private final EvaluableExpression nestedExpr;
+
+            public Bracketed(EvaluableExpression nestedExpr) {
+                this.nestedExpr = nestedExpr;
+            }
+
+            @Override
+            public String toString() { return "( " + nestedExpr.toString() + " )"; }
         }
     }
 }

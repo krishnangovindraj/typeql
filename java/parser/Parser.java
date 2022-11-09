@@ -778,6 +778,8 @@ public class Parser extends TypeQLBaseVisitor {
             return new EvaluableExpression.Operation(EvaluableExpression.Operation.OP.PLUS, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
         } else if (ctx.MINUS() != null) {
             return new EvaluableExpression.Operation(EvaluableExpression.Operation.OP.MINUS, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+        } else if (ctx.func() != null) {
+            return visitFunc(ctx.func());
         } else if (ctx.LPAREN() != null || ctx.RPAREN() != null) {
             assert ctx.LPAREN() != null && ctx.RPAREN() != null;
             return visitExpr(ctx.expr(0));
@@ -793,7 +795,7 @@ public class Parser extends TypeQLBaseVisitor {
 
     @Override
     public EvaluableExpression.EvaluableFunction visitFunc(TypeQLParser.FuncContext ctx) {
-        return new EvaluableExpression.EvaluableFunction(ctx.FUNC_ID().getSymbol().getText(), visitArg_list(ctx.arg_list()));
+        return new EvaluableExpression.EvaluableFunction(ctx.LABEL_().getSymbol().getText(), visitArg_list(ctx.arg_list()));
     }
 
     @Override
