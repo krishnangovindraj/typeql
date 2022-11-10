@@ -17,6 +17,8 @@ public class EvaluableConstraint extends Constraint<EvaluableVariable> {
         this.expression = expression;
     }
 
+    public EvaluableExpression expression() { return expression; }
+
     @Override
     public Set<EvaluableVariable> variables() {
         return set(); // TODO: Recursively include all variables?
