@@ -784,9 +784,22 @@ public class Parser extends TypeQLBaseVisitor {
             assert ctx.LPAREN() != null && ctx.RPAREN() != null;
             return visitExpr(ctx.expr(0));
         } else if (ctx.VAR_() != null) {
-            return new EvaluableExpression.EvaluableAtom.Variable(getVar(ctx.VAR_()).toEvaluable());
+            return new EvaluableExpression.Variable(getVar(ctx.VAR_()).toEvaluable());
         } else if (ctx.value() != null) {
-            return new EvaluableExpression.EvaluableAtom.Constant.Numeric((Double)visitValue(ctx.value())); // TODO: Other types
+            Object value = visitValue(ctx.value());
+            if (value instanceof Long) {
+                return new EvaluableExpression.Constant.Long((Long) value);
+            } else if (value instanceof Double) {
+                return new EvaluableExpression.Constant.Double((Double) value);
+            } else if (value instanceof Boolean) {
+                return new EvaluableExpression.Constant.Boolean((Boolean) value);
+            } else if (value instanceof String) {
+                return new EvaluableExpression.Constant.String((String) value);
+            } else if (value instanceof LocalDateTime) {
+                return new EvaluableExpression.Constant.DateTime((LocalDateTime) value);
+            } else {
+                throw TypeQLException.of(ILLEGAL_GRAMMAR.message(ctx.getText()));
+            }
         }
         else {
             throw TypeQLException.of(ILLEGAL_GRAMMAR.message(ctx.getText()));
@@ -794,8 +807,8 @@ public class Parser extends TypeQLBaseVisitor {
     }
 
     @Override
-    public EvaluableExpression.EvaluableFunction visitFunc(TypeQLParser.FuncContext ctx) {
-        return new EvaluableExpression.EvaluableFunction(ctx.LABEL_().getSymbol().getText(), visitArg_list(ctx.arg_list()));
+    public EvaluableExpression.Function visitFunc(TypeQLParser.FuncContext ctx) {
+        return new EvaluableExpression.Function(ctx.LABEL_().getSymbol().getText(), visitArg_list(ctx.arg_list()));
     }
 
     @Override
