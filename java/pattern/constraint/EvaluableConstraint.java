@@ -1,5 +1,6 @@
 package com.vaticle.typeql.lang.pattern.constraint;
 
+import com.vaticle.typedb.common.collection.Pair;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.variable.EvaluableVariable;
 
@@ -112,6 +113,10 @@ public class EvaluableConstraint extends Constraint<EvaluableVariable> {
                 this.b = b;
             }
 
+            public OP operator() { return op; }
+
+            public Pair<EvaluableExpression, EvaluableExpression> operands() { return new Pair<>(a, b); }
+
             @Override
             public boolean isOperation() { return true; }
 
@@ -120,13 +125,17 @@ public class EvaluableConstraint extends Constraint<EvaluableVariable> {
         }
 
         public static class Function extends EvaluableExpression {
-            private final String id;
+            private final String symbol;
             private final List<EvaluableExpression> argList;
 
-            public Function(String id, List<EvaluableExpression> argList) {
-                this.id = id;
+            public Function(String symbol, List<EvaluableExpression> argList) {
+                this.symbol = symbol;
                 this.argList = argList;
             }
+
+            public String symbol() { return symbol; }
+
+            public List<EvaluableExpression> arguments() { return argList; }
 
             @Override
             public boolean isFunction() { return true; }
@@ -136,7 +145,7 @@ public class EvaluableConstraint extends Constraint<EvaluableVariable> {
 
             @Override
             public String toString() {
-                return id + "(" + argList.stream().map(e -> e.toString()).collect(COMMA.joiner()) + ")";
+                return symbol + "(" + argList.stream().map(e -> e.toString()).collect(COMMA.joiner()) + ")";
             }
         }
 
@@ -146,6 +155,8 @@ public class EvaluableConstraint extends Constraint<EvaluableVariable> {
             public Variable(EvaluableVariable variable) {
                 this.variable = variable;
             }
+
+            public EvaluableVariable variable() { return variable; }
 
             @Override
             public boolean isVariable() { return true; }
@@ -269,12 +280,14 @@ public class EvaluableConstraint extends Constraint<EvaluableVariable> {
             }
         }
 
-        private static class Bracketed extends EvaluableExpression {
+        public static class Bracketed extends EvaluableExpression {
             private final EvaluableExpression nestedExpr;
 
             public Bracketed(EvaluableExpression nestedExpr) {
                 this.nestedExpr = nestedExpr;
             }
+
+            public EvaluableExpression nestedExpression() { return nestedExpr; }
 
             @Override
             public boolean isBracketed() { return true; }
