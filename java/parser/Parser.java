@@ -784,7 +784,7 @@ public class Parser extends TypeQLBaseVisitor {
             assert ctx.LPAREN() != null && ctx.RPAREN() != null;
             return visitExpr(ctx.expr(0));
         } else if (ctx.VAR_() != null) {
-            return new EvaluableExpression.Variable(getVar(ctx.VAR_()).toEvaluable());
+            return new EvaluableExpression.Variable(getVar(ctx.VAR_()));
         } else if (ctx.value() != null) {
             Object value = visitValue(ctx.value());
             if (value instanceof Long) {

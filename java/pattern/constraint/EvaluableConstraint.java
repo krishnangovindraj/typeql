@@ -2,8 +2,11 @@ package com.vaticle.typeql.lang.pattern.constraint;
 
 import com.vaticle.typedb.common.collection.Pair;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
+import com.vaticle.typeql.lang.pattern.variable.ConceptVariable;
 import com.vaticle.typeql.lang.pattern.variable.EvaluableVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -15,9 +18,12 @@ import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_CAST
 
 public class EvaluableConstraint extends Constraint<EvaluableVariable> {
     private final EvaluableExpression expression;
+    private final Set<ConceptVariable> inputs;
 
     public EvaluableConstraint(EvaluableExpression expression) {
         this.expression = expression;
+        this.inputs = new HashSet<>();
+        expression.variables().forEach(v -> this.inputs.add(v.toConcept()));
     }
 
     public EvaluableExpression expression() { return expression; }
@@ -87,7 +93,7 @@ public class EvaluableConstraint extends Constraint<EvaluableVariable> {
             return new Function(funcId, args);
         }
 
-        public static Variable var(EvaluableVariable variable) {
+        public static Variable var(UnboundVariable variable) {
             return new Variable(variable);
         }
 
@@ -99,7 +105,22 @@ public class EvaluableConstraint extends Constraint<EvaluableVariable> {
             return new EvaluableExpression.Bracketed(nestedExpr);
         }
 
+        public Set<UnboundVariable> variables() {
+            Set<UnboundVariable> collector = new HashSet<>();
+            collectVariables(collector);
+            return collector;
+        }
+
+        protected abstract void collectVariables(Set<UnboundVariable> collector);
+
         public static class Operation extends EvaluableExpression {
+
+            @Override
+            protected void collectVariables(Set<UnboundVariable> collector) {
+                a.collectVariables(collector);
+                b.collectVariables(collector);
+            }
+
             @Override
             public String toString() {
                 return a.toString() + " " + op.symbol + " " + b.toString();
@@ -152,25 +173,35 @@ public class EvaluableConstraint extends Constraint<EvaluableVariable> {
             public Function asFunction() { return this; }
 
             @Override
+            protected void collectVariables(Set<UnboundVariable> collector) {
+                argList.forEach(arg -> arg.collectVariables(collector));
+            }
+
+            @Override
             public String toString() {
                 return symbol + "(" + argList.stream().map(e -> e.toString()).collect(COMMA.joiner()) + ")";
             }
         }
 
         public static class Variable extends EvaluableExpression {
-            private final EvaluableVariable variable;
+            private final UnboundVariable variable;
 
-            public Variable(EvaluableVariable variable) {
+            public Variable(UnboundVariable variable) {
                 this.variable = variable;
             }
 
-            public EvaluableVariable variable() { return variable; }
+            public UnboundVariable variable() { return variable; }
 
             @Override
             public boolean isVariable() { return true; }
 
             @Override
             public Variable asVariable() { return this; }
+
+            @Override
+            protected void collectVariables(Set<UnboundVariable> collector) {
+                collector.add(variable);
+            }
 
             @Override
             public String toString() {
@@ -190,6 +221,9 @@ public class EvaluableConstraint extends Constraint<EvaluableVariable> {
 
             @Override
             public Constant<T> asConstant() { return this; }
+
+            @Override
+            protected void collectVariables(Set<UnboundVariable> collector) { } // Nothing to do
 
             @Override
             public java.lang.String toString() { return value.toString(); }
@@ -289,13 +323,13 @@ public class EvaluableConstraint extends Constraint<EvaluableVariable> {
         }
 
         public static class Bracketed extends EvaluableExpression {
-            private final EvaluableExpression nestedExpr;
+            private final EvaluableExpression nestedExpression;
 
-            public Bracketed(EvaluableExpression nestedExpr) {
-                this.nestedExpr = nestedExpr;
+            public Bracketed(EvaluableExpression nestedExpression) {
+                this.nestedExpression = nestedExpression;
             }
 
-            public EvaluableExpression nestedExpression() { return nestedExpr; }
+            public EvaluableExpression nestedExpression() { return nestedExpression; }
 
             @Override
             public boolean isBracketed() { return true; }
@@ -304,7 +338,12 @@ public class EvaluableConstraint extends Constraint<EvaluableVariable> {
             public Bracketed asBracketed() { return this; }
 
             @Override
-            public String toString() { return "( " + nestedExpr.toString() + " )"; }
+            protected void collectVariables(Set<UnboundVariable> collector) {
+                nestedExpression.collectVariables(collector);
+            }
+
+            @Override
+            public String toString() { return "( " + nestedExpression.toString() + " )"; }
         }
     }
 }
