@@ -423,9 +423,9 @@ public class ParserTest {
         TypeQLMatch expected = match(
                 var("x").isa("commodity").has("price", var("p")),
                 rel("commodity", "x").rel("qty", "q").isa("order"),
-                var("net").assign(EvaluableExpression.op(OP.TIMES, EvaluableExpression.var(var("p").toEvaluable()), EvaluableExpression.var(var("q").toEvaluable()))),
+                var("net").assign(EvaluableExpression.op(OP.TIMES, EvaluableExpression.var(var("p")), EvaluableExpression.var(var("q")))),
                 var("gross").assign(EvaluableExpression.op(OP.TIMES,
-                        EvaluableExpression.var(var("net").toEvaluable()),
+                        EvaluableExpression.var(var("net")),
                         EvaluableExpression.bracketed(EvaluableExpression.op(OP.PLUS, EvaluableExpression.constant(1.0), EvaluableExpression.constant(0.21))))));
 
         assertQueryEquals(expected, parsed, query);
@@ -441,12 +441,12 @@ public class ParserTest {
                         EvaluableExpression.op(OP.PLUS,
                                 EvaluableExpression.op(OP.TIMES,
                                         EvaluableExpression.op(OP.DIV,
-                                                EvaluableExpression.var(var("a").toEvaluable()),
-                                                EvaluableExpression.var(var("b").toEvaluable())),
-                                        EvaluableExpression.var(var("c").toEvaluable())),
+                                                EvaluableExpression.var(var("a")),
+                                                EvaluableExpression.var(var("b"))),
+                                        EvaluableExpression.var(var("c"))),
                                 EvaluableExpression.op(OP.DIV,
-                                        EvaluableExpression.op(OP.POW, EvaluableExpression.var(var("d").toEvaluable()), EvaluableExpression.var(var("e").toEvaluable())),
-                                        EvaluableExpression.var(var("f").toEvaluable())))));
+                                        EvaluableExpression.op(OP.POW, EvaluableExpression.var(var("d")), EvaluableExpression.var(var("e"))),
+                                        EvaluableExpression.var(var("f"))))));
         assertQueryEquals(expected, parsed, query);
     }
 
@@ -459,14 +459,14 @@ public class ParserTest {
         TypeQLMatch expected = match(
                 var("res").assign(
                         EvaluableExpression.op(OP.PLUS,
-                                EvaluableExpression.var(var("a").toEvaluable()),
+                                EvaluableExpression.var(var("a")),
                                 EvaluableExpression.op(OP.TIMES,
                                         EvaluableExpression.bracketed(
                                                 EvaluableExpression.op(OP.PLUS,
                                                         EvaluableExpression.func("foo",
-                                                                EvaluableExpression.op(OP.PLUS, EvaluableExpression.var(var("b").toEvaluable()), EvaluableExpression.var(var("c").toEvaluable()))),
-                                                        EvaluableExpression.var(var("d").toEvaluable()))),
-                                        EvaluableExpression.var(var("e").toEvaluable())))));
+                                                                EvaluableExpression.op(OP.PLUS, EvaluableExpression.var(var("b")), EvaluableExpression.var(var("c")))),
+                                                        EvaluableExpression.var(var("d")))),
+                                        EvaluableExpression.var(var("e"))))));
         assertQueryEquals(expected, parsed, query);
     }
 
@@ -483,9 +483,9 @@ public class ParserTest {
         TypeQLMatch expected = match(
                 var("x").isa("commodity").has("price", var("p")),
                 rel("commodity", "x").rel("qty", "q").isa("order"),
-                var("net").assign(EvaluableExpression.op(OP.TIMES, EvaluableExpression.var(var("p").toEvaluable()), EvaluableExpression.var(var("q").toEvaluable()))),
+                var("net").assign(EvaluableExpression.op(OP.TIMES, EvaluableExpression.var(var("p")), EvaluableExpression.var(var("q")))),
                 var("gross").assign(EvaluableExpression.func("percentOf",
-                        EvaluableExpression.var(var("net").toEvaluable()),
+                        EvaluableExpression.var(var("net")),
                         EvaluableExpression.op(OP.PLUS, EvaluableExpression.constant(100), EvaluableExpression.constant(21)))));
 
         assertQueryEquals(expected, parsed, query);
