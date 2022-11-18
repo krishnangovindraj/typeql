@@ -24,7 +24,6 @@ package com.vaticle.typeql.lang.pattern.variable;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.Conjunctable;
 import com.vaticle.typeql.lang.pattern.Pattern;
-
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -71,6 +70,10 @@ public abstract class BoundVariable extends Variable implements Conjunctable {
 
     public ThingVariable<?> asThing() {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(ThingVariable.class)));
+    }
+
+    public EvaluableVariable asEvaluable() {
+        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(EvaluableVariable.class)));
     }
 
     @Override

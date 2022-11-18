@@ -28,6 +28,14 @@ public class EvaluableConstraint extends Constraint<EvaluableVariable> {
     }
 
     @Override
+    public boolean isEvaluable() { return true; }
+
+    @Override
+    public EvaluableConstraint asEvaluable() {
+        return this;
+    }
+
+    @Override
     public String toString() {
         return this.expression.toString();
     }

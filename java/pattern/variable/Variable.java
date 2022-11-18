@@ -60,6 +60,10 @@ public abstract class Variable {
         return false;
     }
 
+    public boolean isEvaluable() {
+        return false;
+    }
+
     public UnboundVariable asUnbound() {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(UnboundVariable.class)));
     }
