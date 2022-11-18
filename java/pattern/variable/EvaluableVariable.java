@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.vaticle.typedb.common.util.Objects.className;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.ILLEGAL_CONSTRAINT_REPETITION;
+import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_CASTING;
 
 public class EvaluableVariable extends BoundVariable {
     private EvaluableConstraint assignment;
@@ -37,6 +39,14 @@ public class EvaluableVariable extends BoundVariable {
     @Override
     public List<EvaluableConstraint> constraints() {
         return constraints;
+    }
+
+    @Override
+    public boolean isEvaluable() { return true; }
+
+    @Override
+    public EvaluableVariable asEvaluable() {
+        return this;
     }
 
     @Override
