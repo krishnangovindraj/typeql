@@ -128,7 +128,10 @@ public class EvaluableConstraint extends Constraint<ConceptVariable> {
             public enum OP {
                 POW("^"), TIMES("*"), DIV("/"), PLUS("+"), MINUS("-");
                 private final String symbol;
+
                 OP(String symbol) { this.symbol = symbol; }
+
+                public String symbol() { return symbol; }
             }
 
             private final OP op;
