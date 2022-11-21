@@ -3,7 +3,6 @@ package com.vaticle.typeql.lang.pattern.constraint;
 import com.vaticle.typedb.common.collection.Pair;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.variable.ConceptVariable;
-import com.vaticle.typeql.lang.pattern.variable.EvaluableVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
 
 import java.util.HashSet;
@@ -16,7 +15,7 @@ import static com.vaticle.typedb.common.util.Objects.className;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Char.COMMA;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_CASTING;
 
-public class EvaluableConstraint extends Constraint<EvaluableVariable> {
+public class EvaluableConstraint extends Constraint<ConceptVariable> {
     private final EvaluableExpression expression;
     private final Set<ConceptVariable> inputs;
 
@@ -29,8 +28,8 @@ public class EvaluableConstraint extends Constraint<EvaluableVariable> {
     public EvaluableExpression expression() { return expression; }
 
     @Override
-    public Set<EvaluableVariable> variables() {
-        return set(); // TODO: Recursively include all variables?
+    public Set<ConceptVariable> variables() {
+        return inputs;
     }
 
     @Override
