@@ -48,21 +48,7 @@ import java.util.List;
 
 import static com.vaticle.typedb.common.collection.Collections.list;
 import static com.vaticle.typedb.common.collection.Collections.pair;
-import static com.vaticle.typeql.lang.TypeQL.and;
-import static com.vaticle.typeql.lang.TypeQL.define;
-import static com.vaticle.typeql.lang.TypeQL.gte;
-import static com.vaticle.typeql.lang.TypeQL.insert;
-import static com.vaticle.typeql.lang.TypeQL.lt;
-import static com.vaticle.typeql.lang.TypeQL.lte;
-import static com.vaticle.typeql.lang.TypeQL.match;
-import static com.vaticle.typeql.lang.TypeQL.not;
-import static com.vaticle.typeql.lang.TypeQL.or;
-import static com.vaticle.typeql.lang.TypeQL.parseQuery;
-import static com.vaticle.typeql.lang.TypeQL.rel;
-import static com.vaticle.typeql.lang.TypeQL.rule;
-import static com.vaticle.typeql.lang.TypeQL.type;
-import static com.vaticle.typeql.lang.TypeQL.undefine;
-import static com.vaticle.typeql.lang.TypeQL.var;
+import static com.vaticle.typeql.lang.TypeQL.*;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.core.AllOf.allOf;
@@ -416,8 +402,8 @@ public class ParserTest {
                 "$x isa commodity,\n" +
                 "    has price $p;\n" +
                 "(commodity: $x, qty: $q) isa order;\n" +
-                "$net <- $p * $q;\n" +
-                "$gross <- $net * ( 1.0 + 0.21 );" +
+                "?net <- $p * $q;\n" +
+                "?gross <- ?net * ( 1.0 + 0.21 );" +
                 "";
         TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
         TypeQLMatch expected = match(
@@ -454,19 +440,19 @@ public class ParserTest {
     @Test
     public void testFuncParenthesisPrecedence() {
         final String query = "match\n" +
-                "$res <- $a + ( foo($b + $c) + $d ) * $e;";
+                "?res <- $a + ( foo($b + ?c) + $d ) * ?e;";
         TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
         TypeQLMatch expected = match(
-                var("res").assign(
+                valvar("res").assign(
                         EvaluableExpression.op(OP.PLUS,
                                 EvaluableExpression.var(var("a")),
                                 EvaluableExpression.op(OP.TIMES,
                                         EvaluableExpression.bracketed(
                                                 EvaluableExpression.op(OP.PLUS,
                                                         EvaluableExpression.func("foo",
-                                                                EvaluableExpression.op(OP.PLUS, EvaluableExpression.var(var("b")), EvaluableExpression.var(var("c")))),
+                                                                EvaluableExpression.op(OP.PLUS, EvaluableExpression.var(var("b")), EvaluableExpression.var(valvar("c")))),
                                                         EvaluableExpression.var(var("d")))),
-                                        EvaluableExpression.var(var("e"))))));
+                                        EvaluableExpression.var(valvar("e"))))));
         assertQueryEquals(expected, parsed, query);
     }
 

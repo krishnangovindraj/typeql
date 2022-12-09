@@ -190,6 +190,12 @@ public class Parser extends TypeQLBaseVisitor {
         }
     }
 
+    private UnboundVariable getValVar(TerminalNode variable) {
+        // Remove '?' prefix
+        String name = variable.getSymbol().getText().substring(1);
+        return UnboundVariable.namedVal(name);
+
+    }
     // PARSER VISITORS =========================================================
 
     @Override
@@ -685,6 +691,7 @@ public class Parser extends TypeQLBaseVisitor {
             predicate = TypeQLToken.Predicate.Equality.of(ctx.predicate_equality().getText());
             if (ctx.predicate_value().value() != null) value = visitValue(ctx.predicate_value().value());
             else if (ctx.predicate_value().VAR_() != null) value = getVar(ctx.predicate_value().VAR_());
+            else if (ctx.predicate_value().EVAR_() != null) value = getValVar(ctx.predicate_value().EVAR_());
             else throw TypeQLException.of(ILLEGAL_STATE);
         } else if (ctx.predicate_substring() != null) {
             predicate = TypeQLToken.Predicate.SubString.of(ctx.predicate_substring().getText());
@@ -762,7 +769,7 @@ public class Parser extends TypeQLBaseVisitor {
     // Arithmetic
     @Override
     public EvaluableVariable visitVariable_evaluable(TypeQLParser.Variable_evaluableContext ctx) {
-        UnboundVariable unscoped = getVar(ctx.VAR_());
+        UnboundVariable unscoped = getValVar(ctx.EVAR_());
         return unscoped.constrain(new EvaluableConstraint(this.visitExpr(ctx.expr())));
     }
 
@@ -784,7 +791,9 @@ public class Parser extends TypeQLBaseVisitor {
             assert ctx.LPAREN() != null && ctx.RPAREN() != null;
             return visitExpr(ctx.expr(0));
         } else if (ctx.VAR_() != null) {
-            return new EvaluableExpression.Variable(getVar(ctx.VAR_()));
+            return new EvaluableExpression.ThingVar(getVar(ctx.VAR_()));
+        } else if (ctx.EVAR_() != null) {
+            return new EvaluableExpression.ValVar(getValVar(ctx.EVAR_()));
         } else if (ctx.value() != null) {
             Object value = visitValue(ctx.value());
             if (value instanceof Long) {

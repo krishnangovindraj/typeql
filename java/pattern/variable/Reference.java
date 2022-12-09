@@ -36,7 +36,7 @@ public abstract class Reference {
     final Type type;
     final boolean isVisible;
 
-    enum Type {NAME, LABEL, ANONYMOUS}
+    enum Type {NAME, LABEL, ANONYMOUS, NAMED_VAL}
 
     Reference(Type type, boolean isVisible) {
         this.type = type;
@@ -53,6 +53,10 @@ public abstract class Reference {
 
     public static Reference.Anonymous anonymous(boolean isVisible) {
         return new Reference.Anonymous(isVisible);
+    }
+
+    public static Reference NamedVal(String name) {
+        return new Reference.NamedVal(name);
     }
 
     protected Reference.Type type() {
@@ -77,6 +81,10 @@ public abstract class Reference {
         return type == Type.NAME;
     }
 
+    public boolean isNamedVal() {
+        return type == Type.NAMED_VAL;
+    }
+
     public boolean isLabel() {
         return type == Type.LABEL;
     }
@@ -99,6 +107,10 @@ public abstract class Reference {
 
     public Reference.Anonymous asAnonymous() {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Anonymous.class)));
+    }
+
+    public Reference.NamedVal asNamedVal() {
+        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(NamedVal.class)));
     }
 
     @Override
@@ -236,6 +248,57 @@ public abstract class Reference {
         @Override
         public int hashCode() {
             return hash;
+        }
+    }
+
+    public static class NamedVal extends Reference {
+
+        private static final Pattern REGEX = Pattern.compile("[a-zA-Z0-9][a-zA-Z0-9_-]*");
+        protected final String name;
+        private final int hash;
+
+        protected NamedVal(String name) {
+            super(Type.NAMED_VAL, true);
+            if (!REGEX.matcher(name).matches()) {
+                throw TypeQLException.of(INVALID_VARIABLE_NAME.message(name, REGEX.toString()));
+            }
+            this.name = name;
+            this.hash = Objects.hash(this.type, this.isVisible, this.name);
+        }
+
+        @Override
+        public String name() {
+            return name;
+        }
+
+        @Override
+        public boolean isNamedVal() {
+            return true;
+        }
+
+        @Override
+        public NamedVal asNamedVal() {
+            return this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            NamedVal that = (NamedVal) o;
+            return (this.type == that.type &&
+                    this.isVisible == that.isVisible &&
+                    this.name.equals(that.name));
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
+
+        @Override
+        public String syntax() {
+            return TypeQLToken.Char.QUESTION_MARK + name();
         }
     }
 }

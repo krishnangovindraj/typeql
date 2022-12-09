@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 
 import static com.vaticle.typedb.common.collection.Collections.list;
-import static com.vaticle.typedb.common.collection.Collections.set;
 import static com.vaticle.typedb.common.util.Objects.className;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Char.COMMA;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_CASTING;
@@ -53,7 +52,9 @@ public class EvaluableConstraint extends Constraint<ConceptVariable> {
 
         public boolean isBracketed() { return false; }
 
-        public boolean isVariable() { return false; }
+        public boolean isThingVar() { return false; }
+
+        public boolean isValVar() { return false; }
 
         public boolean isConstant() { return false; }
 
@@ -69,8 +70,12 @@ public class EvaluableConstraint extends Constraint<ConceptVariable> {
             throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(EvaluableExpression.Bracketed.class)));
         }
 
-        public EvaluableExpression.Variable asVariable() {
-            throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(EvaluableExpression.Variable.class)));
+        public ThingVar asThingVar() {
+            throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(ThingVar.class)));
+        }
+
+        public ValVar asValVar() {
+            throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(ValVar.class)));
         }
 
         public EvaluableExpression.Constant asConstant() {
@@ -92,8 +97,8 @@ public class EvaluableConstraint extends Constraint<ConceptVariable> {
             return new Function(funcId, args);
         }
 
-        public static Variable var(UnboundVariable variable) {
-            return new Variable(variable);
+        public static ThingVar var(UnboundVariable variable) {
+            return new ThingVar(variable);
         }
 
         public static Constant.Double constant(double value) {
@@ -185,20 +190,46 @@ public class EvaluableConstraint extends Constraint<ConceptVariable> {
             }
         }
 
-        public static class Variable extends EvaluableExpression {
+        public static class ThingVar extends EvaluableExpression {
             private final UnboundVariable variable;
 
-            public Variable(UnboundVariable variable) {
+            public ThingVar(UnboundVariable variable) {
                 this.variable = variable;
             }
 
             public UnboundVariable variable() { return variable; }
 
             @Override
-            public boolean isVariable() { return true; }
+            public boolean isThingVar() { return true; }
 
             @Override
-            public Variable asVariable() { return this; }
+            public ThingVar asThingVar() { return this; }
+
+            @Override
+            protected void collectVariables(Set<UnboundVariable> collector) {
+                collector.add(variable);
+            }
+
+            @Override
+            public String toString() {
+                return variable.reference().toString();
+            }
+        }
+
+        public static class ValVar extends EvaluableExpression {
+            private final UnboundVariable variable;
+
+            public ValVar(UnboundVariable variable) {
+                this.variable = variable;
+            }
+
+            public UnboundVariable variable() { return variable; }
+
+            @Override
+            public boolean isValVar() { return true; }
+
+            @Override
+            public ValVar asValVar() { return this; }
 
             @Override
             protected void collectVariables(Set<UnboundVariable> collector) {

@@ -130,6 +130,7 @@ public class TypeQLToken {
         CURLY_CLOSE("}"),
         PARAN_OPEN("("),
         PARAN_CLOSE(")"),
+        QUESTION_MARK("?"),
         SQUARE_OPEN("["),
         SQUARE_CLOSE("]"),
         QUOTE_DOUBLE("\""),

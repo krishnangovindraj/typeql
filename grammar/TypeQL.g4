@@ -156,14 +156,14 @@ attribute             :   HAS label ( VAR_ | predicate )                        
 
 // ATTRIBUTE VALUATION CONSTRUCTS ==============================================
 
-predicate             :   value
+predicate             :   value |
                       |   predicate_equality   predicate_value
                       |   predicate_substring  STRING_
                       ;
 predicate_equality    :   EQ | NEQ | GT | GTE | LT | LTE ;
 predicate_substring   :   CONTAINS | LIKE ;
 
-predicate_value       :   value | VAR_  ;
+predicate_value       :   value | VAR_  | EVAR_ ;
 
 // SCHEMA CONSTRUCT =============================================================
 
@@ -279,6 +279,7 @@ DATETIME_       : DATE_FRAGMENT_ 'T' TIME_              ;
 VAR_            : VAR_ANONYMOUS_ | VAR_NAMED_ ;
 VAR_ANONYMOUS_  : '$_' ;
 VAR_NAMED_      : '$' [a-zA-Z0-9][a-zA-Z0-9_-]* ;
+EVAR_           : '?' [a-zA-Z0-9][a-zA-Z0-9_-]* ;
 IID_            : '0x'[0-9a-f]+ ;
 LABEL_          : TYPE_CHAR_H_ TYPE_CHAR_T_* ;
 LABEL_SCOPED_   : LABEL_ ':' LABEL_ ;
@@ -292,9 +293,9 @@ DIV                 : '/'         ;     TIMES               : '*'         ;
 PLUS                : '+'         ;     MINUS               : '-'         ;
 LPAREN              : '('         ;     RPAREN              : ')'         ;
 
-variable_evaluable        : VAR_ ASSIGN expr;
+variable_evaluable        : EVAR_ ASSIGN expr;
 
-expr                      :  func   |  VAR_   |   value
+expr                      :  func   |  VAR_   | EVAR_ |   value
                           |  '(' expr ')'
                           |  expr  POW expr
                           |  expr  (TIMES | DIV)  expr

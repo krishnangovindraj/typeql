@@ -54,6 +54,10 @@ public class UnboundVariable extends Variable implements ConceptVariableBuilder,
         return new UnboundVariable(Reference.anonymous(false));
     }
 
+    public static UnboundVariable namedVal(String name) {
+        return new UnboundVariable(Reference.NamedVal(name));
+    }
+
     @Override
     public boolean isUnbound() {
         return true;
