@@ -187,7 +187,7 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
     private void eachPatternVariableHasNamedVariable(List<? extends Pattern> patterns) {
         patterns.forEach(pattern -> {
             if (pattern.isVariable() && !pattern.asVariable().reference().isName()
-                    && pattern.asVariable().variables().noneMatch(constraintVar -> constraintVar.reference().isName())) {
+                    && pattern.asVariable().variables().noneMatch(constraintVar -> constraintVar.reference().isName() || constraintVar.reference().isNamedVal())) {
                 throw TypeQLException.of(MATCH_PATTERN_VARIABLE_HAS_NO_NAMED_VARIABLE.message(pattern));
             } else if (!pattern.isVariable()) {
                 eachPatternVariableHasNamedVariable(pattern.patterns());

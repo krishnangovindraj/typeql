@@ -1,382 +1,337 @@
 package com.vaticle.typeql.lang.pattern.constraint;
 
-import com.vaticle.typedb.common.collection.Pair;
+import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
-import com.vaticle.typeql.lang.pattern.variable.ConceptVariable;
+import com.vaticle.typeql.lang.common.util.Strings;
+import com.vaticle.typeql.lang.pattern.expression.EvaluableExpression;
+import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
+import com.vaticle.typeql.lang.pattern.variable.EvaluableVariable;
+import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
-import static com.vaticle.typedb.common.collection.Collections.list;
+import static com.vaticle.typedb.common.collection.Collections.set;
 import static com.vaticle.typedb.common.util.Objects.className;
-import static com.vaticle.typeql.lang.common.TypeQLToken.Char.COMMA;
+import static com.vaticle.typeql.lang.common.TypeQLToken.Char.SPACE;
+import static com.vaticle.typeql.lang.common.TypeQLToken.Predicate.Equality.EQ;
+import static com.vaticle.typeql.lang.common.TypeQLToken.Predicate.SubString.LIKE;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_CASTING;
+import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_CONSTRAINT_DATETIME_PRECISION;
+import static com.vaticle.typeql.lang.common.exception.ErrorMessage.MISSING_CONSTRAINT_PREDICATE;
+import static com.vaticle.typeql.lang.common.exception.ErrorMessage.MISSING_CONSTRAINT_VALUE;
+import static com.vaticle.typeql.lang.common.util.Strings.escapeRegex;
+import static com.vaticle.typeql.lang.common.util.Strings.quoteString;
 
-public class EvaluableConstraint extends Constraint<ConceptVariable> {
-    private final EvaluableExpression expression;
-    private final Set<ConceptVariable> inputs;
-
-    public EvaluableConstraint(EvaluableExpression expression) {
-        this.expression = expression;
-        this.inputs = new HashSet<>();
-        expression.variables().forEach(v -> this.inputs.add(v.toConcept()));
-    }
-
-    public EvaluableExpression expression() { return expression; }
+public abstract class EvaluableConstraint extends Constraint<BoundVariable> {
 
     @Override
-    public Set<ConceptVariable> variables() {
-        return inputs;
+    public boolean isEvaluable() {
+        return true;
     }
-
-    @Override
-    public boolean isEvaluable() { return true; }
 
     @Override
     public EvaluableConstraint asEvaluable() {
         return this;
     }
 
-    @Override
-    public String toString() {
-        return this.expression.toString();
+    public boolean isValue() {
+        return false;
     }
 
-    public abstract static class EvaluableExpression {
+    public EvaluableConstraint asValue() {
+        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(EvaluableConstraint.Value.class)));
+    }
 
-        public boolean isOperation() { return false; }
+    public abstract static class Value<T> extends EvaluableConstraint {
 
-        public boolean isFunction() { return false; }
+        private final TypeQLToken.Predicate predicate;
+        private final T value;
+        private final int hash;
 
-        public boolean isBracketed() { return false; }
+        Value(TypeQLToken.Predicate predicate, T value) {
+            if (predicate == null) throw TypeQLException.of(MISSING_CONSTRAINT_PREDICATE);
+            else if (value == null) throw TypeQLException.of(MISSING_CONSTRAINT_VALUE);
 
-        public boolean isThingVar() { return false; }
+            assert !predicate.isEquality() || value instanceof Comparable
+                    || value instanceof ThingVariable<?> || value instanceof EvaluableVariable
+                    || value instanceof EvaluableExpression;
+            assert !predicate.isSubString() || value instanceof java.lang.String;
 
-        public boolean isValVar() { return false; }
-
-        public boolean isConstant() { return false; }
-
-        public EvaluableExpression.Operation asOperation() {
-            throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(EvaluableExpression.Operation.class)));
-        }
-
-        public EvaluableExpression.Function asFunction() {
-            throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(EvaluableExpression.Function.class)));
-        }
-
-        public EvaluableExpression.Bracketed asBracketed() {
-            throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(EvaluableExpression.Bracketed.class)));
-        }
-
-        public ThingVar asThingVar() {
-            throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(ThingVar.class)));
-        }
-
-        public ValVar asValVar() {
-            throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(ValVar.class)));
-        }
-
-        public EvaluableExpression.Constant asConstant() {
-            throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(EvaluableExpression.Constant.class)));
+            this.predicate = predicate;
+            this.value = value;
+            this.hash = Objects.hash(Value.class, this.predicate, this.value);
         }
 
         @Override
-        public abstract String toString();
-
-        public static EvaluableExpression.Operation op(EvaluableExpression.Operation.OP op, EvaluableExpression a, EvaluableExpression b) {
-            return new EvaluableExpression.Operation(op, a, b);
+        public Set<BoundVariable> variables() {
+            return set();
         }
 
-        public static Function func(String funcId, EvaluableExpression... args) {
-            return func(funcId, list(args));
+        @Override
+        public boolean isValue() {
+            return true;
         }
 
-        public static Function func(String funcId, List<EvaluableExpression> args) {
-            return new Function(funcId, args);
+        @Override
+        public Value<?> asValue() {
+            return this;
         }
 
-        public static ThingVar var(UnboundVariable variable) {
-            return new ThingVar(variable);
+        public TypeQLToken.Predicate predicate() {
+            return predicate;
         }
 
-        public static Constant.Double constant(double value) {
-            return new Constant.Double(value);
+        public T value() {
+            return value;
         }
 
-        public static EvaluableExpression bracketed(EvaluableExpression nestedExpr) {
-            return new EvaluableExpression.Bracketed(nestedExpr);
+        public boolean isLong() {
+            return false;
         }
 
-        public Set<UnboundVariable> variables() {
-            Set<UnboundVariable> collector = new HashSet<>();
-            collectVariables(collector);
-            return collector;
+        public boolean isDouble() {
+            return false;
         }
 
-        protected abstract void collectVariables(Set<UnboundVariable> collector);
-
-        public static class Operation extends EvaluableExpression {
-
-            @Override
-            protected void collectVariables(Set<UnboundVariable> collector) {
-                a.collectVariables(collector);
-                b.collectVariables(collector);
-            }
-
-            @Override
-            public String toString() {
-                return a.toString() + " " + op.symbol + " " + b.toString();
-            }
-
-            public enum OP {
-                POW("^"), TIMES("*"), DIV("/"), PLUS("+"), MINUS("-");
-                private final String symbol;
-
-                OP(String symbol) { this.symbol = symbol; }
-
-                public String symbol() { return symbol; }
-            }
-
-            private final OP op;
-            private final EvaluableExpression a;
-            private final EvaluableExpression b;
-
-            public Operation(OP op, EvaluableExpression a, EvaluableExpression b) {
-                this.op = op;
-                this.a = a;
-                this.b = b;
-            }
-
-            public OP operator() { return op; }
-
-            public Pair<EvaluableExpression, EvaluableExpression> operands() { return new Pair<>(a, b); }
-
-            @Override
-            public boolean isOperation() { return true; }
-
-            @Override
-            public Operation asOperation() { return this; }
+        public boolean isBoolean() {
+            return false;
         }
 
-        public static class Function extends EvaluableExpression {
-            private final String symbol;
-            private final List<EvaluableExpression> argList;
-
-            public Function(String symbol, List<EvaluableExpression> argList) {
-                this.symbol = symbol;
-                this.argList = argList;
-            }
-
-            public String symbol() { return symbol; }
-
-            public List<EvaluableExpression> arguments() { return argList; }
-
-            @Override
-            public boolean isFunction() { return true; }
-
-            @Override
-            public Function asFunction() { return this; }
-
-            @Override
-            protected void collectVariables(Set<UnboundVariable> collector) {
-                argList.forEach(arg -> arg.collectVariables(collector));
-            }
-
-            @Override
-            public String toString() {
-                return symbol + "(" + argList.stream().map(e -> e.toString()).collect(COMMA.joiner()) + ")";
-            }
+        public boolean isString() {
+            return false;
         }
 
-        public static class ThingVar extends EvaluableExpression {
-            private final UnboundVariable variable;
-
-            public ThingVar(UnboundVariable variable) {
-                this.variable = variable;
-            }
-
-            public UnboundVariable variable() { return variable; }
-
-            @Override
-            public boolean isThingVar() { return true; }
-
-            @Override
-            public ThingVar asThingVar() { return this; }
-
-            @Override
-            protected void collectVariables(Set<UnboundVariable> collector) {
-                collector.add(variable);
-            }
-
-            @Override
-            public String toString() {
-                return variable.reference().toString();
-            }
+        public boolean isDateTime() {
+            return false;
         }
 
-        public static class ValVar extends EvaluableExpression {
-            private final UnboundVariable variable;
-
-            public ValVar(UnboundVariable variable) {
-                this.variable = variable;
-            }
-
-            public UnboundVariable variable() { return variable; }
-
-            @Override
-            public boolean isValVar() { return true; }
-
-            @Override
-            public ValVar asValVar() { return this; }
-
-            @Override
-            protected void collectVariables(Set<UnboundVariable> collector) {
-                collector.add(variable);
-            }
-
-            @Override
-            public String toString() {
-                return variable.reference().toString();
-            }
+        public boolean isVariable() {
+            return false;
         }
 
-        // TODO: Improve
-        public abstract static class Constant<T> extends EvaluableExpression {
-            T value;
-            public Constant(T value) {
-                this.value = value;
+        public boolean isValueVariable() {
+            return false;
+        }
+
+        public Value.Long asLong() {
+            throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Value.Long.class)));
+        }
+
+        public Value.Double asDouble() {
+            throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Value.Double.class)));
+        }
+
+        public Value.Boolean asBoolean() {
+            throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Value.Boolean.class)));
+        }
+
+        public Value.String asString() {
+            throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Value.String.class)));
+        }
+
+        public Value.DateTime asDateTime() {
+            throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Value.DateTime.class)));
+        }
+
+        public Value.Variable asVariable() {
+            throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Value.Variable.class)));
+        }
+
+        public Value.ValueVariable asValueVariable() {
+            throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Value.ValueVariable.class)));
+        }
+
+        @Override
+        public java.lang.String toString() {
+            if (predicate.equals(EQ) && !isVariable()) return Strings.valueToString(value);
+            else return predicate.toString() + SPACE + Strings.valueToString(value);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Value<?> that = (Value<?>) o;
+            return (this.predicate.equals(that.predicate) && this.value.equals(that.value));
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
+
+        public static class Long extends Value<java.lang.Long> {
+
+            public Long(TypeQLToken.Predicate.Equality predicate, long value) {
+                super(predicate, value);
             }
 
             @Override
-            public boolean isConstant() { return true; }
-
-            @Override
-            public Constant<T> asConstant() { return this; }
-
-            @Override
-            protected void collectVariables(Set<UnboundVariable> collector) { } // Nothing to do
-
-            @Override
-            public java.lang.String toString() { return value.toString(); }
-
-            public T value() { return value; }
-
             public boolean isLong() {
-                return false;
+                return true;
             }
 
-            public boolean isDouble() {
-                return false;
-            }
-
-            public boolean isBoolean() {
-                return false;
-            }
-
-            public boolean isString() {
-                return false;
-            }
-
-            public boolean isDateTime() {
-                return false;
-            }
-
+            @Override
             public Long asLong() {
-                throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Long.class)));
-            }
-
-            public Double asDouble() {
-                throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Double.class)));
-            }
-
-            public Boolean asBoolean() {
-                throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Boolean.class)));
-            }
-
-            public String asString() {
-                throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(String.class)));
-            }
-
-            public DateTime asDateTime() {
-                throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(DateTime.class)));
-            }
-
-            public static class Long extends Constant<java.lang.Long> {
-                public Long(java.lang.Long value) { super(value); }
-
-                @Override
-                public boolean isLong() { return true; }
-
-                @Override
-                public Long asLong() { return this; }
-            }
-
-            public static class Double extends Constant<java.lang.Double> {
-                public Double(java.lang.Double value) { super(value); }
-
-                @Override
-                public boolean isDouble() { return true; }
-
-                @Override
-                public Double asDouble() { return this; }
-            }
-
-            public static class Boolean extends Constant<java.lang.Boolean> {
-                public Boolean(java.lang.Boolean value) { super(value); }
-
-                @Override
-                public boolean isBoolean() { return true; }
-
-                @Override
-                public Boolean asBoolean() { return this; }
-            }
-
-
-            public static class String extends Constant<java.lang.String> {
-                public String(java.lang.String value) { super(value); }
-
-                @Override
-                public boolean isString() { return true; }
-
-                @Override
-                public String asString() { return this; }
-            }
-
-            public static class DateTime extends Constant<java.time.LocalDateTime> {
-                public DateTime(java.time.LocalDateTime value) { super(value); }
-
-                @Override
-                public boolean isDateTime() { return true; }
-
-                @Override
-                public DateTime asDateTime() { return this; }
+                return this;
             }
         }
 
-        public static class Bracketed extends EvaluableExpression {
-            private final EvaluableExpression nestedExpression;
+        public static class Double extends Value<java.lang.Double> {
 
-            public Bracketed(EvaluableExpression nestedExpression) {
-                this.nestedExpression = nestedExpression;
-            }
-
-            public EvaluableExpression nestedExpression() { return nestedExpression; }
-
-            @Override
-            public boolean isBracketed() { return true; }
-
-            @Override
-            public Bracketed asBracketed() { return this; }
-
-            @Override
-            protected void collectVariables(Set<UnboundVariable> collector) {
-                nestedExpression.collectVariables(collector);
+            public Double(TypeQLToken.Predicate.Equality predicate, double value) {
+                super(predicate, value);
             }
 
             @Override
-            public String toString() { return "( " + nestedExpression.toString() + " )"; }
+            public boolean isDouble() {
+                return true;
+            }
+
+            @Override
+            public Double asDouble() {
+                return this;
+            }
+        }
+
+        public static class Boolean extends Value<java.lang.Boolean> {
+
+            public Boolean(TypeQLToken.Predicate.Equality predicate, boolean value) {
+                super(predicate, value);
+            }
+
+            @Override
+            public boolean isBoolean() {
+                return true;
+            }
+
+            @Override
+            public Boolean asBoolean() {
+                return this;
+            }
+        }
+
+        public static class String extends Value<java.lang.String> {
+
+            public String(TypeQLToken.Predicate predicate, java.lang.String value) {
+                super(predicate, value);
+            }
+
+            @Override
+            public boolean isString() {
+                return true;
+            }
+
+            @Override
+            public java.lang.String toString() {
+                StringBuilder operation = new StringBuilder();
+
+                if (predicate().equals(LIKE)) {
+                    operation.append(LIKE).append(SPACE).append(quoteString(escapeRegex(value())));
+                } else if (predicate().equals(EQ)) {
+                    operation.append(quoteString(value()));
+                } else {
+                    operation.append(predicate()).append(SPACE).append(quoteString(value()));
+                }
+
+                return operation.toString();
+            }
+
+            @Override
+            public String asString() {
+                return this;
+            }
+        }
+
+        public static class DateTime extends Value<LocalDateTime> {
+
+            public DateTime(TypeQLToken.Predicate.Equality predicate, LocalDateTime value) {
+                super(predicate, value);
+                // validate precision of fractional seconds, which are stored as nanos in LocalDateTime
+                int nanos = value.toLocalTime().getNano();
+                final long nanosPerMilli = 1000000L;
+                long remainder = nanos % nanosPerMilli;
+                if (remainder != 0) {
+                    throw TypeQLException.of(INVALID_CONSTRAINT_DATETIME_PRECISION.message(value));
+                }
+            }
+
+            @Override
+            public boolean isDateTime() {
+                return true;
+            }
+
+            @Override
+            public DateTime asDateTime() {
+                return this;
+            }
+        }
+
+        public static class Variable extends Value<ThingVariable<?>> {
+
+            public Variable(TypeQLToken.Predicate.Equality predicate, UnboundVariable variable) {
+                super(predicate, variable.toThing());
+            }
+
+            @Override
+            public Set<BoundVariable> variables() {
+                return set(value());
+            }
+
+            @Override
+            public boolean isVariable() {
+                return true;
+            }
+
+            @Override
+            public Variable asVariable() {
+                return this;
+            }
+        }
+
+        public static class ValueVariable extends Value<EvaluableVariable> {
+
+            public ValueVariable(TypeQLToken.Predicate.Equality predicate, EvaluableVariable variable) {
+                super(predicate, variable);
+            }
+
+            @Override
+            public Set<BoundVariable> variables() {
+                return set(value());
+            }
+
+            @Override
+            public boolean isValueVariable() {
+                return true;
+            }
+
+            @Override
+            public ValueVariable asValueVariable() {
+                return this;
+            }
+        }
+
+        public static class Expression extends Value<EvaluableExpression> {
+            private final Set<BoundVariable> inputs;
+
+            public Expression(TypeQLToken.Predicate predicate, EvaluableExpression expression) {
+                super(predicate, expression);
+                this.inputs = new HashSet<>(expression.variables());
+            }
+
+            @Override
+            public Set<BoundVariable> variables() {
+                return this.inputs;
+            }
+
+            @Override
+            public java.lang.String toString() {
+                return predicate().toString() + SPACE + this.value().toString();
+            }
         }
     }
 }

@@ -30,6 +30,7 @@ java_library(
     srcs = glob([
         "*.java",
         "constraint/*.java",
+        "expression/*.java",
         "util/*.java",
         "variable/*.java",
         "variable/builder/*.java",

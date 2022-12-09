@@ -26,10 +26,13 @@ import com.vaticle.typedb.common.collection.Pair;
 import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.common.util.Strings;
+import com.vaticle.typeql.lang.pattern.expression.EvaluableExpression;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
+import com.vaticle.typeql.lang.pattern.variable.EvaluableVariable;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 import com.vaticle.typeql.lang.pattern.variable.TypeVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
+import com.vaticle.typeql.lang.pattern.variable.builder.EvaluableVariableBuilder;
 
 import javax.annotation.Nullable;
 import java.time.LocalDateTime;
@@ -489,7 +492,9 @@ public abstract class ThingConstraint extends Constraint<BoundVariable> {
             if (predicate == null) throw TypeQLException.of(MISSING_CONSTRAINT_PREDICATE);
             else if (value == null) throw TypeQLException.of(MISSING_CONSTRAINT_VALUE);
 
-            assert !predicate.isEquality() || value instanceof Comparable || value instanceof ThingVariable<?>;
+            assert !predicate.isEquality() || value instanceof Comparable
+                    || value instanceof ThingVariable<?> || value instanceof EvaluableVariable
+                    || value instanceof EvaluableExpression;
             assert !predicate.isSubString() || value instanceof java.lang.String;
 
             this.predicate = predicate;
@@ -544,6 +549,10 @@ public abstract class ThingConstraint extends Constraint<BoundVariable> {
             return false;
         }
 
+        public boolean isValueVariable() {
+            return false;
+        }
+
         public Long asLong() {
             throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Long.class)));
         }
@@ -566,6 +575,10 @@ public abstract class ThingConstraint extends Constraint<BoundVariable> {
 
         public Variable asVariable() {
             throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Variable.class)));
+        }
+
+        public ValueVariable asValueVariable() {
+            throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(ValueVariable.class)));
         }
 
         @Override
@@ -713,6 +726,47 @@ public abstract class ThingConstraint extends Constraint<BoundVariable> {
             @Override
             public Variable asVariable() {
                 return this;
+            }
+        }
+
+        public static class ValueVariable extends Value<EvaluableVariable> {
+
+            public ValueVariable(TypeQLToken.Predicate.Equality predicate, EvaluableVariableBuilder variable) {
+                super(predicate, variable.toEvaluable());
+            }
+
+            @Override
+            public Set<BoundVariable> variables() {
+                return set(value());
+            }
+
+            @Override
+            public boolean isValueVariable() {
+                return true;
+            }
+
+            @Override
+            public ValueVariable asValueVariable() {
+                return this;
+            }
+        }
+
+        public static class Expression extends Value<EvaluableExpression> {
+            private final Set<BoundVariable> inputs;
+
+            public Expression(TypeQLToken.Predicate predicate, EvaluableExpression expression) {
+                super(predicate, expression);
+                this.inputs = new HashSet<>(expression.variables());
+            }
+
+            @Override
+            public Set<BoundVariable> variables() {
+                return this.inputs;
+            }
+
+            @Override
+            public java.lang.String toString() {
+                return predicate().toString() + SPACE + this.value().toString();
             }
         }
     }

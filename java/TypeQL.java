@@ -33,6 +33,7 @@ import com.vaticle.typeql.lang.pattern.Pattern;
 import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
 import com.vaticle.typeql.lang.pattern.schema.Rule;
 import com.vaticle.typeql.lang.pattern.variable.*;
+import com.vaticle.typeql.lang.pattern.variable.builder.EvaluableVariableBuilder;
 import com.vaticle.typeql.lang.query.TypeQLDefine;
 import com.vaticle.typeql.lang.query.TypeQLInsert;
 import com.vaticle.typeql.lang.query.TypeQLMatch;
@@ -165,8 +166,8 @@ public class TypeQL {
         return UnboundVariable.named(name);
     }
 
-    public static UnboundVariable valvar(String name) {
-        return UnboundVariable.namedVal(name);
+    public static EvaluableVariableBuilder valvar(String name) {
+        return new EvaluableVariableBuilder(Reference.namedVal(name));
     }
 
     public static TypeVariable type(TypeQLToken.Type type) {
@@ -175,10 +176,6 @@ public class TypeQL {
 
     public static TypeVariable type(String label) {
         return hidden().type(label);
-    }
-
-    public static EvaluableVariable evaluable(String name) {
-        return new EvaluableVariable(Reference.name(name));
     }
 
     public static ThingVariable.Relation rel(String playerVar) {

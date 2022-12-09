@@ -163,7 +163,7 @@ predicate             :   value |
 predicate_equality    :   EQ | NEQ | GT | GTE | LT | LTE ;
 predicate_substring   :   CONTAINS | LIKE ;
 
-predicate_value       :   value | VAR_  | EVAR_ ;
+predicate_value       :   value | VAR_  | EVAR_ | expr;
 
 // SCHEMA CONSTRUCT =============================================================
 
@@ -286,14 +286,12 @@ LABEL_SCOPED_   : LABEL_ ':' LABEL_ ;
 
 
 // ARITHMETIC
-ASSIGN              : '<-' ;
-
 POW                 : '^'         ;
 DIV                 : '/'         ;     TIMES               : '*'         ;
 PLUS                : '+'         ;     MINUS               : '-'         ;
 LPAREN              : '('         ;     RPAREN              : ')'         ;
 
-variable_evaluable        : EVAR_ ASSIGN expr;
+variable_evaluable        : EVAR_ evar_predicate;
 
 expr                      :  func   |  VAR_   | EVAR_ |   value
                           |  '(' expr ')'
@@ -303,6 +301,9 @@ expr                      :  func   |  VAR_   | EVAR_ |   value
                           ;
 func                      :     LABEL_   '('  arg_list? ')' ;
 arg_list                  :     expr   (',' expr)*    ;
+
+evar_predicate            :   predicate_equality   predicate_value
+                          |   predicate_substring  STRING_;
 
 // FRAGMENTS OF KEYWORDS =======================================================
 

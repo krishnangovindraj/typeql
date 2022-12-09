@@ -55,7 +55,7 @@ public abstract class Reference {
         return new Reference.Anonymous(isVisible);
     }
 
-    public static Reference NamedVal(String name) {
+    public static Reference.NamedVal namedVal(String name) {
         return new Reference.NamedVal(name);
     }
 

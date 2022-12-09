@@ -23,7 +23,6 @@ package com.vaticle.typeql.lang.pattern.variable;
 
 import com.vaticle.typeql.lang.pattern.constraint.*;
 import com.vaticle.typeql.lang.pattern.variable.builder.ConceptVariableBuilder;
-import com.vaticle.typeql.lang.pattern.variable.builder.EvaluableVariableBuilder;
 import com.vaticle.typeql.lang.pattern.variable.builder.ThingVariableBuilder;
 import com.vaticle.typeql.lang.pattern.variable.builder.TypeVariableBuilder;
 
@@ -31,7 +30,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class UnboundVariable extends Variable implements ConceptVariableBuilder,
-                                                         EvaluableVariableBuilder,
                                                          TypeVariableBuilder,
                                                          ThingVariableBuilder.Common<ThingVariable.Thing>,
                                                          ThingVariableBuilder.Thing,
@@ -54,10 +52,6 @@ public class UnboundVariable extends Variable implements ConceptVariableBuilder,
         return new UnboundVariable(Reference.anonymous(false));
     }
 
-    public static UnboundVariable namedVal(String name) {
-        return new UnboundVariable(Reference.NamedVal(name));
-    }
-
     @Override
     public boolean isUnbound() {
         return true;
@@ -75,8 +69,6 @@ public class UnboundVariable extends Variable implements ConceptVariableBuilder,
     public TypeVariable toType() {
         return new TypeVariable(reference);
     }
-
-    public EvaluableVariable toEvaluable() { return new EvaluableVariable(reference); }
 
     public ThingVariable<?> toThing() {
         return new ThingVariable.Thing(reference);
@@ -161,11 +153,6 @@ public class UnboundVariable extends Variable implements ConceptVariableBuilder,
 
     public ThingVariable.Relation constrain(ThingConstraint.Relation constraint) {
         return new ThingVariable.Relation(reference, constraint);
-    }
-
-    @Override
-    public EvaluableVariable constrain(EvaluableConstraint constraint) {
-        return new EvaluableVariable(reference, constraint);
     }
 
     @Override

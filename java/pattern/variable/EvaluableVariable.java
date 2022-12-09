@@ -7,36 +7,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.vaticle.typedb.common.collection.Collections.list;
+import static com.vaticle.typeql.lang.common.TypeQLToken.Char.SPACE;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.ILLEGAL_CONSTRAINT_REPETITION;
 
 public class EvaluableVariable extends BoundVariable {
-    private EvaluableConstraint assignment;
-    private final List<EvaluableConstraint> constraints;
+    private EvaluableConstraint constraint;
 
-    public EvaluableVariable(Reference reference) {
+    public EvaluableVariable(Reference.NamedVal reference) {
         super(reference);
-        this.constraints = new ArrayList<>();
+        this.constraint = null;
     }
 
-    public EvaluableVariable(Reference reference, EvaluableConstraint constraint) {
+    public EvaluableVariable(Reference.NamedVal reference, EvaluableConstraint constraint) {
         this(reference);
         constrain(constraint);
     }
 
-    public EvaluableConstraint evaluable() {
-        return constraints.get(0);
-    }
-
     public EvaluableVariable constrain(EvaluableConstraint constraint) {
-        if (assignment != null) {throw TypeQLException.of(ILLEGAL_CONSTRAINT_REPETITION.message(reference, EvaluableConstraint.class, constraint));}
-        this.assignment = constraint;
-        this.constraints.add(constraint);
+        if (this.constraint != null) {throw TypeQLException.of(ILLEGAL_CONSTRAINT_REPETITION.message(reference, EvaluableConstraint.class, constraint));}
+        this.constraint = constraint;
         return this;
     }
 
     @Override
     public List<EvaluableConstraint> constraints() {
-        return constraints;
+        return list(constraint);
     }
 
     @Override
@@ -49,7 +45,7 @@ public class EvaluableVariable extends BoundVariable {
 
     @Override
     public String toString(boolean pretty) {
-        return reference().syntax() + " <- " + assignment;
+        return reference().syntax() + SPACE + constraint.toString();
     }
 
     @Override

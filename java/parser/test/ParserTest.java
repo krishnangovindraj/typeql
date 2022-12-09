@@ -26,8 +26,8 @@ import com.vaticle.typeql.lang.common.TypeQLArg;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.Conjunction;
 import com.vaticle.typeql.lang.pattern.Pattern;
-import com.vaticle.typeql.lang.pattern.constraint.EvaluableConstraint.EvaluableExpression;
-import com.vaticle.typeql.lang.pattern.constraint.EvaluableConstraint.EvaluableExpression.Operation.OP;
+import com.vaticle.typeql.lang.pattern.expression.EvaluableExpression;
+import com.vaticle.typeql.lang.pattern.expression.EvaluableExpression.Operation.OP;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 import com.vaticle.typeql.lang.query.TypeQLDefine;
 import com.vaticle.typeql.lang.query.TypeQLDelete;
@@ -402,16 +402,15 @@ public class ParserTest {
                 "$x isa commodity,\n" +
                 "    has price $p;\n" +
                 "(commodity: $x, qty: $q) isa order;\n" +
-                "?net <- $p * $q;\n" +
-                "?gross <- ?net * ( 1.0 + 0.21 );" +
-                "";
+                "?net = $p * $q;\n" +
+                "?gross = ?net * ( 1.0 + 0.21 );";
         TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
         TypeQLMatch expected = match(
                 var("x").isa("commodity").has("price", var("p")),
                 rel("commodity", "x").rel("qty", "q").isa("order"),
-                var("net").assign(EvaluableExpression.op(OP.TIMES, EvaluableExpression.var(var("p")), EvaluableExpression.var(var("q")))),
-                var("gross").assign(EvaluableExpression.op(OP.TIMES,
-                        EvaluableExpression.var(var("net")),
+                valvar("net").eq(EvaluableExpression.op(OP.TIMES, EvaluableExpression.thingVar(var("p")), EvaluableExpression.thingVar(var("q")))),
+                valvar("gross").eq(EvaluableExpression.op(OP.TIMES,
+                        EvaluableExpression.valVar(valvar("net")),
                         EvaluableExpression.bracketed(EvaluableExpression.op(OP.PLUS, EvaluableExpression.constant(1.0), EvaluableExpression.constant(0.21))))));
 
         assertQueryEquals(expected, parsed, query);
@@ -420,19 +419,19 @@ public class ParserTest {
     @Test
     public void testOpPrecedence() {
         final String query = "match\n" +
-                "$res <- $a / $b * $c + $d ^ $e / $f;";
+                "$res = $a / $b * $c + $d ^ $e / $f;";
         TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
         TypeQLMatch expected = match(
-                var("res").assign(
+                var("res").eq(
                         EvaluableExpression.op(OP.PLUS,
                                 EvaluableExpression.op(OP.TIMES,
                                         EvaluableExpression.op(OP.DIV,
-                                                EvaluableExpression.var(var("a")),
-                                                EvaluableExpression.var(var("b"))),
-                                        EvaluableExpression.var(var("c"))),
+                                                EvaluableExpression.thingVar(var("a")),
+                                                EvaluableExpression.thingVar(var("b"))),
+                                        EvaluableExpression.thingVar(var("c"))),
                                 EvaluableExpression.op(OP.DIV,
-                                        EvaluableExpression.op(OP.POW, EvaluableExpression.var(var("d")), EvaluableExpression.var(var("e"))),
-                                        EvaluableExpression.var(var("f"))))));
+                                        EvaluableExpression.op(OP.POW, EvaluableExpression.thingVar(var("d")), EvaluableExpression.thingVar(var("e"))),
+                                        EvaluableExpression.thingVar(var("f"))))));
         assertQueryEquals(expected, parsed, query);
     }
 
@@ -440,19 +439,19 @@ public class ParserTest {
     @Test
     public void testFuncParenthesisPrecedence() {
         final String query = "match\n" +
-                "?res <- $a + ( foo($b + ?c) + $d ) * ?e;";
+                "?res = $a + ( foo($b + ?c) + $d ) * ?e;";
         TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
         TypeQLMatch expected = match(
-                valvar("res").assign(
+                valvar("res").eq(
                         EvaluableExpression.op(OP.PLUS,
-                                EvaluableExpression.var(var("a")),
+                                EvaluableExpression.thingVar(var("a")),
                                 EvaluableExpression.op(OP.TIMES,
                                         EvaluableExpression.bracketed(
                                                 EvaluableExpression.op(OP.PLUS,
                                                         EvaluableExpression.func("foo",
-                                                                EvaluableExpression.op(OP.PLUS, EvaluableExpression.var(var("b")), EvaluableExpression.var(valvar("c")))),
-                                                        EvaluableExpression.var(var("d")))),
-                                        EvaluableExpression.var(valvar("e"))))));
+                                                                EvaluableExpression.op(OP.PLUS, EvaluableExpression.thingVar(var("b")), EvaluableExpression.valVar(valvar("c")))),
+                                                        EvaluableExpression.thingVar(var("d")))),
+                                        EvaluableExpression.valVar(valvar("e"))))));
         assertQueryEquals(expected, parsed, query);
     }
 
@@ -462,16 +461,16 @@ public class ParserTest {
                 "$x isa commodity,\n" +
                 "    has price $p;\n" +
                 "(commodity: $x, qty: $q) isa order;\n" +
-                "$net <- $p * $q;\n" +
-                "$gross <- percentOf($net,100.0 + 21.0);" +
+                "?net = $p * $q;\n" +
+                "?gross = percentOf(?net,100.0 + 21.0);" +
                 "";
         TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
         TypeQLMatch expected = match(
                 var("x").isa("commodity").has("price", var("p")),
                 rel("commodity", "x").rel("qty", "q").isa("order"),
-                var("net").assign(EvaluableExpression.op(OP.TIMES, EvaluableExpression.var(var("p")), EvaluableExpression.var(var("q")))),
-                var("gross").assign(EvaluableExpression.func("percentOf",
-                        EvaluableExpression.var(var("net")),
+                valvar("net").eq(EvaluableExpression.op(OP.TIMES, EvaluableExpression.thingVar(var("p")), EvaluableExpression.thingVar(var("q")))),
+                valvar("gross").eq(EvaluableExpression.func("percentOf",
+                        EvaluableExpression.valVar(valvar("net")),
                         EvaluableExpression.op(OP.PLUS, EvaluableExpression.constant(100), EvaluableExpression.constant(21)))));
 
         assertQueryEquals(expected, parsed, query);
