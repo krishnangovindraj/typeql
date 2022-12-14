@@ -371,7 +371,7 @@ public abstract class EvaluableConstraint extends Constraint<BoundVariable> {
 
         @Override
         public String toString() {
-            return this.expression.toString();
+            return TypeQLToken.Char.ASSIGN.toString() + SPACE + this.expression.toString();
         }
     }
 }

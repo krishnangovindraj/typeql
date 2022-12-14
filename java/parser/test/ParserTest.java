@@ -403,13 +403,13 @@ public class ParserTest {
                 "    has price $p;\n" +
                 "(commodity: $x, qty: $q) isa order;\n" +
                 "?net = $p * $q;\n" +
-                "?gross = ?net * ( 1.0 + 0.21 );";
+                "?gross := ?net * ( 1.0 + 0.21 );";
         TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
         TypeQLMatch expected = match(
                 var("x").isa("commodity").has("price", var("p")),
                 rel("commodity", "x").rel("qty", "q").isa("order"),
                 valvar("net").eq(EvaluableExpression.op(OP.TIMES, EvaluableExpression.thingVar(var("p")), EvaluableExpression.thingVar(var("q")))),
-                valvar("gross").eq(EvaluableExpression.op(OP.TIMES,
+                valvar("gross").assign(EvaluableExpression.op(OP.TIMES,
                         EvaluableExpression.valVar(valvar("net")),
                         EvaluableExpression.bracketed(EvaluableExpression.op(OP.PLUS, EvaluableExpression.constant(1.0), EvaluableExpression.constant(0.21))))));
 

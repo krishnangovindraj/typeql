@@ -40,6 +40,7 @@ import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
 import com.vaticle.typeql.lang.pattern.constraint.TypeConstraint;
 import com.vaticle.typeql.lang.pattern.schema.Rule;
 import com.vaticle.typeql.lang.pattern.variable.*;
+import com.vaticle.typeql.lang.pattern.variable.builder.EvaluableVariableBuilder;
 import com.vaticle.typeql.lang.query.TypeQLDefine;
 import com.vaticle.typeql.lang.query.TypeQLDelete;
 import com.vaticle.typeql.lang.query.TypeQLInsert;
@@ -190,10 +191,10 @@ public class Parser extends TypeQLBaseVisitor {
         }
     }
 
-    private EvaluableVariable getValVar(TerminalNode variable) {
+    private EvaluableVariableBuilder getValVar(TerminalNode variable) {
         // Remove '?' prefix
         String name = variable.getSymbol().getText().substring(1);
-        return new EvaluableVariable(Reference.namedVal(name));
+        return new EvaluableVariableBuilder(Reference.namedVal(name));
     }
     // PARSER VISITORS =========================================================
 
@@ -713,6 +714,8 @@ public class Parser extends TypeQLBaseVisitor {
             return new ThingConstraint.Value.DateTime(predicate.asEquality(), (LocalDateTime) value);
         } else if (value instanceof UnboundVariable) {
             return new ThingConstraint.Value.Variable(predicate.asEquality(), (UnboundVariable) value);
+        } else if (value instanceof EvaluableVariableBuilder) {
+            return new ThingConstraint.Value.ValueVariable(predicate.asEquality(), (EvaluableVariableBuilder) value);
         } else if (value instanceof EvaluableExpression) {
             return new ThingConstraint.Value.Expression(predicate.asEquality(), (EvaluableExpression) value);
         } else {
@@ -810,11 +813,11 @@ public class Parser extends TypeQLBaseVisitor {
     // Arithmetic
     @Override
     public EvaluableVariable visitVariable_evaluable(TypeQLParser.Variable_evaluableContext ctx) {
-        EvaluableVariable owner = getValVar(ctx.EVAR_());
+        EvaluableVariableBuilder ownerBuilder = getValVar(ctx.EVAR_());
         if (ctx.evar_predicate() != null) {
-            return owner.constrain(visitEvar_predicate(ctx.evar_predicate()));
+            return ownerBuilder.constrain(visitEvar_predicate(ctx.evar_predicate()));
         } else if (ctx.ASSIGN() != null) {
-            return owner.constrain(new EvaluableConstraint.Expression(visitExpr(ctx.expr())));
+            return ownerBuilder.constrain(new EvaluableConstraint.Expression(visitExpr(ctx.expr())));
         } else throw TypeQLException.of(ILLEGAL_STATE);
     }
 
@@ -838,7 +841,7 @@ public class Parser extends TypeQLBaseVisitor {
         } else if (ctx.VAR_() != null) {
             return new EvaluableExpression.ThingVar(getVar(ctx.VAR_()).toThing());
         } else if (ctx.EVAR_() != null) {
-            return new EvaluableExpression.ValVar(getValVar(ctx.EVAR_()));
+            return new EvaluableExpression.ValVar(getValVar(ctx.EVAR_()).toEvaluable());
         } else if (ctx.value() != null) {
             Object value = visitValue(ctx.value());
             if (value instanceof Long) {

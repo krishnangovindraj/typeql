@@ -32,7 +32,7 @@ public class EvaluableVariable extends BoundVariable {
 
     @Override
     public List<EvaluableConstraint> constraints() {
-        return list(constraint);
+        return constraint != null ? list(constraint) : list();
     }
 
     @Override

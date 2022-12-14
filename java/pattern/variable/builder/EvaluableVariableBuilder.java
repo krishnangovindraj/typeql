@@ -1,6 +1,7 @@
 package com.vaticle.typeql.lang.pattern.variable.builder;
 
 import com.vaticle.typeql.lang.common.TypeQLToken;
+import com.vaticle.typeql.lang.pattern.Pattern;
 import com.vaticle.typeql.lang.pattern.constraint.EvaluableConstraint;
 import com.vaticle.typeql.lang.pattern.expression.EvaluableExpression;
 import com.vaticle.typeql.lang.pattern.variable.EvaluableVariable;
@@ -262,6 +263,14 @@ public class EvaluableVariableBuilder {
     }
 
     public EvaluableVariable constrain(EvaluableConstraint.Value<?> constraint) {
+        return new EvaluableVariable(reference, constraint);
+    }
+
+    public EvaluableVariable assign(EvaluableExpression.Operation expr) {
+        return constrain(new EvaluableConstraint.Expression(expr));
+    }
+
+    public EvaluableVariable constrain(EvaluableConstraint.Expression constraint) {
         return new EvaluableVariable(reference, constraint);
     }
 

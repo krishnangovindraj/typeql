@@ -138,6 +138,7 @@ public class TypeQLToken {
         NEW_LINE("\n"),
         INDENTATION("    "),
         UNDERSCORE("_"),
+        ASSIGN(":="),
         $_("$_"),
         $("$");
 
