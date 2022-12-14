@@ -62,6 +62,7 @@ import static com.vaticle.typeql.lang.common.TypeQLToken.Constraint.ISAX;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Predicate.Equality.EQ;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Predicate.SubString.LIKE;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Type.RELATION;
+import static com.vaticle.typeql.lang.common.exception.ErrorMessage.ILLEGAL_STATE;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_CASTING;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_CONSTRAINT_DATETIME_PRECISION;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_IID_STRING;
@@ -757,6 +758,7 @@ public abstract class ThingConstraint extends Constraint<BoundVariable> {
             public Expression(TypeQLToken.Predicate predicate, EvaluableExpression expression) {
                 super(predicate, expression);
                 this.inputs = new HashSet<>(expression.variables());
+                throw TypeQLException.of(ILLEGAL_STATE); // TODO: Delete. I've already removed it from the grammar
             }
 
             @Override

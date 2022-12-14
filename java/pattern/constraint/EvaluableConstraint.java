@@ -8,6 +8,7 @@ import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.EvaluableVariable;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
+import com.vaticle.typeql.lang.pattern.variable.builder.EvaluableVariableBuilder;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -19,6 +20,7 @@ import static com.vaticle.typedb.common.util.Objects.className;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Char.SPACE;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Predicate.Equality.EQ;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Predicate.SubString.LIKE;
+import static com.vaticle.typeql.lang.common.exception.ErrorMessage.ILLEGAL_STATE;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_CASTING;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_CONSTRAINT_DATETIME_PRECISION;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.MISSING_CONSTRAINT_PREDICATE;
@@ -46,7 +48,7 @@ public abstract class EvaluableConstraint extends Constraint<BoundVariable> {
         return false;
     }
 
-    public EvaluableConstraint asValue() {
+    public Value<?> asValue() {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(EvaluableConstraint.Value.class)));
     }
 
@@ -304,8 +306,8 @@ public abstract class EvaluableConstraint extends Constraint<BoundVariable> {
 
         public static class ValueVariable extends Value<EvaluableVariable> {
 
-            public ValueVariable(TypeQLToken.Predicate.Equality predicate, EvaluableVariable variable) {
-                super(predicate, variable);
+            public ValueVariable(TypeQLToken.Predicate.Equality predicate, EvaluableVariableBuilder variable) {
+                super(predicate, variable.toEvaluable());
             }
 
             @Override
@@ -330,6 +332,7 @@ public abstract class EvaluableConstraint extends Constraint<BoundVariable> {
             public Expression(TypeQLToken.Predicate predicate, EvaluableExpression expression) {
                 super(predicate, expression);
                 this.inputs = new HashSet<>(expression.variables());
+                throw TypeQLException.of(ILLEGAL_STATE); // TODO: Delete. I've already removed it from the grammar
             }
 
             @Override

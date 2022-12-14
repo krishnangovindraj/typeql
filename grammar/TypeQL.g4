@@ -156,14 +156,14 @@ attribute             :   HAS label ( VAR_ | predicate )                        
 
 // ATTRIBUTE VALUATION CONSTRUCTS ==============================================
 
-predicate             :   value |
+predicate             :   value |   EVAR_   |
                       |   predicate_equality   predicate_value
                       |   predicate_substring  STRING_
                       ;
 predicate_equality    :   EQ | NEQ | GT | GTE | LT | LTE ;
 predicate_substring   :   CONTAINS | LIKE ;
 
-predicate_value       :   value | VAR_  | EVAR_ | expr;
+predicate_value       :   value | VAR_  | EVAR_ ;
 
 // SCHEMA CONSTRUCT =============================================================
 

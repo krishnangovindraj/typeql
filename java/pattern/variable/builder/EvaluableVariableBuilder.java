@@ -1,7 +1,6 @@
 package com.vaticle.typeql.lang.pattern.variable.builder;
 
 import com.vaticle.typeql.lang.common.TypeQLToken;
-import com.vaticle.typeql.lang.pattern.Pattern;
 import com.vaticle.typeql.lang.pattern.constraint.EvaluableConstraint;
 import com.vaticle.typeql.lang.pattern.expression.EvaluableExpression;
 import com.vaticle.typeql.lang.pattern.variable.EvaluableVariable;
@@ -52,7 +51,7 @@ public class EvaluableVariableBuilder {
         return constrain(new EvaluableConstraint.Value.Variable(EQ, variable));
     }
 
-    public EvaluableVariable eq(EvaluableVariable variable) {
+    public EvaluableVariable eq(EvaluableVariableBuilder variable) {
         return constrain(new EvaluableConstraint.Value.ValueVariable(EQ, variable));
     }
 
@@ -90,7 +89,7 @@ public class EvaluableVariableBuilder {
         return constrain(new EvaluableConstraint.Value.Variable(NEQ, variable));
     }
 
-    public EvaluableVariable neq(EvaluableVariable variable) {
+    public EvaluableVariable neq(EvaluableVariableBuilder variable) {
         return constrain(new EvaluableConstraint.Value.ValueVariable(NEQ, variable));
     }
 
@@ -128,7 +127,7 @@ public class EvaluableVariableBuilder {
         return constrain(new EvaluableConstraint.Value.Variable(GT, variable));
     }
 
-    public EvaluableVariable gt(EvaluableVariable variable) {
+    public EvaluableVariable gt(EvaluableVariableBuilder variable) {
         return constrain(new EvaluableConstraint.Value.ValueVariable(GT, variable));
     }
 
@@ -166,7 +165,7 @@ public class EvaluableVariableBuilder {
         return constrain(new EvaluableConstraint.Value.Variable(GTE, variable));
     }
 
-    public EvaluableVariable gte(EvaluableVariable variable) {
+    public EvaluableVariable gte(EvaluableVariableBuilder variable) {
         return constrain(new EvaluableConstraint.Value.ValueVariable(GTE, variable));
     }
 
@@ -204,7 +203,7 @@ public class EvaluableVariableBuilder {
         return constrain(new EvaluableConstraint.Value.Variable(LT, variable));
     }
 
-    public EvaluableVariable lt(EvaluableVariable variable) {
+    public EvaluableVariable lt(EvaluableVariableBuilder variable) {
         return constrain(new EvaluableConstraint.Value.ValueVariable(LT, variable));
     }
 
@@ -242,7 +241,7 @@ public class EvaluableVariableBuilder {
         return constrain(new EvaluableConstraint.Value.Variable(LTE, variable));
     }
 
-    public EvaluableVariable lte(EvaluableVariable variable) {
+    public EvaluableVariable lte(EvaluableVariableBuilder variable) {
         return constrain(new EvaluableConstraint.Value.ValueVariable(LTE, variable));
     }
 

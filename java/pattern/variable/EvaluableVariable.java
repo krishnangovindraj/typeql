@@ -45,7 +45,7 @@ public class EvaluableVariable extends BoundVariable {
 
     @Override
     public String toString(boolean pretty) {
-        return reference().syntax() + SPACE + constraint.toString();
+        return reference().syntax() + ((constraint!=null)? SPACE + constraint.toString() : "");
     }
 
     @Override

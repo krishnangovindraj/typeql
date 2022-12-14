@@ -687,12 +687,15 @@ public class Parser extends TypeQLBaseVisitor {
         if (ctx.value() != null) {
             predicate = TypeQLToken.Predicate.Equality.EQ;
             value = visitValue(ctx.value());
+        } else if (ctx.EVAR_() != null) {
+            predicate = TypeQLToken.Predicate.Equality.EQ;
+            value = getValVar(ctx.EVAR_());
         } else if (ctx.predicate_equality() != null) {
             predicate = TypeQLToken.Predicate.Equality.of(ctx.predicate_equality().getText());
             if (ctx.predicate_value().value() != null) value = visitValue(ctx.predicate_value().value());
             else if (ctx.predicate_value().VAR_() != null) value = getVar(ctx.predicate_value().VAR_());
             else if (ctx.predicate_value().EVAR_() != null) value = getValVar(ctx.predicate_value().EVAR_());
-            else if (ctx.predicate_value().expr() != null) value = visitExpr(ctx.predicate_value().expr());
+//            else if (ctx.predicate_value().expr() != null) value = visitExpr(ctx.predicate_value().expr()); // TODO: Reenable/Remove
             else throw TypeQLException.of(ILLEGAL_STATE);
         } else if (ctx.predicate_substring() != null) {
             predicate = TypeQLToken.Predicate.SubString.of(ctx.predicate_substring().getText());
@@ -733,7 +736,7 @@ public class Parser extends TypeQLBaseVisitor {
             if (ctx.predicate_value().value() != null) value = visitValue(ctx.predicate_value().value());
             else if (ctx.predicate_value().VAR_() != null) value = getVar(ctx.predicate_value().VAR_());
             else if (ctx.predicate_value().EVAR_() != null) value = getValVar(ctx.predicate_value().EVAR_());
-            else if (ctx.predicate_value().expr() != null) value = visitExpr(ctx.predicate_value().expr());
+//            else if (ctx.predicate_value().expr() != null) value = visitExpr(ctx.predicate_value().expr()); // TODO: Reenable
             else throw TypeQLException.of(ILLEGAL_STATE);
         } else if (ctx.predicate_substring() != null) {
             predicate = TypeQLToken.Predicate.SubString.of(ctx.predicate_substring().getText());
@@ -755,6 +758,8 @@ public class Parser extends TypeQLBaseVisitor {
             return new EvaluableConstraint.Value.DateTime(predicate.asEquality(), (LocalDateTime) value);
         } else if (value instanceof UnboundVariable) {
             return new EvaluableConstraint.Value.Variable(predicate.asEquality(), (UnboundVariable) value);
+        } else if (value instanceof EvaluableVariableBuilder) {
+            return new EvaluableConstraint.Value.ValueVariable(predicate.asEquality(), (EvaluableVariableBuilder) value);
         } else if (value instanceof EvaluableExpression) {
             return new EvaluableConstraint.Value.Expression(predicate.asEquality(), (EvaluableExpression) value);
         } else {
