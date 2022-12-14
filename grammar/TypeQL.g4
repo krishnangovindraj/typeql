@@ -291,7 +291,10 @@ DIV                 : '/'         ;     TIMES               : '*'         ;
 PLUS                : '+'         ;     MINUS               : '-'         ;
 LPAREN              : '('         ;     RPAREN              : ')'         ;
 
-variable_evaluable        : EVAR_ evar_predicate;
+ASSIGN              : ':=';
+
+variable_evaluable        : EVAR_ evar_predicate
+                          | EVAR_ ASSIGN expr;
 
 expr                      :  func   |  VAR_   | EVAR_ |   value
                           |  '(' expr ')'

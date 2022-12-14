@@ -813,8 +813,9 @@ public class Parser extends TypeQLBaseVisitor {
         EvaluableVariable owner = getValVar(ctx.EVAR_());
         if (ctx.evar_predicate() != null) {
             return owner.constrain(visitEvar_predicate(ctx.evar_predicate()));
+        } else if (ctx.ASSIGN() != null) {
+            return owner.constrain(new EvaluableConstraint.Expression(visitExpr(ctx.expr())));
         } else throw TypeQLException.of(ILLEGAL_STATE);
-
     }
 
     @Override

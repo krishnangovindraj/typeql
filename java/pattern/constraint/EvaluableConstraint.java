@@ -42,9 +42,18 @@ public abstract class EvaluableConstraint extends Constraint<BoundVariable> {
         return false;
     }
 
+    public boolean isExpression() {
+        return false;
+    }
+
     public EvaluableConstraint asValue() {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(EvaluableConstraint.Value.class)));
     }
+
+    public EvaluableConstraint.Expression asExpression() {
+        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(EvaluableConstraint.Expression.class)));
+    }
+
 
     public abstract static class Value<T> extends EvaluableConstraint {
 
@@ -332,6 +341,37 @@ public abstract class EvaluableConstraint extends Constraint<BoundVariable> {
             public java.lang.String toString() {
                 return predicate().toString() + SPACE + this.value().toString();
             }
+        }
+    }
+
+    public static class Expression extends EvaluableConstraint {
+        private final EvaluableExpression expression;
+        private final Set<BoundVariable> inputs;
+
+        public Expression(EvaluableExpression expression) {
+            this.expression = expression;
+            this.inputs = new HashSet<>();
+            expression.variables().forEach(v -> this.inputs.add(v));
+        }
+
+        public EvaluableExpression expression() { return expression; }
+
+        @Override
+        public Set<BoundVariable> variables() {
+            return inputs;
+        }
+
+        public boolean isExpression() {
+            return true;
+        }
+
+        public EvaluableConstraint.Expression asExpression() {
+            return this;
+        }
+
+        @Override
+        public String toString() {
+            return this.expression.toString();
         }
     }
 }
