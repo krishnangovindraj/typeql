@@ -9,6 +9,15 @@ public abstract class UnboundVariable extends Variable {
     UnboundVariable(Reference reference) {
         super(reference);
     }
+    @Override
+    public boolean isUnbound() {
+        return true;
+    }
+
+    @Override
+    public UnboundVariable asUnbound() {
+        return this;
+    }
 
     public boolean isDollarVariable() {
         return false;

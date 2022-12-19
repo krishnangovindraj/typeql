@@ -47,6 +47,7 @@ query_delete          :   MATCH       patterns      DELETE  variable_things     
 
 query_match           :   MATCH       patterns            ( modifiers )         ;
 
+
 // MATCH QUERY ANSWER GROUP AND AGGREGATE FUNCTIONS ============================
 
 query_match_aggregate :   query_match   match_aggregate   ;
@@ -57,7 +58,7 @@ query_match_group_agg :   query_match   match_group       match_aggregate  ;
 
 modifiers             : ( filter ';' )? ( sort ';' )? ( offset ';' )? ( limit ';' )?;
 
-filter                :   GET         (VAR_|EVAR_)      ( ',' (VAR_|EVAR_))*                   ;
+filter                :   GET         either_var      ( ',' either_var)*                   ;
 sort                  :   SORT        var_order ( ',' var_order )*              ;
 var_order             :   VAR_ ORDER_?                                          ;
 offset                :   OFFSET      LONG_                                     ;
@@ -182,6 +183,8 @@ label                 :   LABEL_        | schema_native | type_native   | unrese
 
 // LITERAL INPUT VALUES =======================================================
 
+either_var            :   VAR_            |   EVAR_           ;
+
 schema_native         :   RULE            ;
 
 type_native           :   THING           |   ENTITY          |   ATTRIBUTE
@@ -293,7 +296,7 @@ LPAREN              : '('         ;     RPAREN              : ')'         ;
 
 ASSIGN              : ':=';
 
-variable_evaluable        : EVAR_ evar_predicate
+variable_evaluable        : EVAR_ predicate
                           | EVAR_ ASSIGN expr;
 
 expr                      :  func   |  VAR_   | EVAR_ |   value
@@ -304,9 +307,6 @@ expr                      :  func   |  VAR_   | EVAR_ |   value
                           ;
 func                      :     LABEL_   '('  arg_list? ')' ;
 arg_list                  :     expr   (',' expr)*    ;
-
-evar_predicate            :   predicate_equality   predicate_value
-                          |   predicate_substring  STRING_;
 
 // FRAGMENTS OF KEYWORDS =======================================================
 

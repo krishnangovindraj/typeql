@@ -17,6 +17,16 @@ public class UnboundEvaluableVariable extends UnboundVariable implements Predica
         return new UnboundEvaluableVariable(Reference.namedVal(name));
     }
 
+    @Override
+    public boolean isEvaluableVariable() {
+        return true;
+    }
+
+    @Override
+    public UnboundEvaluableVariable asEvaluableVariable() {
+        return this;
+    }
+
     public EvaluableVariable assign(EvaluableExpression assignment) {
         return constrain(new EvaluableConstraint.Expression(assignment));
     }

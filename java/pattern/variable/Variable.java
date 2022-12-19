@@ -64,7 +64,7 @@ public abstract class Variable {
         return false;
     }
 
-    public UnboundDollarVariable asUnbound() {
+    public UnboundVariable asUnbound() {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(UnboundDollarVariable.class)));
     }
 

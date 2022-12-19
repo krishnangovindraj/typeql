@@ -61,16 +61,12 @@ public class UnboundDollarVariable extends UnboundVariable implements
     }
 
     @Override
-    public boolean isUnbound() {
+    public boolean isDollarVariable() {
         return true;
     }
 
-    public boolean isEvaluable(UnboundDollarVariable variable) {
-        return variable.reference().isNamedVal();
-    }
-
     @Override
-    public UnboundDollarVariable asUnbound() {
+    public UnboundDollarVariable asDollarVariable() {
         return this;
     }
 
@@ -84,11 +80,6 @@ public class UnboundDollarVariable extends UnboundVariable implements
 
     public ThingVariable<?> toThing() {
         return new ThingVariable.Thing(reference);
-    }
-
-    public EvaluableVariable toEvaluable() {
-        assert isEvaluable(this);
-        return new EvaluableVariable(reference.asNamedVal());
     }
 
     @Override

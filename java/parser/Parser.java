@@ -324,7 +324,7 @@ public class Parser extends TypeQLBaseVisitor {
         TypeQLMatch match = new TypeQLMatch.Unfiltered(visitPatterns(ctx.patterns()));
 
         if (ctx.modifiers() != null) {
-            List<UnboundDollarVariable> variables = new ArrayList<>();
+            List<UnboundVariable> variables = new ArrayList<>();
             Sortable.Sorting sorting = null;
             Long offset = null, limit = null;
 
@@ -375,8 +375,8 @@ public class Parser extends TypeQLBaseVisitor {
     // GET QUERY MODIFIERS ==========================================
 
     @Override
-    public List<UnboundDollarVariable> visitFilter(TypeQLParser.FilterContext ctx) {
-        return ctx.VAR_().stream().map(this::getVar).collect(toList());
+    public List<UnboundVariable> visitFilter(TypeQLParser.FilterContext ctx) {
+        return ctx.either_var().stream().map(this::visitEither_var).collect(toList());
     }
 
     @Override
@@ -695,8 +695,8 @@ public class Parser extends TypeQLBaseVisitor {
         } else if (ctx.predicate_equality() != null) {
             predicate = TypeQLToken.Predicate.Equality.of(ctx.predicate_equality().getText());
             if (ctx.predicate_value().value() != null) value = visitValue(ctx.predicate_value().value());
-            else if (ctx.predicate_value().VAR_() != null) value = getVar(ctx.predicate_value().VAR_()).toThing();
-            else if (ctx.predicate_value().EVAR_() != null) value = getValVar(ctx.predicate_value().EVAR_()).toEvaluable();
+            else if (ctx.predicate_value().VAR_() != null) value = getVar(ctx.predicate_value().VAR_());
+            else if (ctx.predicate_value().EVAR_() != null) value = getValVar(ctx.predicate_value().EVAR_());
             else throw TypeQLException.of(ILLEGAL_STATE);
         } else if (ctx.predicate_substring() != null) {
             predicate = TypeQLToken.Predicate.SubString.of(ctx.predicate_substring().getText());
@@ -716,49 +716,10 @@ public class Parser extends TypeQLBaseVisitor {
             return new Predicate.String(predicate, (String) value);
         } else if (value instanceof LocalDateTime) {
             return new Predicate.DateTime(predicate.asEquality(), (LocalDateTime) value);
-        } else if (value instanceof ThingVariable<?>) {
-            return new Predicate.Variable(predicate.asEquality(), (ThingVariable<?>) value);
-        } else if (value instanceof EvaluableVariable) {
-            return new Predicate.
-                    ValueVariable(predicate.asEquality(), (EvaluableVariable) value);
-        } else {
-            throw TypeQLException.of(ILLEGAL_GRAMMAR.message(ctx.getText()));
-        }
-    }
-
-    @Override
-    public Predicate<?> visitEvar_predicate(TypeQLParser.Evar_predicateContext ctx) {
-        TypeQLToken.Predicate predicate;
-        Object value;
-
-        if (ctx.predicate_equality() != null) {
-            predicate = TypeQLToken.Predicate.Equality.of(ctx.predicate_equality().getText());
-            if (ctx.predicate_value().value() != null) value = visitValue(ctx.predicate_value().value());
-            else if (ctx.predicate_value().VAR_() != null) value = getVar(ctx.predicate_value().VAR_()).toThing();
-            else if (ctx.predicate_value().EVAR_() != null) value = getValVar(ctx.predicate_value().EVAR_()).toEvaluable();
-            else throw TypeQLException.of(ILLEGAL_STATE);
-        } else if (ctx.predicate_substring() != null) {
-            predicate = TypeQLToken.Predicate.SubString.of(ctx.predicate_substring().getText());
-            if (ctx.predicate_substring().LIKE() != null) value = getRegex(ctx.STRING_());
-            else value = getString(ctx.STRING_());
-        } else throw TypeQLException.of(ILLEGAL_STATE);
-
-        assert predicate != null;
-
-        if (value instanceof Long) {
-            return new Predicate.Long(predicate.asEquality(), (Long) value);
-        } else if (value instanceof Double) {
-            return new Predicate.Double(predicate.asEquality(), (Double) value);
-        } else if (value instanceof Boolean) {
-            return new Predicate.Boolean(predicate.asEquality(), (Boolean) value);
-        } else if (value instanceof String) {
-            return new Predicate.String(predicate, (String) value);
-        } else if (value instanceof LocalDateTime) {
-            return new Predicate.DateTime(predicate.asEquality(), (LocalDateTime) value);
-        } else if (value instanceof ThingVariable<?>) {
-            return new Predicate.Variable(predicate.asEquality(), (ThingVariable<?>) value);
-        } else if (value instanceof EvaluableVariable) {
-            return new Predicate.ValueVariable(predicate.asEquality(), (EvaluableVariable) value);
+        } else if (value instanceof UnboundDollarVariable) {
+            return new Predicate.Variable(predicate.asEquality(),((UnboundDollarVariable)value).toThing());
+        } else if (value instanceof UnboundEvaluableVariable) {
+            return new Predicate.ValueVariable(predicate.asEquality(), ((UnboundEvaluableVariable)value).toEvaluable());
         } else {
             throw TypeQLException.of(ILLEGAL_GRAMMAR.message(ctx.getText()));
         }
@@ -768,6 +729,13 @@ public class Parser extends TypeQLBaseVisitor {
 
     public String getRegex(TerminalNode string) {
         return unescapeRegex(unquoteString(string));
+    }
+
+    @Override
+    public UnboundVariable visitEither_var(TypeQLParser.Either_varContext ctx) {
+        if (ctx.EVAR_() != null) return getValVar(ctx.EVAR_());
+        else if (ctx.VAR_() != null) return getVar(ctx.VAR_());
+        else throw TypeQLException.of(ILLEGAL_STATE);
     }
 
     @Override
@@ -816,8 +784,8 @@ public class Parser extends TypeQLBaseVisitor {
     @Override
     public EvaluableVariable visitVariable_evaluable(TypeQLParser.Variable_evaluableContext ctx) {
         UnboundEvaluableVariable ownerBuilder = getValVar(ctx.EVAR_());
-        if (ctx.evar_predicate() != null) {
-            return ownerBuilder.constrain(new EvaluableConstraint.Value(visitEvar_predicate(ctx.evar_predicate())));
+        if (ctx.predicate() != null) {
+            return ownerBuilder.constrain(new EvaluableConstraint.Value(visitPredicate(ctx.predicate())));
         } else if (ctx.ASSIGN() != null) {
             return ownerBuilder.constrain(new EvaluableConstraint.Expression(visitExpr(ctx.expr())));
         } else throw TypeQLException.of(ILLEGAL_STATE);

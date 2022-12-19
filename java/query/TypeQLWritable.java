@@ -70,7 +70,7 @@ public abstract class TypeQLWritable extends TypeQLQuery {
             this.hash = Objects.hash(this.command, this.match, this.variables);
         }
 
-        public List<UnboundDollarVariable> namedVariablesUnbound() {
+        public List<UnboundDollarVariable> namedUnboudDollarVariables() {
             if (namedVariablesUnbound == null) {
                 namedVariablesUnbound = variables.stream().flatMap(v -> concat(Stream.of(v), v.variables()))
                         .filter(Variable::isNamed).map(BoundVariable::toUnbound).distinct().collect(toList());

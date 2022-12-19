@@ -23,11 +23,14 @@ package com.vaticle.typeql.lang.parser.test;
 
 import com.vaticle.typeql.lang.TypeQL;
 import com.vaticle.typeql.lang.common.TypeQLArg;
+import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.Conjunction;
 import com.vaticle.typeql.lang.pattern.Pattern;
+import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
 import com.vaticle.typeql.lang.pattern.expression.EvaluableExpression;
 import com.vaticle.typeql.lang.pattern.expression.EvaluableExpression.Operation.OP;
+import com.vaticle.typeql.lang.pattern.expression.Predicate;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 import com.vaticle.typeql.lang.query.TypeQLDefine;
 import com.vaticle.typeql.lang.query.TypeQLDelete;
@@ -1084,6 +1087,29 @@ public class ParserTest {
                 "        " + then + "\n" +
                 "    };";
         TypeQLDefine parsed = TypeQL.parseQuery(query).asDefine();
+
+        assertQueryEquals(expected, parsed, query.replace("'", "\""));
+    }
+
+    @Test
+    public void testRuleAttachAttributeByValue() {
+        Conjunction<? extends Pattern> whenPattern = and(
+                var("x").has("age", var("a")),
+                valvar("d").assign(EvaluableExpression.op(OP.TIMES, EvaluableExpression.thingVar(var("a")), EvaluableExpression.constant(365)))
+        );
+        ThingVariable<?> thenPattern = var("x").has("days",
+                new ThingConstraint.Value(new Predicate.ValueVariable(TypeQLToken.Predicate.Equality.EQ, valvar("d").toEvaluable())));
+        TypeQLDefine expected = define(rule("all-movies-are-drama").when(whenPattern).then(thenPattern));
+        final String query = "define\n" +
+                "rule attach-val:\n" +
+                "    when {\n" +
+                "        $x has age $a;\n" +
+                "        ?d := $a * 365;\n" +
+                "    } then {\n" +
+                "        $x has days = ?d;\n" +
+                "    };";
+        TypeQLDefine parsed = TypeQL.parseQuery(query).asDefine();
+
 
         assertQueryEquals(expected, parsed, query.replace("'", "\""));
     }
