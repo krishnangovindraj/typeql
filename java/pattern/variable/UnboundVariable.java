@@ -22,19 +22,23 @@
 package com.vaticle.typeql.lang.pattern.variable;
 
 import com.vaticle.typeql.lang.pattern.constraint.*;
+import com.vaticle.typeql.lang.pattern.expression.Predicate;
 import com.vaticle.typeql.lang.pattern.variable.builder.ConceptVariableBuilder;
+import com.vaticle.typeql.lang.pattern.variable.builder.PredicateBuilder;
 import com.vaticle.typeql.lang.pattern.variable.builder.ThingVariableBuilder;
 import com.vaticle.typeql.lang.pattern.variable.builder.TypeVariableBuilder;
 
 import java.util.Collections;
 import java.util.List;
 
-public class UnboundVariable extends Variable implements ConceptVariableBuilder,
-                                                         TypeVariableBuilder,
-                                                         ThingVariableBuilder.Common<ThingVariable.Thing>,
-                                                         ThingVariableBuilder.Thing,
-                                                         ThingVariableBuilder.Relation,
-                                                         ThingVariableBuilder.Attribute {
+public class UnboundVariable extends Variable implements
+        PredicateBuilder<ThingVariable.Attribute>,
+        ConceptVariableBuilder,
+        TypeVariableBuilder,
+        ThingVariableBuilder.Common<ThingVariable.Thing>,
+        ThingVariableBuilder.Thing,
+        ThingVariableBuilder.Relation,
+        ThingVariableBuilder.Attribute {
 
     UnboundVariable(Reference reference) {
         super(reference);
@@ -42,6 +46,10 @@ public class UnboundVariable extends Variable implements ConceptVariableBuilder,
 
     public static UnboundVariable named(String name) {
         return new UnboundVariable(Reference.name(name));
+    }
+
+    public static UnboundVariable namedVal(String name) {
+        return new UnboundVariable(Reference.namedVal(name));
     }
 
     public static UnboundVariable anonymous() {
@@ -55,6 +63,10 @@ public class UnboundVariable extends Variable implements ConceptVariableBuilder,
     @Override
     public boolean isUnbound() {
         return true;
+    }
+
+    public boolean isEvaluable(UnboundVariable variable) {
+        return variable.reference().isNamedVal();
     }
 
     @Override
@@ -72,6 +84,11 @@ public class UnboundVariable extends Variable implements ConceptVariableBuilder,
 
     public ThingVariable<?> toThing() {
         return new ThingVariable.Thing(reference);
+    }
+
+    public EvaluableVariable toEvaluable() {
+        assert isEvaluable(this);
+        return new EvaluableVariable(reference.asNamedVal());
     }
 
     @Override
@@ -139,6 +156,11 @@ public class UnboundVariable extends Variable implements ConceptVariableBuilder,
     @Override
     public ConceptVariable constrain(ConceptConstraint.Is constraint) {
         return new ConceptVariable(reference, constraint);
+    }
+
+    @Override
+    public ThingVariable.Attribute constrain(Predicate<?> predicate) {
+        return constrain(new ThingConstraint.Value<>(predicate));
     }
 
     @Override

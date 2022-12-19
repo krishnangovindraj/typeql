@@ -419,10 +419,10 @@ public class ParserTest {
     @Test
     public void testOpPrecedence() {
         final String query = "match\n" +
-                "$res = $a / $b * $c + $d ^ $e / $f;";
+                "?res := $a / $b * $c + $d ^ $e / $f;";
         TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
         TypeQLMatch expected = match(
-                var("res").eq(
+                valvar("res").assign(
                         EvaluableExpression.op(OP.PLUS,
                                 EvaluableExpression.op(OP.TIMES,
                                         EvaluableExpression.op(OP.DIV,
@@ -439,10 +439,10 @@ public class ParserTest {
     @Test
     public void testFuncParenthesisPrecedence() {
         final String query = "match\n" +
-                "?res = $a + ( foo($b + ?c) + $d ) * ?e;";
+                "?res := $a + ( foo($b + ?c) + $d ) * ?e;";
         TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
         TypeQLMatch expected = match(
-                valvar("res").eq(
+                valvar("res").assign(
                         EvaluableExpression.op(OP.PLUS,
                                 EvaluableExpression.thingVar(var("a")),
                                 EvaluableExpression.op(OP.TIMES,
@@ -468,8 +468,8 @@ public class ParserTest {
         TypeQLMatch expected = match(
                 var("x").isa("commodity").has("price", var("p")),
                 rel("commodity", "x").rel("qty", "q").isa("order"),
-                valvar("net").eq(EvaluableExpression.op(OP.TIMES, EvaluableExpression.thingVar(var("p")), EvaluableExpression.thingVar(var("q")))),
-                valvar("gross").eq(EvaluableExpression.func("percentOf",
+                valvar("net").assign(EvaluableExpression.op(OP.TIMES, EvaluableExpression.thingVar(var("p")), EvaluableExpression.thingVar(var("q")))),
+                valvar("gross").assign(EvaluableExpression.func("percentOf",
                         EvaluableExpression.valVar(valvar("net")),
                         EvaluableExpression.op(OP.PLUS, EvaluableExpression.constant(100), EvaluableExpression.constant(21)))));
 

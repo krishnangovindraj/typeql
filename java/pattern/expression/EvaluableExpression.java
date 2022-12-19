@@ -6,7 +6,7 @@ import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.EvaluableVariable;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
-import com.vaticle.typeql.lang.pattern.variable.builder.EvaluableVariableBuilder;
+import com.vaticle.typeql.lang.pattern.variable.UnboundEvaluableVariable;
 
 import java.util.HashSet;
 import java.util.List;
@@ -86,7 +86,7 @@ public abstract class EvaluableExpression {
         return new ThingVar(variable.toThing());
     }
 
-    public static ValVar valVar(EvaluableVariableBuilder variable) {
+    public static ValVar valVar(UnboundEvaluableVariable variable) {
         return new ValVar(variable.toEvaluable());
     }
 
