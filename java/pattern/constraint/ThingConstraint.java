@@ -29,7 +29,7 @@ import com.vaticle.typeql.lang.pattern.expression.Predicate;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 import com.vaticle.typeql.lang.pattern.variable.TypeVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ import static com.vaticle.typeql.lang.common.TypeQLToken.Type.RELATION;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_CASTING;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_IID_STRING;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.MISSING_CONSTRAINT_RELATION_PLAYER;
-import static com.vaticle.typeql.lang.pattern.variable.UnboundVariable.hidden;
+import static com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable.hidden;
 
 public abstract class ThingConstraint extends Constraint<BoundVariable> {
 
@@ -177,12 +177,12 @@ public abstract class ThingConstraint extends Constraint<BoundVariable> {
             this(hidden().type(type), isExplicit, false);
         }
 
-        public Isa(UnboundVariable typeVar, boolean isExplicit) {
+        public Isa(UnboundDollarVariable typeVar, boolean isExplicit) {
             this(typeVar.toType(), isExplicit, false);
         }
 
-        public Isa(Either<String, UnboundVariable> typeArg, boolean isExplicit) {
-            this(typeArg.apply(label -> hidden().type(label), UnboundVariable::toType), isExplicit, false);
+        public Isa(Either<String, UnboundDollarVariable> typeArg, boolean isExplicit) {
+            this(typeArg.apply(label -> hidden().type(label), UnboundDollarVariable::toType), isExplicit, false);
         }
 
         private Isa(TypeVariable type, boolean isExplicit, boolean isDerived) {
@@ -331,20 +331,20 @@ public abstract class ThingConstraint extends Constraint<BoundVariable> {
             private final ThingVariable<?> player;
             private int repetition;
 
-            public RolePlayer(String roleType, UnboundVariable playerVar) {
+            public RolePlayer(String roleType, UnboundDollarVariable playerVar) {
                 this(roleType == null ? null : hidden().type(roleType), playerVar.toThing());
             }
 
-            public RolePlayer(UnboundVariable roleTypeVar, UnboundVariable playerVar) {
+            public RolePlayer(UnboundDollarVariable roleTypeVar, UnboundDollarVariable playerVar) {
                 this(roleTypeVar == null ? null : roleTypeVar.toType(), playerVar.toThing());
             }
 
-            public RolePlayer(UnboundVariable playerVar) {
+            public RolePlayer(UnboundDollarVariable playerVar) {
                 this(null, playerVar.toThing());
             }
 
-            public RolePlayer(Either<String, UnboundVariable> roleTypeArg, UnboundVariable playerVar) {
-                this(roleTypeArg == null ? null : roleTypeArg.apply(label -> hidden().type(label), UnboundVariable::toType), playerVar.toThing());
+            public RolePlayer(Either<String, UnboundDollarVariable> roleTypeArg, UnboundDollarVariable playerVar) {
+                this(roleTypeArg == null ? null : roleTypeArg.apply(label -> hidden().type(label), UnboundDollarVariable::toType), playerVar.toThing());
             }
 
             private RolePlayer(@Nullable TypeVariable roleType, ThingVariable<?> player) {
@@ -415,11 +415,11 @@ public abstract class ThingConstraint extends Constraint<BoundVariable> {
             this(hidden().type(type), hidden().constrain(value));
         }
 
-        public Has(String type, UnboundVariable var) {
+        public Has(String type, UnboundDollarVariable var) {
             this(hidden().type(type), var.toThing());
         }
 
-        public Has(UnboundVariable var) {
+        public Has(UnboundDollarVariable var) {
             this(null, var.toThing());
         }
 

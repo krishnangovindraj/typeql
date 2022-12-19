@@ -57,7 +57,7 @@ query_match_group_agg :   query_match   match_group       match_aggregate  ;
 
 modifiers             : ( filter ';' )? ( sort ';' )? ( offset ';' )? ( limit ';' )?;
 
-filter                :   GET         VAR_      ( ',' VAR_ )*                   ;
+filter                :   GET         (VAR_|EVAR_)      ( ',' (VAR_|EVAR_))*                   ;
 sort                  :   SORT        var_order ( ',' var_order )*              ;
 var_order             :   VAR_ ORDER_?                                          ;
 offset                :   OFFSET      LONG_                                     ;

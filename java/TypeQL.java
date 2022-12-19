@@ -53,7 +53,7 @@ import static com.vaticle.typeql.lang.common.TypeQLToken.Predicate.Equality.NEQ;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Predicate.SubString.CONTAINS;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Predicate.SubString.LIKE;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.ILLEGAL_CHAR_IN_LABEL;
-import static com.vaticle.typeql.lang.pattern.variable.UnboundVariable.hidden;
+import static com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable.hidden;
 
 public class TypeQL {
 
@@ -159,16 +159,16 @@ public class TypeQL {
         return new Rule(label);
     }
 
-    public static UnboundVariable var() {
-        return UnboundVariable.anonymous();
+    public static UnboundDollarVariable var() {
+        return UnboundDollarVariable.anonymous();
     }
 
-    public static UnboundVariable var(String name) {
-        return UnboundVariable.named(name);
+    public static UnboundDollarVariable var(String name) {
+        return UnboundDollarVariable.named(name);
     }
 
     public static UnboundEvaluableVariable valvar(String name) {
-        return new UnboundEvaluableVariable(Reference.namedVal(name));
+        return UnboundEvaluableVariable.namedVal(name);
     }
 
     public static TypeVariable type(TypeQLToken.Type type) {
@@ -183,7 +183,7 @@ public class TypeQL {
         return hidden().rel(playerVar);
     }
 
-    public static ThingVariable.Relation rel(UnboundVariable playerVar) {
+    public static ThingVariable.Relation rel(UnboundDollarVariable playerVar) {
         return hidden().rel(playerVar);
     }
 
@@ -191,11 +191,11 @@ public class TypeQL {
         return hidden().rel(roleType, playerVar);
     }
 
-    public static ThingVariable.Relation rel(String roleType, UnboundVariable playerVar) {
+    public static ThingVariable.Relation rel(String roleType, UnboundDollarVariable playerVar) {
         return hidden().rel(roleType, playerVar);
     }
 
-    public static ThingVariable.Relation rel(UnboundVariable roleType, UnboundVariable playerVar) {
+    public static ThingVariable.Relation rel(UnboundDollarVariable roleType, UnboundDollarVariable playerVar) {
         return hidden().rel(roleType, playerVar);
     }
 
@@ -219,7 +219,7 @@ public class TypeQL {
         return new ThingConstraint.Value<>(new Predicate.DateTime(EQ, value));
     }
 
-    public static ThingConstraint.Value<ThingVariable<?>> eq(UnboundVariable variable) {
+    public static ThingConstraint.Value<ThingVariable<?>> eq(UnboundDollarVariable variable) {
         return new ThingConstraint.Value<>(new Predicate.Variable(EQ, variable.toThing()));
     }
 
@@ -247,7 +247,7 @@ public class TypeQL {
         return new ThingConstraint.Value<>(new Predicate.DateTime(NEQ, value));
     }
 
-    public static ThingConstraint.Value<ThingVariable<?>> neq(UnboundVariable variable) {
+    public static ThingConstraint.Value<ThingVariable<?>> neq(UnboundDollarVariable variable) {
         return new ThingConstraint.Value<>(new Predicate.Variable(NEQ, variable.toThing()));
     }
 
@@ -275,7 +275,7 @@ public class TypeQL {
         return new ThingConstraint.Value<>(new Predicate.DateTime(GT, value));
     }
 
-    public static ThingConstraint.Value<ThingVariable<?>> gt(UnboundVariable variable) {
+    public static ThingConstraint.Value<ThingVariable<?>> gt(UnboundDollarVariable variable) {
         return new ThingConstraint.Value<>(new Predicate.Variable(GT, variable.toThing()));
     }
 
@@ -303,7 +303,7 @@ public class TypeQL {
         return new ThingConstraint.Value<>(new Predicate.DateTime(GTE, value));
     }
 
-    public static ThingConstraint.Value<ThingVariable<?>> gte(UnboundVariable variable) {
+    public static ThingConstraint.Value<ThingVariable<?>> gte(UnboundDollarVariable variable) {
         return new ThingConstraint.Value<>(new Predicate.Variable(GTE, variable.toThing()));
     }
 
@@ -331,7 +331,7 @@ public class TypeQL {
         return new ThingConstraint.Value<>(new Predicate.DateTime(LT, value));
     }
 
-    public static ThingConstraint.Value<ThingVariable<?>> lt(UnboundVariable variable) {
+    public static ThingConstraint.Value<ThingVariable<?>> lt(UnboundDollarVariable variable) {
         return new ThingConstraint.Value<>(new Predicate.Variable(LT, variable.toThing()));
     }
 
@@ -359,7 +359,7 @@ public class TypeQL {
         return new ThingConstraint.Value<>(new Predicate.DateTime(LTE, value));
     }
 
-    public static ThingConstraint.Value<ThingVariable<?>> lte(UnboundVariable variable) {
+    public static ThingConstraint.Value<ThingVariable<?>> lte(UnboundDollarVariable variable) {
         return new ThingConstraint.Value<>(new Predicate.Variable(LTE, variable.toThing()));
     }
 

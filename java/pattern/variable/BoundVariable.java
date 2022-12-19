@@ -40,7 +40,7 @@ public abstract class BoundVariable extends Variable implements Conjunctable {
     }
 
     @Override
-    public void validateIsBoundedBy(Set<UnboundVariable> bounds) {
+    public void validateIsBoundedBy(Set<UnboundDollarVariable> bounds) {
         if (Stream.concat(Stream.of(this), variables()).noneMatch(v -> bounds.contains(v.toUnbound()))) {
             throw TypeQLException.of(MATCH_HAS_UNBOUNDED_NESTED_PATTERN.message(toString()));
         }
@@ -56,8 +56,8 @@ public abstract class BoundVariable extends Variable implements Conjunctable {
         return this;
     }
 
-    public UnboundVariable toUnbound() {
-        return new UnboundVariable(reference);
+    public UnboundDollarVariable toUnbound() {
+        return new UnboundDollarVariable(reference);
     }
 
     public ConceptVariable asConcept() {

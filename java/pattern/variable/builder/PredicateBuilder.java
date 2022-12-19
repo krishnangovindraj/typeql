@@ -4,7 +4,7 @@ import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.pattern.expression.Predicate;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundEvaluableVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
 
 import java.time.LocalDateTime;
 import java.util.function.BiFunction;
@@ -39,7 +39,7 @@ public interface PredicateBuilder<VAR_TYPE extends BoundVariable> {
         return eq(Predicate.DateTime::new, value);
     }
 
-    default VAR_TYPE eq(UnboundVariable variable) {
+    default VAR_TYPE eq(UnboundDollarVariable variable) {
         return eq(Predicate.Variable::new, variable.toThing());
     }
 
@@ -72,7 +72,7 @@ public interface PredicateBuilder<VAR_TYPE extends BoundVariable> {
         return neq(Predicate.DateTime::new, value);
     }
 
-    default VAR_TYPE neq(UnboundVariable variable) {
+    default VAR_TYPE neq(UnboundDollarVariable variable) {
         return neq(Predicate.Variable::new, variable.toThing());
     }
     default VAR_TYPE neq(UnboundEvaluableVariable variable) {
@@ -105,7 +105,7 @@ public interface PredicateBuilder<VAR_TYPE extends BoundVariable> {
         return gt(Predicate.DateTime::new, value);
     }
 
-    default VAR_TYPE gt(UnboundVariable variable) {
+    default VAR_TYPE gt(UnboundDollarVariable variable) {
         return gt(Predicate.Variable::new, variable.toThing());
     }
 
@@ -140,7 +140,7 @@ public interface PredicateBuilder<VAR_TYPE extends BoundVariable> {
         return gte(Predicate.DateTime::new, value);
     }
 
-    default VAR_TYPE gte(UnboundVariable variable) {
+    default VAR_TYPE gte(UnboundDollarVariable variable) {
         return gte(Predicate.Variable::new, variable.toThing());
     }
 
@@ -175,7 +175,7 @@ public interface PredicateBuilder<VAR_TYPE extends BoundVariable> {
     }
 
 
-    default VAR_TYPE lt(UnboundVariable variable) {
+    default VAR_TYPE lt(UnboundDollarVariable variable) {
         return lt(Predicate.Variable::new, variable.toThing());
     }
 
@@ -209,7 +209,7 @@ public interface PredicateBuilder<VAR_TYPE extends BoundVariable> {
         return lte(Predicate.DateTime::new, value);
     }
 
-    default VAR_TYPE lte(UnboundVariable variable) {
+    default VAR_TYPE lte(UnboundDollarVariable variable) {
         return lte(Predicate.Variable::new, variable.toThing());
     }
 

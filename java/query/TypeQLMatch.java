@@ -29,7 +29,7 @@ import com.vaticle.typeql.lang.pattern.Conjunction;
 import com.vaticle.typeql.lang.pattern.Pattern;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
 import com.vaticle.typeql.lang.query.builder.Aggregatable;
 import com.vaticle.typeql.lang.query.builder.Sortable;
 
@@ -73,17 +73,17 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
     private final int hash;
 
     private List<BoundVariable> variables;
-    private List<UnboundVariable> variablesNamedUnbound;
+    private List<UnboundDollarVariable> variablesNamedUnbound;
 
     TypeQLMatch(Conjunction<? extends Pattern> conjunction) {
         this(conjunction, new ArrayList<>());
     }
 
-    TypeQLMatch(Conjunction<? extends Pattern> conjunction, List<UnboundVariable> filter) {
+    TypeQLMatch(Conjunction<? extends Pattern> conjunction, List<UnboundDollarVariable> filter) {
         this(conjunction, filter, null, null, null);
     }
 
-    public TypeQLMatch(Conjunction<? extends Pattern> conjunction, List<UnboundVariable> filter, Sortable.Sorting sorting, Long offset, Long limit) {
+    public TypeQLMatch(Conjunction<? extends Pattern> conjunction, List<UnboundDollarVariable> filter, Sortable.Sorting sorting, Long offset, Long limit) {
         if (filter == null) throw TypeQLException.of(ErrorMessage.MISSING_MATCH_FILTER.message());
         this.conjunction = conjunction;
         this.modifiers = new Modifiers(filter, sorting, offset, limit);
@@ -101,14 +101,14 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
 
     public class Modifiers {
 
-        private final List<UnboundVariable> filter;
+        private final List<UnboundDollarVariable> filter;
         private final Sortable.Sorting sorting;
         private final Long offset;
         private final Long limit;
 
         private final int hash;
 
-        public Modifiers(List<UnboundVariable> filter, @Nullable Sortable.Sorting sorting, @Nullable Long offset,
+        public Modifiers(List<UnboundDollarVariable> filter, @Nullable Sortable.Sorting sorting, @Nullable Long offset,
                          @Nullable Long limit) {
             this.filter = list(filter);
             this.sorting = sorting;
@@ -117,8 +117,8 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
             this.hash = Objects.hash(this.filter, this.sorting, this.offset, this.limit);
         }
 
-        public List<UnboundVariable> filter() {
-            if (filter.isEmpty()) return namedVariablesUnbound();
+        public List<UnboundDollarVariable> filter() {
+            if (filter.isEmpty()) return namedUnboudDollarVariables();
             else return filter;
         }
 
@@ -143,7 +143,7 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
             StringBuilder syntax = new StringBuilder();
             if (!filter.isEmpty()) {
                 syntax.append(GET);
-                String vars = filter.stream().map(UnboundVariable::toString).collect(COMMA_SPACE.joiner());
+                String vars = filter.stream().map(v -> v.toString()).collect(COMMA_SPACE.joiner());
                 syntax.append(SPACE).append(vars);
                 syntax.append(SEMICOLON).append(SPACE);
             }
@@ -169,19 +169,19 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
     }
 
     private void hasBoundingConjunction() {
-        if (!conjunction.namedVariablesUnbound().findAny().isPresent()) {
+        if (!conjunction.namedUnboundDollarVariables().findAny().isPresent()) {
             throw TypeQLException.of(MATCH_HAS_NO_BOUNDING_NAMED_VARIABLE);
         }
     }
 
     private void nestedPatternsAreBounded() {
         conjunction.patterns().stream().filter(pattern -> !pattern.isVariable()).forEach(pattern -> {
-            pattern.validateIsBoundedBy(conjunction.namedVariablesUnbound().collect(toSet()));
+            pattern.validateIsBoundedBy(conjunction.namedUnboundDollarVariables().collect(toSet()));
         });
     }
 
     private void queryHasNamedVariable() {
-        if (namedVariablesUnbound().isEmpty()) throw TypeQLException.of(MATCH_HAS_NO_NAMED_VARIABLE);
+        if (namedUnboudDollarVariables().isEmpty()) throw TypeQLException.of(MATCH_HAS_NO_NAMED_VARIABLE);
     }
 
     private void eachPatternVariableHasNamedVariable(List<? extends Pattern> patterns) {
@@ -196,10 +196,10 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
     }
 
     private void filtersAreInScope() {
-        Set<UnboundVariable> duplicates = new HashSet<>();
-        for (UnboundVariable var : modifiers.filter) {
+        Set<UnboundDollarVariable> duplicates = new HashSet<>();
+        for (UnboundDollarVariable var : modifiers.filter) {
             if (!var.isNamed()) throw TypeQLException.of(VARIABLE_NOT_NAMED);
-            if (!namedVariablesUnbound().contains(var))
+            if (!namedUnboudDollarVariables().contains(var))
                 throw TypeQLException.of(VARIABLE_OUT_OF_SCOPE_MATCH.message(var));
             if (duplicates.contains(var)) throw TypeQLException.of(ILLEGAL_FILTER_VARIABLE_REPEATING.message(var));
             else duplicates.add(var);
@@ -207,22 +207,22 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
     }
 
     private void sortVarsAreInScope() {
-        List<UnboundVariable> sortableVars = modifiers.filter.isEmpty() ? namedVariablesUnbound() : modifiers.filter;
+        List<UnboundDollarVariable> sortableVars = modifiers.filter.isEmpty() ? namedUnboudDollarVariables() : modifiers.filter;
         if (modifiers.sorting != null && modifiers.sorting.variables().stream().anyMatch(v -> !sortableVars.contains(v))) {
             throw TypeQLException.of(VARIABLE_OUT_OF_SCOPE_MATCH.message(modifiers.sorting.variables()));
         }
     }
 
     @Override
-    public Aggregate aggregate(TypeQLToken.Aggregate.Method method, UnboundVariable var) {
+    public Aggregate aggregate(TypeQLToken.Aggregate.Method method, UnboundDollarVariable var) {
         return new Aggregate(this, method, var);
     }
 
     public Group group(String var) {
-        return group(UnboundVariable.named(var));
+        return group(UnboundDollarVariable.named(var));
     }
 
-    public Group group(UnboundVariable var) {
+    public Group group(UnboundDollarVariable var) {
         return new Group(this, var);
     }
 
@@ -240,9 +240,9 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
         return variables;
     }
 
-    public List<UnboundVariable> namedVariablesUnbound() {
+    public List<UnboundDollarVariable> namedUnboudDollarVariables() {
         if (variablesNamedUnbound == null) {
-            variablesNamedUnbound = conjunction.namedVariablesUnbound().collect(toList());
+            variablesNamedUnbound = conjunction.namedUnboundDollarVariables().collect(toList());
         }
         return variablesNamedUnbound;
     }
@@ -289,18 +289,19 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
             return new Conjunction<>(patterns);
         }
 
+        @Deprecated // Force below version
         public TypeQLMatch.Filtered get(String var, String... vars) {
-            return get(concat(of(var), of(vars)).map(UnboundVariable::named).collect(toList()));
+            return get(concat(of(var), of(vars)).map(UnboundDollarVariable::named).collect(toList()));
         }
 
-        public TypeQLMatch.Filtered get(UnboundVariable var, UnboundVariable... vars) {
-            List<UnboundVariable> varList = new ArrayList<>();
+        public TypeQLMatch.Filtered get(UnboundDollarVariable var, UnboundDollarVariable... vars) {
+            List<UnboundDollarVariable> varList = new ArrayList<>();
             varList.add(var);
             varList.addAll(list(vars));
             return get(varList);
         }
 
-        public TypeQLMatch.Filtered get(List<UnboundVariable> vars) {
+        public TypeQLMatch.Filtered get(List<UnboundDollarVariable> vars) {
             return new TypeQLMatch.Filtered(this, vars);
         }
 
@@ -338,7 +339,7 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
 
     public static class Filtered extends TypeQLMatch implements Sortable<Sorted, Offset, Limited> {
 
-        public Filtered(Unfiltered unfiltered, List<UnboundVariable> filter) {
+        public Filtered(Unfiltered unfiltered, List<UnboundDollarVariable> filter) {
             super(unfiltered.conjunction(), filter, null, null, null);
             if (filter.isEmpty()) throw TypeQLException.of(ErrorMessage.EMPTY_MATCH_FILTER);
         }
@@ -396,10 +397,10 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
 
         private final TypeQLMatch query;
         private final TypeQLToken.Aggregate.Method method;
-        private final UnboundVariable var;
+        private final UnboundDollarVariable var;
         private final int hash;
 
-        public Aggregate(TypeQLMatch query, TypeQLToken.Aggregate.Method method, UnboundVariable var) {
+        public Aggregate(TypeQLMatch query, TypeQLToken.Aggregate.Method method, UnboundDollarVariable var) {
             if (query == null) throw new NullPointerException("MatchQuery is null");
             if (method == null) throw new NullPointerException("Method is null");
 
@@ -430,7 +431,7 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
             return method;
         }
 
-        public UnboundVariable var() {
+        public UnboundDollarVariable var() {
             return var;
         }
 
@@ -463,10 +464,10 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
     public static class Group extends TypeQLQuery implements Aggregatable<Group.Aggregate> {
 
         private final TypeQLMatch query;
-        private final UnboundVariable var;
+        private final UnboundDollarVariable var;
         private final int hash;
 
-        public Group(TypeQLMatch query, UnboundVariable var) {
+        public Group(TypeQLMatch query, UnboundDollarVariable var) {
             if (query == null) throw new NullPointerException("GetQuery is null");
             if (var == null) throw new NullPointerException("Variable is null");
             else if (!query.modifiers.filter().contains(var)) {
@@ -487,12 +488,12 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
             return query;
         }
 
-        public UnboundVariable var() {
+        public UnboundDollarVariable var() {
             return var;
         }
 
         @Override
-        public Aggregate aggregate(TypeQLToken.Aggregate.Method method, UnboundVariable var) {
+        public Aggregate aggregate(TypeQLToken.Aggregate.Method method, UnboundDollarVariable var) {
             return new Aggregate(this, method, var);
         }
 
@@ -520,10 +521,10 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
 
             private final TypeQLMatch.Group group;
             private final TypeQLToken.Aggregate.Method method;
-            private final UnboundVariable var;
+            private final UnboundDollarVariable var;
             private final int hash;
 
-            public Aggregate(TypeQLMatch.Group group, TypeQLToken.Aggregate.Method method, UnboundVariable var) {
+            public Aggregate(TypeQLMatch.Group group, TypeQLToken.Aggregate.Method method, UnboundDollarVariable var) {
                 if (group == null) throw new NullPointerException("TypeQLMatch.Group is null");
                 if (method == null) throw new NullPointerException("Method is null");
                 if (var == null && !method.equals(TypeQLToken.Aggregate.Method.COUNT)) {
@@ -553,7 +554,7 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
                 return method;
             }
 
-            public UnboundVariable var() {
+            public UnboundDollarVariable var() {
                 return var;
             }
 

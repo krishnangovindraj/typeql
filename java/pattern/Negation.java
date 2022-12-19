@@ -24,7 +24,7 @@ package com.vaticle.typeql.lang.pattern;
 import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.common.exception.ErrorMessage;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
-import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
 
 import java.util.List;
 import java.util.Objects;
@@ -64,7 +64,7 @@ public class Negation<T extends Pattern> implements Conjunctable {
     }
 
     @Override
-    public void validateIsBoundedBy(Set<UnboundVariable> bounds) {
+    public void validateIsBoundedBy(Set<UnboundDollarVariable> bounds) {
         if (pattern.isNegation()) {
             throw TypeQLException.of(ErrorMessage.ILLEGAL_STATE);
         } else {

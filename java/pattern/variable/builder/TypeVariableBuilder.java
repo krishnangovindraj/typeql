@@ -25,7 +25,7 @@ import com.vaticle.typeql.lang.common.TypeQLArg;
 import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.pattern.constraint.TypeConstraint;
 import com.vaticle.typeql.lang.pattern.variable.TypeVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
 
 public interface TypeVariableBuilder {
 
@@ -57,7 +57,7 @@ public interface TypeVariableBuilder {
         return constrain(new TypeConstraint.Sub(typeScope, typeLabel, false));
     }
 
-    default TypeVariable sub(UnboundVariable typeVar) {
+    default TypeVariable sub(UnboundDollarVariable typeVar) {
         return constrain(new TypeConstraint.Sub(typeVar, false));
     }
 
@@ -73,7 +73,7 @@ public interface TypeVariableBuilder {
         return constrain(new TypeConstraint.Sub(typeScope, typeLabel, true));
     }
 
-    default TypeVariable subX(UnboundVariable typeVar) {
+    default TypeVariable subX(UnboundDollarVariable typeVar) {
         return constrain(new TypeConstraint.Sub(typeVar, true));
     }
 
@@ -85,11 +85,11 @@ public interface TypeVariableBuilder {
         return constrain(new TypeConstraint.Owns(attributeType, isKey));
     }
 
-    default TypeVariable owns(UnboundVariable attributeTypeVar) {
+    default TypeVariable owns(UnboundDollarVariable attributeTypeVar) {
         return constrain(new TypeConstraint.Owns(attributeTypeVar, false));
     }
 
-    default TypeVariable owns(UnboundVariable attributeTypeVar, boolean isKey) {
+    default TypeVariable owns(UnboundDollarVariable attributeTypeVar, boolean isKey) {
         return constrain(new TypeConstraint.Owns(attributeTypeVar, isKey));
     }
 
@@ -101,27 +101,27 @@ public interface TypeVariableBuilder {
         return constrain(new TypeConstraint.Owns(attributeType, overriddenAttributeType, isKey));
     }
 
-    default TypeVariable owns(String attributeType, UnboundVariable overriddenAttributeTypeVar) {
+    default TypeVariable owns(String attributeType, UnboundDollarVariable overriddenAttributeTypeVar) {
         return constrain(new TypeConstraint.Owns(attributeType, overriddenAttributeTypeVar, false));
     }
 
-    default TypeVariable owns(String attributeType, UnboundVariable overriddenAttributeTypeVar, boolean isKey) {
+    default TypeVariable owns(String attributeType, UnboundDollarVariable overriddenAttributeTypeVar, boolean isKey) {
         return constrain(new TypeConstraint.Owns(attributeType, overriddenAttributeTypeVar, isKey));
     }
 
-    default TypeVariable owns(UnboundVariable attributeTypeVar, String overriddenAttributeType) {
+    default TypeVariable owns(UnboundDollarVariable attributeTypeVar, String overriddenAttributeType) {
         return constrain(new TypeConstraint.Owns(attributeTypeVar, overriddenAttributeType, false));
     }
 
-    default TypeVariable owns(UnboundVariable attributeTypeVar, String overriddenAttributeType, boolean isKey) {
+    default TypeVariable owns(UnboundDollarVariable attributeTypeVar, String overriddenAttributeType, boolean isKey) {
         return constrain(new TypeConstraint.Owns(attributeTypeVar, overriddenAttributeType, isKey));
     }
 
-    default TypeVariable owns(UnboundVariable attributeTypeVar, UnboundVariable overriddenAttributeTypeVar) {
+    default TypeVariable owns(UnboundDollarVariable attributeTypeVar, UnboundDollarVariable overriddenAttributeTypeVar) {
         return constrain(new TypeConstraint.Owns(attributeTypeVar, overriddenAttributeTypeVar, false));
     }
 
-    default TypeVariable owns(UnboundVariable attributeTypeVar, UnboundVariable overriddenAttributeTypeVar, boolean isKey) {
+    default TypeVariable owns(UnboundDollarVariable attributeTypeVar, UnboundDollarVariable overriddenAttributeTypeVar, boolean isKey) {
         return constrain(new TypeConstraint.Owns(attributeTypeVar, overriddenAttributeTypeVar, isKey));
     }
 
@@ -129,7 +129,7 @@ public interface TypeVariableBuilder {
         return constrain(new TypeConstraint.Plays(relationType, roleType));
     }
 
-    default TypeVariable plays(UnboundVariable roleTypevar) {
+    default TypeVariable plays(UnboundDollarVariable roleTypevar) {
         return constrain(new TypeConstraint.Plays(roleTypevar));
     }
 
@@ -137,15 +137,15 @@ public interface TypeVariableBuilder {
         return constrain(new TypeConstraint.Plays(relationType, roleType, overriddenRoleType));
     }
 
-    default TypeVariable plays(String relationType, String roleType, UnboundVariable overriddenRoleTypeVar) {
+    default TypeVariable plays(String relationType, String roleType, UnboundDollarVariable overriddenRoleTypeVar) {
         return constrain(new TypeConstraint.Plays(relationType, roleType, overriddenRoleTypeVar));
     }
 
-    default TypeVariable plays(UnboundVariable roleTypeVar, String overriddenRoleType) {
+    default TypeVariable plays(UnboundDollarVariable roleTypeVar, String overriddenRoleType) {
         return constrain(new TypeConstraint.Plays(roleTypeVar, overriddenRoleType));
     }
 
-    default TypeVariable plays(UnboundVariable roleTypeVar, UnboundVariable overriddenRoleTypeVar) {
+    default TypeVariable plays(UnboundDollarVariable roleTypeVar, UnboundDollarVariable overriddenRoleTypeVar) {
         return constrain(new TypeConstraint.Plays(roleTypeVar, overriddenRoleTypeVar));
     }
 
@@ -153,7 +153,7 @@ public interface TypeVariableBuilder {
         return constrain(new TypeConstraint.Relates(roleType));
     }
 
-    default TypeVariable relates(UnboundVariable roleTypeVar) {
+    default TypeVariable relates(UnboundDollarVariable roleTypeVar) {
         return constrain(new TypeConstraint.Relates(roleTypeVar));
     }
 
@@ -161,15 +161,15 @@ public interface TypeVariableBuilder {
         return constrain(new TypeConstraint.Relates(roleType, overriddenRoleType));
     }
 
-    default TypeVariable relates(String roleType, UnboundVariable overriddenRoleTypeVar) {
+    default TypeVariable relates(String roleType, UnboundDollarVariable overriddenRoleTypeVar) {
         return constrain(new TypeConstraint.Relates(roleType, overriddenRoleTypeVar));
     }
 
-    default TypeVariable relates(UnboundVariable roleTypeVar, String overriddenRoleType) {
+    default TypeVariable relates(UnboundDollarVariable roleTypeVar, String overriddenRoleType) {
         return constrain(new TypeConstraint.Relates(roleTypeVar, overriddenRoleType));
     }
 
-    default TypeVariable relates(UnboundVariable roleTypeVar, UnboundVariable overriddenRoleTypeVar) {
+    default TypeVariable relates(UnboundDollarVariable roleTypeVar, UnboundDollarVariable overriddenRoleTypeVar) {
         return constrain(new TypeConstraint.Relates(roleTypeVar, overriddenRoleTypeVar));
     }
 

@@ -27,7 +27,7 @@ import com.vaticle.typeql.lang.common.TypeQLArg;
 import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.variable.TypeVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -56,7 +56,7 @@ import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_CAST
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.MISSING_PATTERNS;
 import static com.vaticle.typeql.lang.common.util.Strings.escapeRegex;
 import static com.vaticle.typeql.lang.common.util.Strings.quoteString;
-import static com.vaticle.typeql.lang.pattern.variable.UnboundVariable.hidden;
+import static com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable.hidden;
 
 public abstract class TypeConstraint extends Constraint<TypeVariable> {
 
@@ -212,13 +212,13 @@ public abstract class TypeConstraint extends Constraint<TypeVariable> {
             this(hidden().type(typeScope, typeLabel), isExplicit);
         }
 
-        public Sub(UnboundVariable typeVar, boolean isExplicit) {
+        public Sub(UnboundDollarVariable typeVar, boolean isExplicit) {
             this(typeVar.toType(), isExplicit);
         }
 
-        public Sub(Either<Pair<String, String>, UnboundVariable> typeArg, boolean isExplicit) {
+        public Sub(Either<Pair<String, String>, UnboundDollarVariable> typeArg, boolean isExplicit) {
             this(typeArg.apply(scoped -> hidden().constrain(new TypeConstraint.Label(scoped.first(), scoped.second())),
-                               UnboundVariable::toType), isExplicit);
+                               UnboundDollarVariable::toType), isExplicit);
         }
 
         private Sub(TypeVariable type, boolean isExplicit) {
@@ -408,7 +408,7 @@ public abstract class TypeConstraint extends Constraint<TypeVariable> {
             this(hidden().type(attributeType), null, isKey);
         }
 
-        public Owns(UnboundVariable attributeTypeVar, boolean isKey) {
+        public Owns(UnboundDollarVariable attributeTypeVar, boolean isKey) {
             this(attributeTypeVar.toType(), null, isKey);
         }
 
@@ -416,21 +416,21 @@ public abstract class TypeConstraint extends Constraint<TypeVariable> {
             this(hidden().type(attributeType), overriddenAttributeType == null ? null : hidden().type(overriddenAttributeType), isKey);
         }
 
-        public Owns(UnboundVariable attributeTypeVar, String overriddenAttributeType, boolean isKey) {
+        public Owns(UnboundDollarVariable attributeTypeVar, String overriddenAttributeType, boolean isKey) {
             this(attributeTypeVar.toType(), overriddenAttributeType == null ? null : hidden().type(overriddenAttributeType), isKey);
         }
 
-        public Owns(String attributeType, UnboundVariable overriddenAttributeTypeVar, boolean isKey) {
+        public Owns(String attributeType, UnboundDollarVariable overriddenAttributeTypeVar, boolean isKey) {
             this(hidden().type(attributeType), overriddenAttributeTypeVar == null ? null : overriddenAttributeTypeVar.toType(), isKey);
         }
 
-        public Owns(UnboundVariable attributeTypeVar, UnboundVariable overriddenAttributeTypeVar, boolean isKey) {
+        public Owns(UnboundDollarVariable attributeTypeVar, UnboundDollarVariable overriddenAttributeTypeVar, boolean isKey) {
             this(attributeTypeVar.toType(), overriddenAttributeTypeVar == null ? null : overriddenAttributeTypeVar.toType(), isKey);
         }
 
-        public Owns(Either<String, UnboundVariable> attributeTypeArg, Either<String, UnboundVariable> overriddenAttributeTypeArg, boolean isKey) {
-            this(attributeTypeArg.apply(label -> hidden().type(label), UnboundVariable::toType),
-                 overriddenAttributeTypeArg == null ? null : overriddenAttributeTypeArg.apply(label -> hidden().type(label), UnboundVariable::toType),
+        public Owns(Either<String, UnboundDollarVariable> attributeTypeArg, Either<String, UnboundDollarVariable> overriddenAttributeTypeArg, boolean isKey) {
+            this(attributeTypeArg.apply(label -> hidden().type(label), UnboundDollarVariable::toType),
+                 overriddenAttributeTypeArg == null ? null : overriddenAttributeTypeArg.apply(label -> hidden().type(label), UnboundDollarVariable::toType),
                  isKey);
         }
 
@@ -504,7 +504,7 @@ public abstract class TypeConstraint extends Constraint<TypeVariable> {
             this(hidden().type(relationType, roleType), null);
         }
 
-        public Plays(UnboundVariable var) {
+        public Plays(UnboundDollarVariable var) {
             this(var.toType(), null);
         }
 
@@ -512,21 +512,21 @@ public abstract class TypeConstraint extends Constraint<TypeVariable> {
             this(hidden().type(relationType, roleType), overriddenRoleType == null ? null : scopedType(overriddenRoleType));
         }
 
-        public Plays(UnboundVariable roleTypeVar, String overriddenRoleType) {
+        public Plays(UnboundDollarVariable roleTypeVar, String overriddenRoleType) {
             this(roleTypeVar.toType(), overriddenRoleType == null ? null : scopedType(overriddenRoleType));
         }
 
-        public Plays(String relationType, String roleType, UnboundVariable overriddenRoleTypeVar) {
+        public Plays(String relationType, String roleType, UnboundDollarVariable overriddenRoleTypeVar) {
             this(hidden().type(relationType, roleType), overriddenRoleTypeVar == null ? null : overriddenRoleTypeVar.toType());
         }
 
-        public Plays(UnboundVariable roleTypeVar, UnboundVariable overriddenRoleTypeVar) {
+        public Plays(UnboundDollarVariable roleTypeVar, UnboundDollarVariable overriddenRoleTypeVar) {
             this(roleTypeVar.toType(), overriddenRoleTypeVar == null ? null : overriddenRoleTypeVar.toType());
         }
 
-        public Plays(Either<Pair<String, String>, UnboundVariable> roleTypeArg, Either<String, UnboundVariable> overriddenRoleTypeArg) {
-            this(roleTypeArg.apply(scoped -> hidden().constrain(new TypeConstraint.Label(scoped.first(), scoped.second())), UnboundVariable::toType),
-                 overriddenRoleTypeArg == null ? null : overriddenRoleTypeArg.apply(Plays::scopedType, UnboundVariable::toType));
+        public Plays(Either<Pair<String, String>, UnboundDollarVariable> roleTypeArg, Either<String, UnboundDollarVariable> overriddenRoleTypeArg) {
+            this(roleTypeArg.apply(scoped -> hidden().constrain(new TypeConstraint.Label(scoped.first(), scoped.second())), UnboundDollarVariable::toType),
+                 overriddenRoleTypeArg == null ? null : overriddenRoleTypeArg.apply(Plays::scopedType, UnboundDollarVariable::toType));
         }
 
         private Plays(TypeVariable roleType, @Nullable TypeVariable overriddenRoleType) {
@@ -609,7 +609,7 @@ public abstract class TypeConstraint extends Constraint<TypeVariable> {
             this(scopedType(roleType), null);
         }
 
-        public Relates(UnboundVariable roleTypeVar) {
+        public Relates(UnboundDollarVariable roleTypeVar) {
             this(roleTypeVar.toType(), null);
         }
 
@@ -617,21 +617,21 @@ public abstract class TypeConstraint extends Constraint<TypeVariable> {
             this(scopedType(roleType), overriddenRoleType == null ? null : scopedType(overriddenRoleType));
         }
 
-        public Relates(UnboundVariable roleTypeVar, String overriddenRoleType) {
+        public Relates(UnboundDollarVariable roleTypeVar, String overriddenRoleType) {
             this(roleTypeVar.toType(), overriddenRoleType == null ? null : scopedType(overriddenRoleType));
         }
 
-        public Relates(String roleType, UnboundVariable overriddenRoleTypeVar) {
+        public Relates(String roleType, UnboundDollarVariable overriddenRoleTypeVar) {
             this(scopedType(roleType), overriddenRoleTypeVar == null ? null : overriddenRoleTypeVar.toType());
         }
 
-        public Relates(UnboundVariable roleTypeVar, UnboundVariable overriddenRoleTypeVar) {
+        public Relates(UnboundDollarVariable roleTypeVar, UnboundDollarVariable overriddenRoleTypeVar) {
             this(roleTypeVar.toType(), overriddenRoleTypeVar == null ? null : overriddenRoleTypeVar.toType());
         }
 
-        public Relates(Either<String, UnboundVariable> roleTypeArg, Either<String, UnboundVariable> overriddenRoleTypeArg) {
-            this(roleTypeArg.apply(Relates::scopedType, UnboundVariable::toType),
-                 overriddenRoleTypeArg == null ? null : overriddenRoleTypeArg.apply(Relates::scopedType, UnboundVariable::toType));
+        public Relates(Either<String, UnboundDollarVariable> roleTypeArg, Either<String, UnboundDollarVariable> overriddenRoleTypeArg) {
+            this(roleTypeArg.apply(Relates::scopedType, UnboundDollarVariable::toType),
+                 overriddenRoleTypeArg == null ? null : overriddenRoleTypeArg.apply(Relates::scopedType, UnboundDollarVariable::toType));
         }
 
         private Relates(TypeVariable roleType, @Nullable TypeVariable overriddenRoleType) {

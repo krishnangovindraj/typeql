@@ -7,10 +7,14 @@ import com.vaticle.typeql.lang.pattern.expression.Predicate;
 import com.vaticle.typeql.lang.pattern.variable.builder.PredicateBuilder;
 
 import java.util.List;
-public class UnboundEvaluableVariable extends Variable implements PredicateBuilder<EvaluableVariable> {
-    public UnboundEvaluableVariable(Reference reference) {
+public class UnboundEvaluableVariable extends UnboundVariable implements PredicateBuilder<EvaluableVariable> {
+    private UnboundEvaluableVariable(Reference reference) {
         super(reference);
         assert reference.isNamedVal();
+    }
+
+    public static UnboundEvaluableVariable namedVal(String name) {
+        return new UnboundEvaluableVariable(Reference.namedVal(name));
     }
 
     public EvaluableVariable assign(EvaluableExpression assignment) {

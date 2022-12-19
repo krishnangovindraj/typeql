@@ -23,15 +23,15 @@ package com.vaticle.typeql.lang.pattern.variable.builder;
 
 import com.vaticle.typeql.lang.pattern.constraint.ConceptConstraint;
 import com.vaticle.typeql.lang.pattern.variable.ConceptVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
 
 public interface ConceptVariableBuilder {
 
     default ConceptVariable is(String var) {
-        return is(UnboundVariable.named(var));
+        return is(UnboundDollarVariable.named(var));
     }
 
-    default ConceptVariable is(UnboundVariable var) {
+    default ConceptVariable is(UnboundDollarVariable var) {
         return constrain(new ConceptConstraint.Is(var));
     }
 

@@ -25,7 +25,8 @@ import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.common.exception.ErrorMessage;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundEvaluableVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
 import com.vaticle.typeql.lang.pattern.variable.Variable;
 
 import java.util.AbstractList;
@@ -72,8 +73,12 @@ public class Conjunction<T extends Pattern> implements Pattern {
         });
     }
 
-    public Stream<UnboundVariable> namedVariablesUnbound() {
-        return variables().filter(Variable::isNamed).map(v -> UnboundVariable.named(v.name())).distinct();
+    public Stream<UnboundEvaluableVariable> namedUnboundEvaluableVariables() {
+        return variables().filter(Variable::isNamed).map(v -> UnboundEvaluableVariable.namedVal(v.name())).distinct();
+    }
+
+    public Stream<UnboundDollarVariable> namedUnboundDollarVariables() {
+        return variables().filter(Variable::isNamed).map(v -> UnboundDollarVariable.named(v.name())).distinct();
     }
 
     @Override
@@ -82,12 +87,12 @@ public class Conjunction<T extends Pattern> implements Pattern {
     }
 
     @Override
-    public void validateIsBoundedBy(Set<UnboundVariable> bounds) {
+    public void validateIsBoundedBy(Set<UnboundDollarVariable> bounds) {
         if (variables().noneMatch(v -> bounds.contains(v.toUnbound()))) {
             String str = toString().replace("\n", " ");
             throw TypeQLException.of(MATCH_HAS_UNBOUNDED_NESTED_PATTERN.message(str));
         }
-        HashSet<UnboundVariable> union = new HashSet<>(bounds);
+        HashSet<UnboundDollarVariable> union = new HashSet<>(bounds);
         union.addAll(variables().map(BoundVariable::toUnbound).collect(Collectors.toSet()));
         patterns.stream().filter(pattern -> !pattern.isVariable()).forEach(pattern -> {
             pattern.validateIsBoundedBy(union);

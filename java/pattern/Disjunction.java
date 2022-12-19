@@ -21,7 +21,7 @@
 
 package com.vaticle.typeql.lang.pattern;
 
-import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
 
 import java.util.Iterator;
 import java.util.List;
@@ -57,7 +57,7 @@ public class Disjunction<T extends Pattern> implements Pattern {
     }
 
     @Override
-    public void validateIsBoundedBy(Set<UnboundVariable> bounds) {
+    public void validateIsBoundedBy(Set<UnboundDollarVariable> bounds) {
         patterns.forEach(pattern -> pattern.validateIsBoundedBy(bounds));
     }
 

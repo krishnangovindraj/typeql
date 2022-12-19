@@ -24,7 +24,7 @@ package com.vaticle.typeql.lang.query.builder;
 import com.vaticle.typedb.common.collection.Pair;
 import com.vaticle.typeql.lang.common.TypeQLArg;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
-import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,9 +40,9 @@ import static com.vaticle.typeql.lang.common.exception.ErrorMessage.VARIABLE_NOT
 public interface Sortable<S, O, L> {
 
     default S sort(String var, String... vars) {
-        List<Pair<UnboundVariable, TypeQLArg.Order>> pairs = new ArrayList<>();
-        pairs.add(new Pair<>(UnboundVariable.named(var), null));
-        for (String v : vars) pairs.add(new Pair<>(UnboundVariable.named(v), null));
+        List<Pair<UnboundDollarVariable, TypeQLArg.Order>> pairs = new ArrayList<>();
+        pairs.add(new Pair<>(UnboundDollarVariable.named(var), null));
+        for (String v : vars) pairs.add(new Pair<>(UnboundDollarVariable.named(v), null));
         return sort(pairs);
     }
 
@@ -62,14 +62,14 @@ public interface Sortable<S, O, L> {
         return sort(list(parseVarOrder(varOrder1), parseVarOrder(varOrder2), parseVarOrder(varOrder3), parseVarOrder(varOrder4)));
     }
 
-    static Pair<UnboundVariable, TypeQLArg.Order> parseVarOrder(Pair<String, String> varOrder) {
+    static Pair<UnboundDollarVariable, TypeQLArg.Order> parseVarOrder(Pair<String, String> varOrder) {
         return new Pair<>(
-                UnboundVariable.named(varOrder.first()),
+                UnboundDollarVariable.named(varOrder.first()),
                 varOrder.second() == null ? null : TypeQLArg.Order.of(varOrder.second())
         );
     }
 
-    default S sort(List<Pair<UnboundVariable, TypeQLArg.Order>> varOrders) {
+    default S sort(List<Pair<UnboundDollarVariable, TypeQLArg.Order>> varOrders) {
         return sort(Sorting.create(varOrders));
     }
 
@@ -82,18 +82,18 @@ public interface Sortable<S, O, L> {
     class Sorting {
 
         private final int hash;
-        private final List<UnboundVariable> variables;
-        private final Map<UnboundVariable, TypeQLArg.Order> orders;
+        private final List<UnboundDollarVariable> variables;
+        private final Map<UnboundDollarVariable, TypeQLArg.Order> orders;
 
-        private Sorting(List<UnboundVariable> variables, Map<UnboundVariable, TypeQLArg.Order> orders) {
+        private Sorting(List<UnboundDollarVariable> variables, Map<UnboundDollarVariable, TypeQLArg.Order> orders) {
             this.variables = variables;
             this.orders = orders;
             this.hash = Objects.hash(variables, orders);
         }
 
-        public static Sorting create(List<Pair<UnboundVariable, TypeQLArg.Order>> sorting) {
-            List<UnboundVariable> vars = new ArrayList<>();
-            Map<UnboundVariable, TypeQLArg.Order> orders = new HashMap<>();
+        public static Sorting create(List<Pair<UnboundDollarVariable, TypeQLArg.Order>> sorting) {
+            List<UnboundDollarVariable> vars = new ArrayList<>();
+            Map<UnboundDollarVariable, TypeQLArg.Order> orders = new HashMap<>();
             sorting.forEach(pair -> {
                 vars.add(pair.first());
                 orders.put(pair.first(), pair.second());
@@ -101,11 +101,11 @@ public interface Sortable<S, O, L> {
             return new Sorting(vars, orders);
         }
 
-        public List<UnboundVariable> variables() {
+        public List<UnboundDollarVariable> variables() {
             return variables;
         }
 
-        public TypeQLArg.Order getOrder(UnboundVariable var) {
+        public TypeQLArg.Order getOrder(UnboundDollarVariable var) {
             if (!variables.contains(var)) throw TypeQLException.of(VARIABLE_NOT_SORTED.message(var));
             TypeQLArg.Order order = orders.get(var);
             return order == null ? TypeQLArg.Order.ASC : order;

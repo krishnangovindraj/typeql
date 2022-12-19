@@ -5,7 +5,7 @@ import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.EvaluableVariable;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundEvaluableVariable;
 
 import java.util.HashSet;
@@ -82,7 +82,7 @@ public abstract class EvaluableExpression {
         return new Function(funcId, args);
     }
 
-    public static ThingVar thingVar(UnboundVariable variable) {
+    public static ThingVar thingVar(UnboundDollarVariable variable) {
         return new ThingVar(variable.toThing());
     }
 

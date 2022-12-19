@@ -39,11 +39,11 @@ public class TypeQLDelete extends TypeQLWritable.InsertOrDelete {
 
     static List<ThingVariable<?>> validDeleteVars(TypeQLMatch.Unfiltered match, List<ThingVariable<?>> variables) {
         variables.forEach(var -> {
-            if (var.isNamed() && !match.namedVariablesUnbound().contains(var.toUnbound())) {
+            if (var.isNamed() && !match.namedUnboudDollarVariables().contains(var.toUnbound())) {
                 throw TypeQLException.of(VARIABLE_OUT_OF_SCOPE_DELETE.message(var.reference()));
             }
             var.variables().forEach(nestedVar -> {
-                if (nestedVar.isNamed() && !match.namedVariablesUnbound().contains(nestedVar.toUnbound())) {
+                if (nestedVar.isNamed() && !match.namedUnboudDollarVariables().contains(nestedVar.toUnbound())) {
                     throw TypeQLException.of(VARIABLE_OUT_OF_SCOPE_DELETE.message(nestedVar.reference()));
                 }
             });
