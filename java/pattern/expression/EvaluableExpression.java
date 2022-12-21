@@ -8,13 +8,14 @@ import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundEvaluableVariable;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import static com.vaticle.typedb.common.collection.Collections.list;
 import static com.vaticle.typedb.common.util.Objects.className;
-import static com.vaticle.typeql.lang.common.TypeQLToken.Char.COMMA;
+import static com.vaticle.typeql.lang.common.TypeQLToken.Char.COMMA_SPACE;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_CASTING;
 
 public abstract class EvaluableExpression {
@@ -82,6 +83,10 @@ public abstract class EvaluableExpression {
         return new Function(funcId, args);
     }
 
+    public static EvaluableExpression bracketed(EvaluableExpression nestedExpr) {
+        return new EvaluableExpression.Bracketed(nestedExpr);
+    }
+
     public static ThingVar thingVar(UnboundDollarVariable variable) {
         return new ThingVar(variable.toThing());
     }
@@ -90,12 +95,24 @@ public abstract class EvaluableExpression {
         return new ValVar(variable.toEvaluable());
     }
 
+    public static Constant.Boolean constant(Boolean value) {
+        return new Constant.Boolean(value);
+    }
+
+    public static Constant.Long constant(long value) {
+        return new Constant.Long(value);
+    }
+
     public static Constant.Double constant(double value) {
         return new Constant.Double(value);
     }
 
-    public static EvaluableExpression bracketed(EvaluableExpression nestedExpr) {
-        return new EvaluableExpression.Bracketed(nestedExpr);
+    public static Constant.String constant(String value) {
+        return new Constant.String(value);
+    }
+
+    public static Constant.DateTime constant(LocalDateTime value) {
+        return new Constant.DateTime(value);
     }
 
     public Set<BoundVariable> variables() {
@@ -195,7 +212,7 @@ public abstract class EvaluableExpression {
 
         @Override
         public String toString() {
-            return symbol + "(" + argList.stream().map(e -> e.toString()).collect(COMMA.joiner()) + ")";
+            return symbol + "(" + argList.stream().map(e -> e.toString()).collect(COMMA_SPACE.joiner()) + ")";
         }
     }
 

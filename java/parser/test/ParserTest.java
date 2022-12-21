@@ -464,8 +464,8 @@ public class ParserTest {
                 "$x isa commodity,\n" +
                 "    has price $p;\n" +
                 "(commodity: $x, qty: $q) isa order;\n" +
-                "?net = $p * $q;\n" +
-                "?gross = percentOf(?net,100.0 + 21.0);" +
+                "?net := $p * $q;\n" +
+                "?gross := percentOf(?net, 100.0 + 21.0);" +
                 "";
         TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
         TypeQLMatch expected = match(
@@ -474,7 +474,7 @@ public class ParserTest {
                 valvar("net").assign(EvaluableExpression.op(OP.TIMES, EvaluableExpression.thingVar(var("p")), EvaluableExpression.thingVar(var("q")))),
                 valvar("gross").assign(EvaluableExpression.func("percentOf",
                         EvaluableExpression.valVar(valvar("net")),
-                        EvaluableExpression.op(OP.PLUS, EvaluableExpression.constant(100), EvaluableExpression.constant(21)))));
+                        EvaluableExpression.op(OP.PLUS, EvaluableExpression.constant(100.0), EvaluableExpression.constant(21.0)))));
 
         assertQueryEquals(expected, parsed, query);
     }
@@ -1099,14 +1099,15 @@ public class ParserTest {
         );
         ThingVariable<?> thenPattern = var("x").has("days",
                 new ThingConstraint.Value(new Predicate.ValueVariable(TypeQLToken.Predicate.Equality.EQ, valvar("d").toEvaluable())));
-        TypeQLDefine expected = define(rule("all-movies-are-drama").when(whenPattern).then(thenPattern));
+        TypeQLDefine expected = define(rule("attach-val").when(whenPattern).then(thenPattern));
         final String query = "define\n" +
                 "rule attach-val:\n" +
                 "    when {\n" +
                 "        $x has age $a;\n" +
                 "        ?d := $a * 365;\n" +
-                "    } then {\n" +
-                "        $x has days = ?d;\n" +
+                "    }\n" +
+                "    then {\n" +
+                "        $x has days ?d;\n" +
                 "    };";
         TypeQLDefine parsed = TypeQL.parseQuery(query).asDefine();
 
