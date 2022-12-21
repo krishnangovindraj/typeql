@@ -67,9 +67,10 @@ checkstyle_test(
     include = glob([
         "*",
         "constraint/*.java",
+        "expression/*.java",
+        "schema/*.java",
         "variable/*.java",
-        "variable/builder/*.java",
-        "schema/*.java"
+        "variable/builder/*.java"
     ]),
     license_type = "apache-header",
 )

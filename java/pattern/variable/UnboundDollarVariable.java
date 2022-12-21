@@ -21,7 +21,10 @@
 
 package com.vaticle.typeql.lang.pattern.variable;
 
-import com.vaticle.typeql.lang.pattern.constraint.*;
+import com.vaticle.typeql.lang.pattern.constraint.ConceptConstraint;
+import com.vaticle.typeql.lang.pattern.constraint.Constraint;
+import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
+import com.vaticle.typeql.lang.pattern.constraint.TypeConstraint;
 import com.vaticle.typeql.lang.pattern.expression.Predicate;
 import com.vaticle.typeql.lang.pattern.variable.builder.ConceptVariableBuilder;
 import com.vaticle.typeql.lang.pattern.variable.builder.PredicateBuilder;
