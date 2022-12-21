@@ -35,12 +35,12 @@ import static com.vaticle.typeql.lang.common.exception.ErrorMessage.ILLEGAL_CONS
 public class EvaluableVariable extends BoundVariable {
     private EvaluableConstraint constraint;
 
-    public EvaluableVariable(Reference.NamedVal reference) {
+    public EvaluableVariable(Reference.Name.NamedVal reference) {
         super(reference);
         this.constraint = null;
     }
 
-    public EvaluableVariable(Reference.NamedVal reference, EvaluableConstraint constraint) {
+    public EvaluableVariable(Reference.Name.NamedVal reference, EvaluableConstraint constraint) {
         this(reference);
         constrain(constraint);
     }

@@ -48,7 +48,7 @@ public class UnboundDollarVariable extends UnboundVariable implements
     }
 
     public static UnboundDollarVariable named(String name) {
-        return new UnboundDollarVariable(Reference.name(name));
+        return new UnboundDollarVariable(Reference.namedDollar(name));
     }
 
     public static UnboundDollarVariable namedVal(String name) {

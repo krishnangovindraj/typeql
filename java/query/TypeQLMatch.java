@@ -188,8 +188,8 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
 
     private void eachPatternVariableHasNamedVariable(List<? extends Pattern> patterns) {
         patterns.forEach(pattern -> {
-            if (pattern.isVariable() && !pattern.asVariable().reference().isName() && !pattern.asVariable().reference().isNamedVal()
-                    && pattern.asVariable().variables().noneMatch(constraintVar -> constraintVar.reference().isName() || constraintVar.reference().isNamedVal())) {
+            if (pattern.isVariable() && !pattern.asVariable().reference().isName()
+                    && pattern.asVariable().variables().noneMatch(constraintVar -> constraintVar.reference().isName())) {
                 throw TypeQLException.of(MATCH_PATTERN_VARIABLE_HAS_NO_NAMED_VARIABLE.message(pattern));
             } else if (!pattern.isVariable()) {
                 eachPatternVariableHasNamedVariable(pattern.patterns());
@@ -202,7 +202,7 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
         for (UnboundVariable var : modifiers.filter) {
             if (!namedUnboundVariables().contains(var))
                 throw TypeQLException.of(VARIABLE_OUT_OF_SCOPE_MATCH.message(var));
-            if (!var.isNamed() && !var.reference().isNamedVal() ) throw TypeQLException.of(VARIABLE_NOT_NAMED.message(var)); // TODO: NamedVal
+            if (!var.isNamed()) throw TypeQLException.of(VARIABLE_NOT_NAMED.message(var)); // TODO: NamedVal
             if (duplicates.contains(var)) throw TypeQLException.of(ILLEGAL_FILTER_VARIABLE_REPEATING.message(var));
             else duplicates.add(var);
         }
