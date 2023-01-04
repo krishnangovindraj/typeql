@@ -30,7 +30,6 @@ import com.vaticle.typeql.lang.pattern.Pattern;
 import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
 import com.vaticle.typeql.lang.pattern.expression.EvaluableExpression;
 import com.vaticle.typeql.lang.pattern.expression.EvaluableExpression.Operation.OP;
-import com.vaticle.typeql.lang.pattern.expression.Predicate;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 import com.vaticle.typeql.lang.query.TypeQLDefine;
 import com.vaticle.typeql.lang.query.TypeQLDelete;
@@ -1113,7 +1112,7 @@ public class ParserTest {
                 valvar("d").assign(EvaluableExpression.op(OP.TIMES, EvaluableExpression.thingVar(var("a")), EvaluableExpression.constant(365)))
         );
         ThingVariable<?> thenPattern = var("x").has("days",
-                new ThingConstraint.Value(new Predicate.ValueVariable(TypeQLToken.Predicate.Equality.EQ, valvar("d").toEvaluable())));
+                new ThingConstraint.Predicate(new com.vaticle.typeql.lang.pattern.expression.Predicate.ValueVariable(TypeQLToken.Predicate.Equality.EQ, valvar("d").toEvaluable())));
         TypeQLDefine expected = define(rule("attach-val").when(whenPattern).then(thenPattern));
         final String query = "define\n" +
                 "rule attach-val:\n" +

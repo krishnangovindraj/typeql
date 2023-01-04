@@ -24,7 +24,6 @@ package com.vaticle.typeql.lang.pattern.constraint;
 import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.expression.EvaluableExpression;
-import com.vaticle.typeql.lang.pattern.expression.Predicate;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 
 import java.util.HashSet;
@@ -48,7 +47,7 @@ public abstract class EvaluableConstraint extends Constraint<BoundVariable> {
         return this;
     }
 
-    public boolean isValue() {
+    public boolean isPredicate() {
         return false;
     }
 
@@ -56,8 +55,8 @@ public abstract class EvaluableConstraint extends Constraint<BoundVariable> {
         return false;
     }
 
-    public Value<?> asValue() {
-        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(EvaluableConstraint.Value.class)));
+    public Predicate<?> asPredicate() {
+        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Predicate.class)));
     }
 
     public EvaluableConstraint.Expression asExpression() {
@@ -65,14 +64,14 @@ public abstract class EvaluableConstraint extends Constraint<BoundVariable> {
     }
 
 
-    public static class Value<T> extends EvaluableConstraint {
+    public static class Predicate<T> extends EvaluableConstraint {
 
-        private final Predicate<T> predicate;
+        private final com.vaticle.typeql.lang.pattern.expression.Predicate predicate;
         private final int hash;
 
-        public Value(Predicate<T> predicate) {
+        public Predicate(com.vaticle.typeql.lang.pattern.expression.Predicate predicate) {
             this.predicate = predicate;
-            this.hash = Objects.hash(Value.class, this.predicate);
+            this.hash = Objects.hash(Predicate.class, this.predicate);
         }
 
         @Override
@@ -81,16 +80,16 @@ public abstract class EvaluableConstraint extends Constraint<BoundVariable> {
         }
 
         @Override
-        public boolean isValue() {
+        public boolean isPredicate() {
             return true;
         }
 
         @Override
-        public Value<?> asValue() {
+        public Predicate<?> asPredicate() {
             return this;
         }
 
-        public Predicate predicate() {
+        public com.vaticle.typeql.lang.pattern.expression.Predicate predicate() {
             return predicate;
         }
 
@@ -103,7 +102,7 @@ public abstract class EvaluableConstraint extends Constraint<BoundVariable> {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            Value<?> that = (Value<?>) o;
+            Predicate<?> that = (Predicate<?>) o;
             return this.predicate.equals(that.predicate);
         }
 

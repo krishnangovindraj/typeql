@@ -47,7 +47,6 @@ import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 import com.vaticle.typeql.lang.pattern.variable.TypeVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundEvaluableVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundEvaluableVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
 import com.vaticle.typeql.lang.query.TypeQLDefine;
 import com.vaticle.typeql.lang.query.TypeQLDelete;
@@ -590,7 +589,7 @@ public class Parser extends TypeQLBaseVisitor {
         if (ctx.VAR_() != null) unbound = getVar(ctx.VAR_());
         else unbound = hidden();
 
-        ThingVariable.Attribute attribute = unbound.constrain(new ThingConstraint.Value(visitPredicate(ctx.predicate())));
+        ThingVariable.Attribute attribute = unbound.constrain(new ThingConstraint.Predicate(visitPredicate(ctx.predicate())));
         if (ctx.ISA_() != null) attribute = attribute.constrain(getIsaConstraint(ctx.ISA_(), ctx.type()));
 
         if (ctx.attributes() != null) {
@@ -625,7 +624,7 @@ public class Parser extends TypeQLBaseVisitor {
         if (ctx.label() != null) {
             if (ctx.VAR_() != null) return new ThingConstraint.Has(ctx.label().getText(), getVar(ctx.VAR_()));
             if (ctx.predicate() != null)
-                return new ThingConstraint.Has(ctx.label().getText(), new ThingConstraint.Value<>(visitPredicate(ctx.predicate())));
+                return new ThingConstraint.Has(ctx.label().getText(), new ThingConstraint.Predicate<>(visitPredicate(ctx.predicate())));
         } else if (ctx.VAR_() != null) return new ThingConstraint.Has(getVar(ctx.VAR_()));
         throw TypeQLException.of(ILLEGAL_GRAMMAR.message(ctx.getText()));
     }
@@ -689,7 +688,7 @@ public class Parser extends TypeQLBaseVisitor {
     // ATTRIBUTE OPERATION CONSTRUCTS ==========================================
 
     @Override
-    public Predicate<?> visitPredicate(TypeQLParser.PredicateContext ctx) {
+    public Predicate visitPredicate(TypeQLParser.PredicateContext ctx) {
         TypeQLToken.Predicate predicate;
         Object value;
 
@@ -792,7 +791,7 @@ public class Parser extends TypeQLBaseVisitor {
     public EvaluableVariable visitVariable_evaluable(TypeQLParser.Variable_evaluableContext ctx) {
         UnboundEvaluableVariable ownerBuilder = getValVar(ctx.EVAR_());
         if (ctx.predicate() != null) {
-            return ownerBuilder.constrain(new EvaluableConstraint.Value(visitPredicate(ctx.predicate())));
+            return ownerBuilder.constrain(new EvaluableConstraint.Predicate(visitPredicate(ctx.predicate())));
         } else if (ctx.ASSIGN() != null) {
             return ownerBuilder.constrain(new EvaluableConstraint.Expression(visitExpr(ctx.expr())));
         } else throw TypeQLException.of(ILLEGAL_STATE);

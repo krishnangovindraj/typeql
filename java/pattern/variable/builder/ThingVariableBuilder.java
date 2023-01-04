@@ -23,7 +23,6 @@ package com.vaticle.typeql.lang.pattern.variable.builder;
 
 import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
-import com.vaticle.typeql.lang.pattern.expression.Predicate;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
 
@@ -59,27 +58,27 @@ public interface ThingVariableBuilder {
         }
 
         default T has(String type, long value) {
-            return has(type, new ThingConstraint.Value(new Predicate.Long(EQ, value)));
+            return has(type, new ThingConstraint.Predicate(new com.vaticle.typeql.lang.pattern.expression.Predicate.Long(EQ, value)));
         }
 
         default T has(String type, double value) {
-            return has(type, new ThingConstraint.Value(new Predicate.Double(EQ, value)));
+            return has(type, new ThingConstraint.Predicate(new com.vaticle.typeql.lang.pattern.expression.Predicate.Double(EQ, value)));
         }
 
         default T has(String type, boolean value) {
-            return has(type, new ThingConstraint.Value(new Predicate.Boolean(EQ, value)));
+            return has(type, new ThingConstraint.Predicate(new com.vaticle.typeql.lang.pattern.expression.Predicate.Boolean(EQ, value)));
         }
 
         default T has(String type, String value) {
-            return has(type, new ThingConstraint.Value(new Predicate.String(EQ, value)));
+            return has(type, new ThingConstraint.Predicate(new com.vaticle.typeql.lang.pattern.expression.Predicate.String(EQ, value)));
         }
 
         default T has(String type, LocalDateTime value) {
-            return has(type, new ThingConstraint.Value(new Predicate.DateTime(EQ, value)));
+            return has(type, new ThingConstraint.Predicate(new com.vaticle.typeql.lang.pattern.expression.Predicate.DateTime(EQ, value)));
         }
 
-        default T has(String type, ThingConstraint.Value<?> value) {
-            return constrain(new ThingConstraint.Has(type, value));
+        default T has(String type, ThingConstraint.Predicate<?> predicate) {
+            return constrain(new ThingConstraint.Has(type, predicate));
         }
 
         default T has(String type, UnboundDollarVariable variable) {
@@ -130,6 +129,6 @@ public interface ThingVariableBuilder {
     }
 
     interface Attribute {
-        ThingVariable.Attribute constrain(ThingConstraint.Value<?> constraint);
+        ThingVariable.Attribute constrain(ThingConstraint.Predicate<?> constraint);
     }
 }

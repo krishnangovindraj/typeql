@@ -25,7 +25,6 @@ import com.vaticle.typedb.common.collection.Either;
 import com.vaticle.typedb.common.collection.Pair;
 import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
-import com.vaticle.typeql.lang.pattern.expression.Predicate;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 import com.vaticle.typeql.lang.pattern.variable.TypeVariable;
@@ -86,7 +85,7 @@ public abstract class ThingConstraint extends Constraint<BoundVariable> {
         return false;
     }
 
-    public boolean isValue() {
+    public boolean isPredicate() {
         return false;
     }
 
@@ -106,8 +105,8 @@ public abstract class ThingConstraint extends Constraint<BoundVariable> {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Isa.class)));
     }
 
-    public Value<?> asValue() {
-        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Value.class)));
+    public Predicate<?> asPredicate() {
+        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Predicate.class)));
     }
 
     public ThingConstraint.Relation asRelation() {
@@ -411,8 +410,8 @@ public abstract class ThingConstraint extends Constraint<BoundVariable> {
         private final ThingVariable<?> attribute;
         private final int hash;
 
-        public Has(String type, ThingConstraint.Value<?> value) {
-            this(hidden().type(type), hidden().constrain(value));
+        public Has(String type, Predicate<?> predicate) {
+            this(hidden().type(type), hidden().constrain(predicate));
         }
 
         public Has(String type, UnboundDollarVariable var) {
@@ -471,14 +470,14 @@ public abstract class ThingConstraint extends Constraint<BoundVariable> {
         }
     }
 
-    public static class Value<T> extends ThingConstraint {
+    public static class Predicate<T> extends ThingConstraint {
 
-        private final Predicate<T> predicate;
+        private final com.vaticle.typeql.lang.pattern.expression.Predicate predicate;
         private final int hash;
 
-        public Value(Predicate predicate) {
+        public Predicate(com.vaticle.typeql.lang.pattern.expression.Predicate predicate) {
             this.predicate = predicate;
-            this.hash = Objects.hash(Value.class, predicate);
+            this.hash = Objects.hash(Predicate.class, predicate);
         }
 
         @Override
@@ -487,16 +486,16 @@ public abstract class ThingConstraint extends Constraint<BoundVariable> {
         }
 
         @Override
-        public boolean isValue() {
+        public boolean isPredicate() {
             return true;
         }
 
         @Override
-        public Value<?> asValue() {
+        public Predicate<?> asPredicate() {
             return this;
         }
 
-        public Predicate predicate() {
+        public com.vaticle.typeql.lang.pattern.expression.Predicate predicate() {
             return predicate;
         }
 
@@ -509,7 +508,7 @@ public abstract class ThingConstraint extends Constraint<BoundVariable> {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            Value<?> that = (Value<?>) o;
+            Predicate<?> that = (Predicate<?>) o;
             return (this.predicate.equals(that.predicate));
         }
 

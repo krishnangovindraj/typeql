@@ -24,7 +24,6 @@ package com.vaticle.typeql.lang.pattern.variable;
 import com.vaticle.typeql.lang.pattern.constraint.Constraint;
 import com.vaticle.typeql.lang.pattern.constraint.EvaluableConstraint;
 import com.vaticle.typeql.lang.pattern.expression.EvaluableExpression;
-import com.vaticle.typeql.lang.pattern.expression.Predicate;
 import com.vaticle.typeql.lang.pattern.variable.builder.PredicateBuilder;
 
 import java.util.List;
@@ -52,11 +51,11 @@ public class UnboundEvaluableVariable extends UnboundVariable implements Predica
         return constrain(new EvaluableConstraint.Expression(assignment));
     }
 
-    public EvaluableVariable constrain(Predicate<?> predicate) {
-        return constrain(new EvaluableConstraint.Value<>(predicate));
+    public EvaluableVariable constrain(com.vaticle.typeql.lang.pattern.expression.Predicate predicate) {
+        return constrain(new EvaluableConstraint.Predicate<>(predicate));
     }
 
-    public EvaluableVariable constrain(EvaluableConstraint.Value<?> constraint) {
+    public EvaluableVariable constrain(EvaluableConstraint.Predicate<?> constraint) {
         return new EvaluableVariable(reference.asNamedVal(), constraint);
     }
 
