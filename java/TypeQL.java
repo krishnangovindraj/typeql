@@ -31,6 +31,7 @@ import com.vaticle.typeql.lang.pattern.Disjunction;
 import com.vaticle.typeql.lang.pattern.Negation;
 import com.vaticle.typeql.lang.pattern.Pattern;
 import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
+import com.vaticle.typeql.lang.pattern.expression.Predicate;
 import com.vaticle.typeql.lang.pattern.schema.Rule;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.ValueVariable;
@@ -203,178 +204,178 @@ public class TypeQL {
     }
 
     public static ThingConstraint.Predicate<Long> eq(long value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Long(EQ, value));
+        return new ThingConstraint.Predicate<>(new Predicate.Long(EQ, value));
     }
 
     public static ThingConstraint.Predicate<Double> eq(double value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Double(EQ, value));
+        return new ThingConstraint.Predicate<>(new Predicate.Double(EQ, value));
     }
 
     public static ThingConstraint.Predicate<Boolean> eq(boolean value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Boolean(EQ, value));
+        return new ThingConstraint.Predicate<>(new Predicate.Boolean(EQ, value));
     }
 
     public static ThingConstraint.Predicate<String> eq(String value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.String(EQ, value));
+        return new ThingConstraint.Predicate<>(new Predicate.String(EQ, value));
     }
 
     public static ThingConstraint.Predicate<LocalDateTime> eq(LocalDateTime value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.DateTime(EQ, value));
+        return new ThingConstraint.Predicate<>(new Predicate.DateTime(EQ, value));
     }
 
     public static ThingConstraint.Predicate<ThingVariable<?>> eq(UnboundDollarVariable variable) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.ThingVariable(EQ, variable.toThing()));
+        return new ThingConstraint.Predicate<>(new Predicate.ThingVariable(EQ, variable.toThing()));
     }
 
     public static ThingConstraint.Predicate<ValueVariable> eq(UnboundValueVariable variable) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.ValueVariable(EQ, variable.toValue()));
+        return new ThingConstraint.Predicate<>(new Predicate.ValueVariable(EQ, variable.toValue()));
     }
     
     public static ThingConstraint.Predicate<Long> neq(long value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Long(NEQ, value));
+        return new ThingConstraint.Predicate<>(new Predicate.Long(NEQ, value));
     }
 
     public static ThingConstraint.Predicate<Double> neq(double value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Double(NEQ, value));
+        return new ThingConstraint.Predicate<>(new Predicate.Double(NEQ, value));
     }
 
     public static ThingConstraint.Predicate<Boolean> neq(boolean value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Boolean(NEQ, value));
+        return new ThingConstraint.Predicate<>(new Predicate.Boolean(NEQ, value));
     }
 
     public static ThingConstraint.Predicate<String> neq(String value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.String(NEQ, value));
+        return new ThingConstraint.Predicate<>(new Predicate.String(NEQ, value));
     }
 
     public static ThingConstraint.Predicate<LocalDateTime> neq(LocalDateTime value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.DateTime(NEQ, value));
+        return new ThingConstraint.Predicate<>(new Predicate.DateTime(NEQ, value));
     }
 
     public static ThingConstraint.Predicate<ThingVariable<?>> neq(UnboundDollarVariable variable) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.ThingVariable(NEQ, variable.toThing()));
+        return new ThingConstraint.Predicate<>(new Predicate.ThingVariable(NEQ, variable.toThing()));
     }
 
     public static ThingConstraint.Predicate<ValueVariable> neq(UnboundValueVariable variable) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.ValueVariable(NEQ, variable.toValue()));
+        return new ThingConstraint.Predicate<>(new Predicate.ValueVariable(NEQ, variable.toValue()));
     }
 
     public static ThingConstraint.Predicate<Long> gt(long value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Long(GT, value));
+        return new ThingConstraint.Predicate<>(new Predicate.Long(GT, value));
     }
 
     public static ThingConstraint.Predicate<Double> gt(double value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Double(GT, value));
+        return new ThingConstraint.Predicate<>(new Predicate.Double(GT, value));
     }
 
     public static ThingConstraint.Predicate<Boolean> gt(boolean value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Boolean(GT, value));
+        return new ThingConstraint.Predicate<>(new Predicate.Boolean(GT, value));
     }
 
     public static ThingConstraint.Predicate<String> gt(String value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.String(GT, value));
+        return new ThingConstraint.Predicate<>(new Predicate.String(GT, value));
     }
 
     public static ThingConstraint.Predicate<LocalDateTime> gt(LocalDateTime value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.DateTime(GT, value));
+        return new ThingConstraint.Predicate<>(new Predicate.DateTime(GT, value));
     }
 
     public static ThingConstraint.Predicate<ThingVariable<?>> gt(UnboundDollarVariable variable) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.ThingVariable(GT, variable.toThing()));
+        return new ThingConstraint.Predicate<>(new Predicate.ThingVariable(GT, variable.toThing()));
     }
 
     public static ThingConstraint.Predicate<ValueVariable> gt(UnboundValueVariable variable) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.ValueVariable(GT, variable.toValue()));
+        return new ThingConstraint.Predicate<>(new Predicate.ValueVariable(GT, variable.toValue()));
     }
 
     public static ThingConstraint.Predicate<Long> gte(long value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Long(GTE, value));
+        return new ThingConstraint.Predicate<>(new Predicate.Long(GTE, value));
     }
 
     public static ThingConstraint.Predicate<Double> gte(double value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Double(GTE, value));
+        return new ThingConstraint.Predicate<>(new Predicate.Double(GTE, value));
     }
 
     public static ThingConstraint.Predicate<Boolean> gte(boolean value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Boolean(GTE, value));
+        return new ThingConstraint.Predicate<>(new Predicate.Boolean(GTE, value));
     }
 
     public static ThingConstraint.Predicate<String> gte(String value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.String(GTE, value));
+        return new ThingConstraint.Predicate<>(new Predicate.String(GTE, value));
     }
 
     public static ThingConstraint.Predicate<LocalDateTime> gte(LocalDateTime value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.DateTime(GTE, value));
+        return new ThingConstraint.Predicate<>(new Predicate.DateTime(GTE, value));
     }
 
     public static ThingConstraint.Predicate<ThingVariable<?>> gte(UnboundDollarVariable variable) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.ThingVariable(GTE, variable.toThing()));
+        return new ThingConstraint.Predicate<>(new Predicate.ThingVariable(GTE, variable.toThing()));
     }
 
     public static ThingConstraint.Predicate<ValueVariable> gte(UnboundValueVariable variable) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.ValueVariable(GTE, variable.toValue()));
+        return new ThingConstraint.Predicate<>(new Predicate.ValueVariable(GTE, variable.toValue()));
     }
 
     public static ThingConstraint.Predicate<Long> lt(long value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Long(LT, value));
+        return new ThingConstraint.Predicate<>(new Predicate.Long(LT, value));
     }
 
     public static ThingConstraint.Predicate<Double> lt(double value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Double(LT, value));
+        return new ThingConstraint.Predicate<>(new Predicate.Double(LT, value));
     }
 
     public static ThingConstraint.Predicate<Boolean> lt(boolean value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Boolean(LT, value));
+        return new ThingConstraint.Predicate<>(new Predicate.Boolean(LT, value));
     }
 
     public static ThingConstraint.Predicate<String> lt(String value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.String(LT, value));
+        return new ThingConstraint.Predicate<>(new Predicate.String(LT, value));
     }
 
     public static ThingConstraint.Predicate<LocalDateTime> lt(LocalDateTime value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.DateTime(LT, value));
+        return new ThingConstraint.Predicate<>(new Predicate.DateTime(LT, value));
     }
 
     public static ThingConstraint.Predicate<ThingVariable<?>> lt(UnboundDollarVariable variable) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.ThingVariable(LT, variable.toThing()));
+        return new ThingConstraint.Predicate<>(new Predicate.ThingVariable(LT, variable.toThing()));
     }
 
     public static ThingConstraint.Predicate<ValueVariable> lt(UnboundValueVariable variable) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.ValueVariable(LT, variable.toValue()));
+        return new ThingConstraint.Predicate<>(new Predicate.ValueVariable(LT, variable.toValue()));
     }
 
     public static ThingConstraint.Predicate<Long> lte(long value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Long(LTE, value));
+        return new ThingConstraint.Predicate<>(new Predicate.Long(LTE, value));
     }
 
     public static ThingConstraint.Predicate<Double> lte(double value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Double(LTE, value));
+        return new ThingConstraint.Predicate<>(new Predicate.Double(LTE, value));
     }
 
     public static ThingConstraint.Predicate<Boolean> lte(boolean value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Boolean(LTE, value));
+        return new ThingConstraint.Predicate<>(new Predicate.Boolean(LTE, value));
     }
 
     public static ThingConstraint.Predicate<String> lte(String value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.String(LTE, value));
+        return new ThingConstraint.Predicate<>(new Predicate.String(LTE, value));
     }
 
     public static ThingConstraint.Predicate<LocalDateTime> lte(LocalDateTime value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.DateTime(LTE, value));
+        return new ThingConstraint.Predicate<>(new Predicate.DateTime(LTE, value));
     }
 
     public static ThingConstraint.Predicate<ThingVariable<?>> lte(UnboundDollarVariable variable) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.ThingVariable(LTE, variable.toThing()));
+        return new ThingConstraint.Predicate<>(new Predicate.ThingVariable(LTE, variable.toThing()));
     }
 
     public static ThingConstraint.Predicate<ValueVariable> lte(UnboundValueVariable variable) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.ValueVariable(LTE, variable.toValue()));
+        return new ThingConstraint.Predicate<>(new Predicate.ValueVariable(LTE, variable.toValue()));
     }
 
     public static ThingConstraint.Predicate<String> contains(String value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.String(CONTAINS, value));
+        return new ThingConstraint.Predicate<>(new Predicate.String(CONTAINS, value));
     }
 
     public static ThingConstraint.Predicate<String> like(String value) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.String(LIKE, value));
+        return new ThingConstraint.Predicate<>(new Predicate.String(LIKE, value));
     }
 }
