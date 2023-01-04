@@ -33,7 +33,7 @@ public class UnboundValueVariable extends UnboundVariable implements PredicateBu
         assert reference.isNamedValue();
     }
 
-    public static UnboundValueVariable namedValue(String name) {
+    public static UnboundValueVariable named(String name) {
         return new UnboundValueVariable(Reference.namedValue(name));
     }
 

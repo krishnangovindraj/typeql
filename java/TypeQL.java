@@ -172,7 +172,7 @@ public class TypeQL {
     }
 
     public static UnboundValueVariable valvar(String name) {
-        return UnboundValueVariable.namedValue(name);
+        return UnboundValueVariable.named(name);
     }
 
     public static TypeVariable type(TypeQLToken.Type type) {
