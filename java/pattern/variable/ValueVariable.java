@@ -45,7 +45,9 @@ public class ValueVariable extends BoundVariable {
     }
 
     public ValueVariable constrain(ValueConstraint constraint) {
-        if (this.constraint != null) {throw TypeQLException.of(ILLEGAL_CONSTRAINT_REPETITION.message(reference, ValueConstraint.class, constraint));}
+        if (this.constraint != null) {
+            throw TypeQLException.of(ILLEGAL_CONSTRAINT_REPETITION.message(reference, ValueConstraint.class, constraint));
+        }
         this.constraint = constraint;
         return this;
     }
@@ -56,7 +58,9 @@ public class ValueVariable extends BoundVariable {
     }
 
     @Override
-    public boolean isValue() { return true; }
+    public boolean isValue() {
+        return true;
+    }
 
     @Override
     public ValueVariable asValue() {
@@ -65,7 +69,7 @@ public class ValueVariable extends BoundVariable {
 
     @Override
     public String toString(boolean pretty) {
-        return reference().syntax() + ((constraint!=null)? SPACE + constraint.toString() : "");
+        return reference().syntax() + ((constraint != null) ? SPACE + constraint.toString() : "");
     }
 
     @Override
@@ -73,11 +77,13 @@ public class ValueVariable extends BoundVariable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ValueVariable that = (ValueVariable) o;
-        return (this.reference.equals(that.reference)); // TODO: // && set(this.constraints).equals(set(that.constraints)));
+        return this.reference.equals(that.reference) && (
+                (this.constraint == null && that.constraint == null) ||
+                        (this.constraint.equals(that.constraint)));
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(reference); //TODO: //, constraints);
+        return Objects.hash(reference, constraint);
     }
 }

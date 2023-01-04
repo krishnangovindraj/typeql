@@ -32,6 +32,7 @@ import com.vaticle.typeql.lang.pattern.variable.UnboundValueVariable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.vaticle.typedb.common.collection.Collections.list;
@@ -144,18 +145,13 @@ public abstract class Expression {
 
     protected abstract void collectVariables(Set<BoundVariable> collector);
 
+    @Override
+    public abstract boolean equals(Object o);
+
+    @Override
+    public abstract int hashCode();
+
     public static class Operation extends Expression {
-
-        @Override
-        protected void collectVariables(Set<BoundVariable> collector) {
-            a.collectVariables(collector);
-            b.collectVariables(collector);
-        }
-
-        @Override
-        public String toString() {
-            return a.toString() + " " + op.symbol + " " + b.toString();
-        }
 
         public enum OP {
             POW("^"), TIMES("*"), DIV("/"), PLUS("+"), MINUS("-");
@@ -173,11 +169,13 @@ public abstract class Expression {
         private final OP op;
         private final Expression a;
         private final Expression b;
+        private final int hash;
 
         public Operation(OP op, Expression a, Expression b) {
             this.op = op;
             this.a = a;
             this.b = b;
+            this.hash = Objects.hash(op, a, b);
         }
 
         public OP operator() {
@@ -197,15 +195,41 @@ public abstract class Expression {
         public Operation asOperation() {
             return this;
         }
+
+        @Override
+        protected void collectVariables(Set<BoundVariable> collector) {
+            a.collectVariables(collector);
+            b.collectVariables(collector);
+        }
+
+        @Override
+        public String toString() {
+            return a.toString() + " " + op.symbol + " " + b.toString();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Operation that = (Operation) o;
+            return (this.op.equals(that.op) && this.a.equals(that.a) && this.b.equals(that.b));
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
     }
 
     public static class Function extends Expression {
         private final String symbol;
         private final List<Expression> argList;
+        private final int hash;
 
         public Function(String symbol, List<Expression> argList) {
             this.symbol = symbol;
             this.argList = argList;
+            this.hash = Objects.hash(this.symbol, this.argList);
         }
 
         public String symbol() {
@@ -235,13 +259,28 @@ public abstract class Expression {
         public String toString() {
             return symbol + "(" + argList.stream().map(e -> e.toString()).collect(COMMA_SPACE.joiner()) + ")";
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Function that = (Function) o;
+            return (this.symbol.equals(that.symbol) && this.argList.equals(that.argList));
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
     }
 
     public static class ThingVar extends Expression {
         private final ThingVariable variable;
+        private final int hash;
 
         public ThingVar(ThingVariable variable) {
             this.variable = variable;
+            this.hash = Objects.hash(ThingVar.class, variable);
         }
 
         public ThingVariable variable() {
@@ -267,13 +306,28 @@ public abstract class Expression {
         public String toString() {
             return variable.reference().toString();
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ThingVar that = (ThingVar) o;
+            return this.variable.equals(that.variable);
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
     }
 
     public static class ValVar extends Expression {
         private final ValueVariable variable;
+        private final int hash;
 
         public ValVar(ValueVariable variable) {
             this.variable = variable;
+            this.hash = Objects.hash(ValVar.class, variable);
         }
 
         public ValueVariable variable() {
@@ -299,9 +353,21 @@ public abstract class Expression {
         public String toString() {
             return variable.reference().toString();
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ValVar that = (ValVar) o;
+            return this.variable.equals(that.variable);
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
     }
 
-    // TODO: Improve
     public abstract static class Constant<T> extends Expression {
         T value;
 
@@ -321,7 +387,7 @@ public abstract class Expression {
 
         @Override
         protected void collectVariables(Set<BoundVariable> collector) {
-        } // Nothing to do
+        }
 
         @Override
         public java.lang.String toString() {
@@ -370,6 +436,19 @@ public abstract class Expression {
 
         public DateTime asDateTime() {
             throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(DateTime.class)));
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Constant<?> that = (Constant<?>) o;
+            return this.value.equals(that.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
         }
 
         public static class Long extends Constant<java.lang.Long> {
@@ -456,9 +535,11 @@ public abstract class Expression {
 
     public static class Bracketed extends Expression {
         private final Expression nestedExpression;
+        private final int hash;
 
         public Bracketed(Expression nestedExpression) {
             this.nestedExpression = nestedExpression;
+            this.hash = Objects.hash(Bracketed.class, nestedExpression);
         }
 
         public Expression nestedExpression() {
@@ -483,6 +564,19 @@ public abstract class Expression {
         @Override
         public String toString() {
             return "( " + nestedExpression.toString() + " )";
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Bracketed that = (Bracketed) o;
+            return this.nestedExpression.equals(that.nestedExpression);
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
         }
     }
 }

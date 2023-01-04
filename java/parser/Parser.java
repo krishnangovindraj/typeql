@@ -813,7 +813,7 @@ public class Parser extends TypeQLBaseVisitor {
             return visitFunc(ctx.func());
         } else if (ctx.LPAREN() != null || ctx.RPAREN() != null) {
             assert ctx.LPAREN() != null && ctx.RPAREN() != null;
-            return visitExpr(ctx.expr(0));
+            return new Expression.Bracketed(visitExpr(ctx.expr(0)));
         } else if (ctx.VAR_() != null) {
             return new Expression.ThingVar(getVar(ctx.VAR_()).toThing());
         } else if (ctx.EVAR_() != null) {

@@ -202,7 +202,7 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
         for (UnboundVariable var : modifiers.filter) {
             if (!namedUnboundVariables().contains(var))
                 throw TypeQLException.of(VARIABLE_OUT_OF_SCOPE_MATCH.message(var));
-            if (!var.isNamed()) throw TypeQLException.of(VARIABLE_NOT_NAMED.message(var)); // TODO: NamedVal
+            if (!var.isNamed()) throw TypeQLException.of(VARIABLE_NOT_NAMED.message(var));
             if (duplicates.contains(var)) throw TypeQLException.of(ILLEGAL_FILTER_VARIABLE_REPEATING.message(var));
             else duplicates.add(var);
         }

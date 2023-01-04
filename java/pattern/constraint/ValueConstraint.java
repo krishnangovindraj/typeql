@@ -114,11 +114,13 @@ public abstract class ValueConstraint extends Constraint<BoundVariable> {
     public static class Expression extends ValueConstraint {
         private final com.vaticle.typeql.lang.pattern.expression.Expression expression;
         private final Set<BoundVariable> inputs;
+        private final int hash;
 
         public Expression(com.vaticle.typeql.lang.pattern.expression.Expression expression) {
             this.expression = expression;
             this.inputs = new HashSet<>();
             expression.variables().forEach(v -> this.inputs.add(v));
+            this.hash = Objects.hash(Expression.class, this.expression);
         }
 
         public com.vaticle.typeql.lang.pattern.expression.Expression expression() { return expression; }
@@ -139,6 +141,19 @@ public abstract class ValueConstraint extends Constraint<BoundVariable> {
         @Override
         public String toString() {
             return TypeQLToken.Char.ASSIGN.toString() + SPACE + this.expression.toString();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Expression that = (Expression) o;
+            return this.expression.equals(that.expression);
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
         }
     }
 }
