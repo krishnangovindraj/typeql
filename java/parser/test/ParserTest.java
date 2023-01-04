@@ -292,7 +292,7 @@ public class ParserTest {
 
     @Test
     public void testValueEqualsVariableQuery() {
-        final String query = "match\n$s1 = $s2;";
+        final String query = "match\n$s1 == $s2;";
         TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
         TypeQLMatch expected = match(var("s1").eq(var("s2")));
 
@@ -419,8 +419,8 @@ public class ParserTest {
                 "$x isa commodity,\n" +
                 "    has price $p;\n" +
                 "(commodity: $x, qty: $q) isa order;\n" +
-                "?net := $p * $q;\n" +
-                "?gross := ?net * ( 1.0 + 0.21 );";
+                "?net = $p * $q;\n" +
+                "?gross = ?net * ( 1.0 + 0.21 );";
         TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
         TypeQLMatch expected = match(
                 var("x").isa("commodity").has("price", var("p")),
@@ -436,7 +436,7 @@ public class ParserTest {
     @Test
     public void testOpPrecedence() {
         final String query = "match\n" +
-                "?res := $a / $b * $c + $d ^ $e / $f;";
+                "?res = $a / $b * $c + $d ^ $e / $f;";
         TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
         TypeQLMatch expected = match(
                 valvar("res").assign(
@@ -456,7 +456,7 @@ public class ParserTest {
     @Test
     public void testFuncParenthesisPrecedence() {
         final String query = "match\n" +
-                "?res := $a + ( foo($b + ?c) + $d ) * ?e;";
+                "?res = $a + ( foo($b + ?c) + $d ) * ?e;";
         TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
         TypeQLMatch expected = match(
                 valvar("res").assign(
@@ -478,8 +478,8 @@ public class ParserTest {
                 "$x isa commodity,\n" +
                 "    has price $p;\n" +
                 "(commodity: $x, qty: $q) isa order;\n" +
-                "?net := $p * $q;\n" +
-                "?gross := percentOf(?net, 100.0 + 21.0);" +
+                "?net = $p * $q;\n" +
+                "?gross = percentOf(?net, 100.0 + 21.0);" +
                 "";
         TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
         TypeQLMatch expected = match(
@@ -1104,7 +1104,7 @@ public class ParserTest {
                 "rule attach-val:\n" +
                 "    when {\n" +
                 "        $x has age $a;\n" +
-                "        ?d := $a * 365;\n" +
+                "        ?d = $a * 365;\n" +
                 "    }\n" +
                 "    then {\n" +
                 "        $x has days ?d;\n" +

@@ -138,7 +138,7 @@ public class TypeQLToken {
         NEW_LINE("\n"),
         INDENTATION("    "),
         UNDERSCORE("_"),
-        ASSIGN(":="),
+        ASSIGN("="),
         $_("$_"),
         $("$");
 
@@ -212,7 +212,7 @@ public class TypeQLToken {
         }
 
         enum Equality implements Predicate {
-            EQ("="),
+            EQ("=="),
             NEQ("!="),
             GT(">"),
             GTE(">="),

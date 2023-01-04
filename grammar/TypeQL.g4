@@ -247,7 +247,7 @@ OR              : 'or'          ;   NOT             : 'not'         ;
 
 // PREDICATE KEYWORDS
 
-EQ              : '='           ;   NEQ             : '!='          ;
+EQ              : '=='           ;   NEQ             : '!='          ;
 GT              : '>'           ;   GTE             : '>='          ;
 LT              : '<'           ;   LTE             : '<='          ;
 LIKE            : 'like'        ;   CONTAINS        : 'contains'    ;
@@ -292,7 +292,7 @@ POW                 : '^'         ;
 DIV                 : '/'         ;     TIMES               : '*'         ;
 PLUS                : '+'         ;     MINUS               : '-'         ;
 LPAREN              : '('         ;     RPAREN              : ')'         ;
-ASSIGN              : ':=';
+ASSIGN              : '=';
 
 variable_value            : EVAR_ predicate
                           | EVAR_ ASSIGN expr;
