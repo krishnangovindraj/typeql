@@ -74,7 +74,7 @@ public class Conjunction<T extends Pattern> implements Pattern {
     }
 
     public Stream<UnboundValueVariable> namedUnboundValueVariables() {
-        return variables().filter(v -> v.isValue()).map(v -> UnboundValueVariable.namedVal(v.name())).distinct();
+        return variables().filter(v -> v.isValue()).map(v -> UnboundValueVariable.namedValue(v.name())).distinct();
     }
 
     public Stream<UnboundDollarVariable> namedUnboundDollarVariables() {

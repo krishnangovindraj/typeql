@@ -84,8 +84,8 @@ public abstract class Variable {
         switch (reference.type()) {
             case NAMED_DOLLAR:
                 return reference.asNamedDollar().name();
-            case NAMED_VAL:
-                return reference.asNamedVal().name();
+            case NAMED_VALUE:
+                return reference.asNamedValue().name();
             case LABEL:
             case ANONYMOUS:
                 return null;

@@ -50,10 +50,6 @@ public class UnboundDollarVariable extends UnboundVariable implements
         return new UnboundDollarVariable(Reference.namedDollar(name));
     }
 
-    public static UnboundDollarVariable namedVal(String name) {
-        return new UnboundDollarVariable(Reference.namedVal(name));
-    }
-
     public static UnboundDollarVariable anonymous() {
         return new UnboundDollarVariable(Reference.anonymous(true));
     }

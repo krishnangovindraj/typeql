@@ -30,11 +30,11 @@ import java.util.List;
 public class UnboundValueVariable extends UnboundVariable implements PredicateBuilder<ValueVariable> {
     private UnboundValueVariable(Reference reference) {
         super(reference);
-        assert reference.isNamedVal();
+        assert reference.isNamedValue();
     }
 
-    public static UnboundValueVariable namedVal(String name) {
-        return new UnboundValueVariable(Reference.namedVal(name));
+    public static UnboundValueVariable namedValue(String name) {
+        return new UnboundValueVariable(Reference.namedValue(name));
     }
 
     @Override
@@ -56,15 +56,15 @@ public class UnboundValueVariable extends UnboundVariable implements PredicateBu
     }
 
     public ValueVariable constrain(ValueConstraint.Predicate<?> constraint) {
-        return new ValueVariable(reference.asNamedVal(), constraint);
+        return new ValueVariable(reference.asNamedValue(), constraint);
     }
 
     public ValueVariable constrain(ValueConstraint.Expression constraint) {
-        return new ValueVariable(reference.asNamedVal(), constraint);
+        return new ValueVariable(reference.asNamedValue(), constraint);
     }
 
     public ValueVariable toValue() {
-        return new ValueVariable(reference.asNamedVal());
+        return new ValueVariable(reference.asNamedValue());
     }
 
     @Override

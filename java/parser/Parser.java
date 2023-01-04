@@ -201,7 +201,7 @@ public class Parser extends TypeQLBaseVisitor {
     private UnboundValueVariable getValVar(TerminalNode variable) {
         // Remove '?' prefix
         String name = variable.getSymbol().getText().substring(1);
-        return UnboundValueVariable.namedVal(name);
+        return UnboundValueVariable.namedValue(name);
     }
     // PARSER VISITORS =========================================================
 

@@ -36,7 +36,7 @@ public abstract class Reference {
     final Type type;
     final boolean isVisible;
 
-    enum Type {NAMED_DOLLAR, LABEL, ANONYMOUS, NAMED_VAL}
+    enum Type {NAMED_DOLLAR, LABEL, ANONYMOUS, NAMED_VALUE}
 
     Reference(Type type, boolean isVisible) {
         this.type = type;
@@ -47,8 +47,8 @@ public abstract class Reference {
         return new Name.NamedDollar(name);
     }
 
-    public static Reference.Name.NamedVal namedVal(String name) {
-        return new Name.NamedVal(name);
+    public static Name.NamedValue namedValue(String name) {
+        return new Name.NamedValue(name);
     }
 
     public static Reference.Label label(String label) {
@@ -78,15 +78,15 @@ public abstract class Reference {
     }
 
     public boolean isName() {
-        return isNamedDollar() || isNamedVal();
+        return isNamedDollar() || isNamedValue();
     }
 
     public boolean isNamedDollar() {
         return type == Type.NAMED_DOLLAR;
     }
 
-    public boolean isNamedVal() {
-        return type == Type.NAMED_VAL;
+    public boolean isNamedValue() {
+        return type == Type.NAMED_VALUE;
     }
 
     public boolean isLabel() {
@@ -109,8 +109,8 @@ public abstract class Reference {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Name.NamedDollar.class)));
     }
 
-    public Reference.Name.NamedVal asNamedVal() {
-        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Name.NamedVal.class)));
+    public Name.NamedValue asNamedValue() {
+        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Name.NamedValue.class)));
     }
 
     public Reference.Label asLabel() {
@@ -195,14 +195,14 @@ public abstract class Reference {
             }
         }
 
-        public static class NamedVal extends Name {
+        public static class NamedValue extends Name {
 
             private static final Pattern REGEX = Pattern.compile("[a-zA-Z0-9][a-zA-Z0-9_-]*");
             protected final String name;
             private final int hash;
 
-            protected NamedVal(String name) {
-                super(Type.NAMED_VAL, true);
+            protected NamedValue(String name) {
+                super(Type.NAMED_VALUE, true);
                 if (!REGEX.matcher(name).matches()) {
                     throw TypeQLException.of(INVALID_VARIABLE_NAME.message(name, REGEX.toString()));
                 }
@@ -216,12 +216,12 @@ public abstract class Reference {
             }
 
             @Override
-            public boolean isNamedVal() {
+            public boolean isNamedValue() {
                 return true;
             }
 
             @Override
-            public NamedVal asNamedVal() {
+            public NamedValue asNamedValue() {
                 return this;
             }
 
@@ -229,7 +229,7 @@ public abstract class Reference {
             public boolean equals(Object o) {
                 if (this == o) return true;
                 if (o == null || getClass() != o.getClass()) return false;
-                NamedVal that = (NamedVal) o;
+                NamedValue that = (NamedValue) o;
                 return (this.type == that.type &&
                         this.isVisible == that.isVisible &&
                         this.name.equals(that.name));
