@@ -1112,7 +1112,7 @@ public class ParserTest {
                 valvar("d").assign(EvaluableExpression.op(OP.TIMES, EvaluableExpression.thingVar(var("a")), EvaluableExpression.constant(365)))
         );
         ThingVariable<?> thenPattern = var("x").has("days",
-                new ThingConstraint.Predicate(new com.vaticle.typeql.lang.pattern.expression.Predicate.ValueVariable(TypeQLToken.Predicate.Equality.EQ, valvar("d").toEvaluable())));
+                new ThingConstraint.Predicate(new com.vaticle.typeql.lang.pattern.expression.Predicate.ValueVariable(TypeQLToken.Predicate.Equality.EQ, valvar("d").toValue())));
         TypeQLDefine expected = define(rule("attach-val").when(whenPattern).then(thenPattern));
         final String query = "define\n" +
                 "rule attach-val:\n" +

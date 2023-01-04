@@ -24,7 +24,7 @@ package com.vaticle.typeql.lang.pattern.variable.builder;
 import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.pattern.expression.Predicate;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundEvaluableVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundValueVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
 
 import java.time.LocalDateTime;
@@ -64,8 +64,8 @@ public interface PredicateBuilder<VAR_TYPE extends BoundVariable> {
         return eq(Predicate.Variable::new, variable.toThing());
     }
 
-    default VAR_TYPE eq(UnboundEvaluableVariable variable) {
-        return eq(Predicate.ValueVariable::new, variable.toEvaluable());
+    default VAR_TYPE eq(UnboundValueVariable variable) {
+        return eq(Predicate.ValueVariable::new, variable.toValue());
     }
 
     default <T> VAR_TYPE eq(BiFunction<TypeQLToken.Predicate.Equality, T, Predicate<T>> constructor, T value) {
@@ -96,8 +96,8 @@ public interface PredicateBuilder<VAR_TYPE extends BoundVariable> {
     default VAR_TYPE neq(UnboundDollarVariable variable) {
         return neq(Predicate.Variable::new, variable.toThing());
     }
-    default VAR_TYPE neq(UnboundEvaluableVariable variable) {
-        return neq(Predicate.ValueVariable::new, variable.toEvaluable());
+    default VAR_TYPE neq(UnboundValueVariable variable) {
+        return neq(Predicate.ValueVariable::new, variable.toValue());
     }
 
     default <T> VAR_TYPE neq(BiFunction<TypeQLToken.Predicate.Equality, T, Predicate<T>> constructor, T value) {
@@ -130,8 +130,8 @@ public interface PredicateBuilder<VAR_TYPE extends BoundVariable> {
         return gt(Predicate.Variable::new, variable.toThing());
     }
 
-    default VAR_TYPE gt(UnboundEvaluableVariable variable) {
-        return gt(Predicate.ValueVariable::new, variable.toEvaluable());
+    default VAR_TYPE gt(UnboundValueVariable variable) {
+        return gt(Predicate.ValueVariable::new, variable.toValue());
     }
 
 
@@ -165,8 +165,8 @@ public interface PredicateBuilder<VAR_TYPE extends BoundVariable> {
         return gte(Predicate.Variable::new, variable.toThing());
     }
 
-    default VAR_TYPE gte(UnboundEvaluableVariable variable) {
-        return gte(Predicate.ValueVariable::new, variable.toEvaluable());
+    default VAR_TYPE gte(UnboundValueVariable variable) {
+        return gte(Predicate.ValueVariable::new, variable.toValue());
     }
 
     default <T> VAR_TYPE gte(BiFunction<TypeQLToken.Predicate.Equality, T, Predicate<T>> constructor, T value) {
@@ -200,8 +200,8 @@ public interface PredicateBuilder<VAR_TYPE extends BoundVariable> {
         return lt(Predicate.Variable::new, variable.toThing());
     }
 
-    default VAR_TYPE lt(UnboundEvaluableVariable variable) {
-        return lt(Predicate.ValueVariable::new, variable.toEvaluable());
+    default VAR_TYPE lt(UnboundValueVariable variable) {
+        return lt(Predicate.ValueVariable::new, variable.toValue());
     }
 
     default <T> VAR_TYPE lt(BiFunction<TypeQLToken.Predicate.Equality, T, Predicate<T>> constructor, T value) {
@@ -234,8 +234,8 @@ public interface PredicateBuilder<VAR_TYPE extends BoundVariable> {
         return lte(Predicate.Variable::new, variable.toThing());
     }
 
-    default VAR_TYPE lte(UnboundEvaluableVariable variable) {
-        return lte(Predicate.ValueVariable::new, variable.toEvaluable());
+    default VAR_TYPE lte(UnboundValueVariable variable) {
+        return lte(Predicate.ValueVariable::new, variable.toValue());
     }
 
     default <T> VAR_TYPE lte(BiFunction<TypeQLToken.Predicate.Equality, T, Predicate<T>> constructor, T value) {

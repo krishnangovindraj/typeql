@@ -44,7 +44,7 @@ public abstract class UnboundVariable extends Variable {
         return false;
     }
 
-    public boolean isEvaluableVariable() {
+    public boolean isValueVariable() {
         return false;
     }
 
@@ -52,7 +52,7 @@ public abstract class UnboundVariable extends Variable {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(UnboundDollarVariable.class)));
     }
 
-    public UnboundEvaluableVariable asEvaluableVariable() {
-        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(UnboundEvaluableVariable.class)));
+    public UnboundValueVariable asValueVariable() {
+        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(UnboundValueVariable.class)));
     }
 }

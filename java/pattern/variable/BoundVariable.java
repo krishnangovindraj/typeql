@@ -72,8 +72,8 @@ public abstract class BoundVariable extends Variable implements Conjunctable {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(ThingVariable.class)));
     }
 
-    public EvaluableVariable asEvaluable() {
-        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(EvaluableVariable.class)));
+    public ValueVariable asValue() {
+        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(ValueVariable.class)));
     }
 
     @Override

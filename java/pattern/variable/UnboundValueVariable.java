@@ -22,49 +22,49 @@
 package com.vaticle.typeql.lang.pattern.variable;
 
 import com.vaticle.typeql.lang.pattern.constraint.Constraint;
-import com.vaticle.typeql.lang.pattern.constraint.EvaluableConstraint;
+import com.vaticle.typeql.lang.pattern.constraint.ValueConstraint;
 import com.vaticle.typeql.lang.pattern.expression.EvaluableExpression;
 import com.vaticle.typeql.lang.pattern.variable.builder.PredicateBuilder;
 
 import java.util.List;
-public class UnboundEvaluableVariable extends UnboundVariable implements PredicateBuilder<EvaluableVariable> {
-    private UnboundEvaluableVariable(Reference reference) {
+public class UnboundValueVariable extends UnboundVariable implements PredicateBuilder<ValueVariable> {
+    private UnboundValueVariable(Reference reference) {
         super(reference);
         assert reference.isNamedVal();
     }
 
-    public static UnboundEvaluableVariable namedVal(String name) {
-        return new UnboundEvaluableVariable(Reference.namedVal(name));
+    public static UnboundValueVariable namedVal(String name) {
+        return new UnboundValueVariable(Reference.namedVal(name));
     }
 
     @Override
-    public boolean isEvaluableVariable() {
+    public boolean isValueVariable() {
         return true;
     }
 
     @Override
-    public UnboundEvaluableVariable asEvaluableVariable() {
+    public UnboundValueVariable asValueVariable() {
         return this;
     }
 
-    public EvaluableVariable assign(EvaluableExpression assignment) {
-        return constrain(new EvaluableConstraint.Expression(assignment));
+    public ValueVariable assign(EvaluableExpression assignment) {
+        return constrain(new ValueConstraint.Expression(assignment));
     }
 
-    public EvaluableVariable constrain(com.vaticle.typeql.lang.pattern.expression.Predicate predicate) {
-        return constrain(new EvaluableConstraint.Predicate<>(predicate));
+    public ValueVariable constrain(com.vaticle.typeql.lang.pattern.expression.Predicate predicate) {
+        return constrain(new ValueConstraint.Predicate<>(predicate));
     }
 
-    public EvaluableVariable constrain(EvaluableConstraint.Predicate<?> constraint) {
-        return new EvaluableVariable(reference.asNamedVal(), constraint);
+    public ValueVariable constrain(ValueConstraint.Predicate<?> constraint) {
+        return new ValueVariable(reference.asNamedVal(), constraint);
     }
 
-    public EvaluableVariable constrain(EvaluableConstraint.Expression constraint) {
-        return new EvaluableVariable(reference.asNamedVal(), constraint);
+    public ValueVariable constrain(ValueConstraint.Expression constraint) {
+        return new ValueVariable(reference.asNamedVal(), constraint);
     }
 
-    public EvaluableVariable toEvaluable() {
-        return new EvaluableVariable(reference.asNamedVal());
+    public ValueVariable toValue() {
+        return new ValueVariable(reference.asNamedVal());
     }
 
     @Override
@@ -82,7 +82,7 @@ public class UnboundEvaluableVariable extends UnboundVariable implements Predica
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        UnboundEvaluableVariable that = (UnboundEvaluableVariable) o;
+        UnboundValueVariable that = (UnboundValueVariable) o;
         return this.reference.equals(that.reference);
     }
 

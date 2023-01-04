@@ -25,7 +25,6 @@ import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.common.util.Strings;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
-import com.vaticle.typeql.lang.pattern.variable.EvaluableVariable;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 
 import java.time.LocalDateTime;
@@ -55,7 +54,7 @@ public abstract class Predicate<T> {
         else if (value == null) throw TypeQLException.of(MISSING_CONSTRAINT_VALUE);
 
         assert !predicate.isEquality() || value instanceof Comparable
-                || value instanceof ThingVariable<?> || value instanceof EvaluableVariable
+                || value instanceof ThingVariable<?> || value instanceof com.vaticle.typeql.lang.pattern.variable.ValueVariable
                 || value instanceof EvaluableExpression;
         assert !predicate.isSubString() || value instanceof java.lang.String;
 
@@ -128,8 +127,8 @@ public abstract class Predicate<T> {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Predicate.Variable.class)));
     }
 
-    public Predicate.ValueVariable asValueVariable() {
-        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Predicate.ValueVariable.class)));
+    public ValueVariable asValueVariable() {
+        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(ValueVariable.class)));
     }
 
     @Override
@@ -280,9 +279,9 @@ public abstract class Predicate<T> {
         }
     }
 
-    public static class ValueVariable extends Predicate<EvaluableVariable> {
+    public static class ValueVariable extends Predicate<com.vaticle.typeql.lang.pattern.variable.ValueVariable> {
 
-        public ValueVariable(TypeQLToken.Predicate.Equality predicate, EvaluableVariable variable) {
+        public ValueVariable(TypeQLToken.Predicate.Equality predicate, com.vaticle.typeql.lang.pattern.variable.ValueVariable variable) {
             super(predicate, variable);
         }
 

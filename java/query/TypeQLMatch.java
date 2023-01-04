@@ -246,7 +246,7 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
         if (variablesNamedUnbound == null) {
             variablesNamedUnbound = new ArrayList<>();
             variablesNamedUnbound.addAll(namedUnboudDollarVariables());
-            conjunction.namedUnboundEvaluableVariables().forEach(variablesNamedUnbound::add);
+            conjunction.namedUnboundValueVariables().forEach(variablesNamedUnbound::add);
         }
         return variablesNamedUnbound;
     }

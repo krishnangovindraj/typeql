@@ -45,7 +45,7 @@ public abstract class Constraint<VARIABLE extends BoundVariable> {
         return false;
     }
 
-    public boolean isEvaluable() { return false; }
+    public boolean isValue() { return false; }
 
     public ConceptConstraint asConcept() {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(ConceptConstraint.class)));
@@ -59,8 +59,8 @@ public abstract class Constraint<VARIABLE extends BoundVariable> {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(ThingConstraint.class)));
     }
 
-    public EvaluableConstraint asEvaluable() {
-        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(EvaluableConstraint.class)));
+    public ValueConstraint asValue() {
+        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(ValueConstraint.class)));
     }
 
     @Override

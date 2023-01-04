@@ -25,7 +25,7 @@ import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.common.exception.ErrorMessage;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundEvaluableVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundValueVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
 import com.vaticle.typeql.lang.pattern.variable.Variable;
 
@@ -73,8 +73,8 @@ public class Conjunction<T extends Pattern> implements Pattern {
         });
     }
 
-    public Stream<UnboundEvaluableVariable> namedUnboundEvaluableVariables() {
-        return variables().filter(v -> v.isEvaluable()).map(v -> UnboundEvaluableVariable.namedVal(v.name())).distinct();
+    public Stream<UnboundValueVariable> namedUnboundValueVariables() {
+        return variables().filter(v -> v.isValue()).map(v -> UnboundValueVariable.namedVal(v.name())).distinct();
     }
 
     public Stream<UnboundDollarVariable> namedUnboundDollarVariables() {

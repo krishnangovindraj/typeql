@@ -101,7 +101,7 @@ pattern_negation      :   NOT '{' patterns '}'                        ;
 
 // VARIABLE PATTERNS ===========================================================
 
-pattern_variable      :   variable_evaluable
+pattern_variable      :   variable_value
                       |   variable_concept
                       |   variable_type
                       |   variable_thing_any
@@ -296,7 +296,7 @@ LPAREN              : '('         ;     RPAREN              : ')'         ;
 
 ASSIGN              : ':=';
 
-variable_evaluable        : EVAR_ predicate
+variable_value        : EVAR_ predicate
                           | EVAR_ ASSIGN expr;
 
 expr                      :  func   |  VAR_   | EVAR_ |   value

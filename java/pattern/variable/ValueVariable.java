@@ -22,9 +22,8 @@
 package com.vaticle.typeql.lang.pattern.variable;
 
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
-import com.vaticle.typeql.lang.pattern.constraint.EvaluableConstraint;
+import com.vaticle.typeql.lang.pattern.constraint.ValueConstraint;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,35 +31,35 @@ import static com.vaticle.typedb.common.collection.Collections.list;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Char.SPACE;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.ILLEGAL_CONSTRAINT_REPETITION;
 
-public class EvaluableVariable extends BoundVariable {
-    private EvaluableConstraint constraint;
+public class ValueVariable extends BoundVariable {
+    private ValueConstraint constraint;
 
-    public EvaluableVariable(Reference.Name.NamedVal reference) {
+    public ValueVariable(Reference.Name.NamedVal reference) {
         super(reference);
         this.constraint = null;
     }
 
-    public EvaluableVariable(Reference.Name.NamedVal reference, EvaluableConstraint constraint) {
+    public ValueVariable(Reference.Name.NamedVal reference, ValueConstraint constraint) {
         this(reference);
         constrain(constraint);
     }
 
-    public EvaluableVariable constrain(EvaluableConstraint constraint) {
-        if (this.constraint != null) {throw TypeQLException.of(ILLEGAL_CONSTRAINT_REPETITION.message(reference, EvaluableConstraint.class, constraint));}
+    public ValueVariable constrain(ValueConstraint constraint) {
+        if (this.constraint != null) {throw TypeQLException.of(ILLEGAL_CONSTRAINT_REPETITION.message(reference, ValueConstraint.class, constraint));}
         this.constraint = constraint;
         return this;
     }
 
     @Override
-    public List<EvaluableConstraint> constraints() {
+    public List<ValueConstraint> constraints() {
         return constraint != null ? list(constraint) : list();
     }
 
     @Override
-    public boolean isEvaluable() { return true; }
+    public boolean isValue() { return true; }
 
     @Override
-    public EvaluableVariable asEvaluable() {
+    public ValueVariable asValue() {
         return this;
     }
 
@@ -73,7 +72,7 @@ public class EvaluableVariable extends BoundVariable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        EvaluableVariable that = (EvaluableVariable) o;
+        ValueVariable that = (ValueVariable) o;
         return (this.reference.equals(that.reference)); // TODO: // && set(this.constraints).equals(set(that.constraints)));
     }
 

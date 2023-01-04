@@ -35,15 +35,15 @@ import static com.vaticle.typedb.common.util.Objects.className;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Char.SPACE;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_CASTING;
 
-public abstract class EvaluableConstraint extends Constraint<BoundVariable> {
+public abstract class ValueConstraint extends Constraint<BoundVariable> {
 
     @Override
-    public boolean isEvaluable() {
+    public boolean isValue() {
         return true;
     }
 
     @Override
-    public EvaluableConstraint asEvaluable() {
+    public ValueConstraint asValue() {
         return this;
     }
 
@@ -59,12 +59,12 @@ public abstract class EvaluableConstraint extends Constraint<BoundVariable> {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Predicate.class)));
     }
 
-    public EvaluableConstraint.Expression asExpression() {
-        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(EvaluableConstraint.Expression.class)));
+    public ValueConstraint.Expression asExpression() {
+        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(ValueConstraint.Expression.class)));
     }
 
 
-    public static class Predicate<T> extends EvaluableConstraint {
+    public static class Predicate<T> extends ValueConstraint {
 
         private final com.vaticle.typeql.lang.pattern.expression.Predicate predicate;
         private final int hash;
@@ -112,7 +112,7 @@ public abstract class EvaluableConstraint extends Constraint<BoundVariable> {
         }
     }
 
-    public static class Expression extends EvaluableConstraint {
+    public static class Expression extends ValueConstraint {
         private final EvaluableExpression expression;
         private final Set<BoundVariable> inputs;
 
@@ -133,7 +133,7 @@ public abstract class EvaluableConstraint extends Constraint<BoundVariable> {
             return true;
         }
 
-        public EvaluableConstraint.Expression asExpression() {
+        public ValueConstraint.Expression asExpression() {
             return this;
         }
 

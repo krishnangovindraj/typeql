@@ -24,10 +24,10 @@ package com.vaticle.typeql.lang.pattern.expression;
 import com.vaticle.typedb.common.collection.Pair;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
-import com.vaticle.typeql.lang.pattern.variable.EvaluableVariable;
+import com.vaticle.typeql.lang.pattern.variable.ValueVariable;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundEvaluableVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundValueVariable;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -112,8 +112,8 @@ public abstract class EvaluableExpression {
         return new ThingVar(variable.toThing());
     }
 
-    public static ValVar valVar(UnboundEvaluableVariable variable) {
-        return new ValVar(variable.toEvaluable());
+    public static ValVar valVar(UnboundValueVariable variable) {
+        return new ValVar(variable.toValue());
     }
 
     public static Constant.Boolean constant(Boolean value) {
@@ -270,13 +270,13 @@ public abstract class EvaluableExpression {
     }
 
     public static class ValVar extends EvaluableExpression {
-        private final EvaluableVariable variable;
+        private final ValueVariable variable;
 
-        public ValVar(EvaluableVariable variable) {
+        public ValVar(ValueVariable variable) {
             this.variable = variable;
         }
 
-        public EvaluableVariable variable() {
+        public ValueVariable variable() {
             return variable;
         }
 

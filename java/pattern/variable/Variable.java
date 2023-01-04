@@ -60,7 +60,7 @@ public abstract class Variable {
         return false;
     }
 
-    public boolean isEvaluable() {
+    public boolean isValue() {
         return false;
     }
 
