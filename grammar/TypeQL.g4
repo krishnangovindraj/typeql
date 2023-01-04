@@ -47,7 +47,6 @@ query_delete          :   MATCH       patterns      DELETE  variable_things     
 
 query_match           :   MATCH       patterns            ( modifiers )         ;
 
-
 // MATCH QUERY ANSWER GROUP AND AGGREGATE FUNCTIONS ============================
 
 query_match_aggregate :   query_match   match_aggregate   ;
@@ -101,10 +100,10 @@ pattern_negation      :   NOT '{' patterns '}'                        ;
 
 // VARIABLE PATTERNS ===========================================================
 
-pattern_variable      :   variable_value
-                      |   variable_concept
+pattern_variable      :   variable_concept
                       |   variable_type
                       |   variable_thing_any
+                      |   variable_value
                       ;
 
 // CONCEPT VARAIBLES ===========================================================
@@ -293,20 +292,20 @@ POW                 : '^'         ;
 DIV                 : '/'         ;     TIMES               : '*'         ;
 PLUS                : '+'         ;     MINUS               : '-'         ;
 LPAREN              : '('         ;     RPAREN              : ')'         ;
-
 ASSIGN              : ':=';
 
-variable_value        : EVAR_ predicate
+variable_value            : EVAR_ predicate
                           | EVAR_ ASSIGN expr;
 
-expr                      :  func   |  VAR_   | EVAR_ |   value
+expr                      :  VAR_   | EVAR_
+                          |  func   | value
                           |  '(' expr ')'
                           |  expr  POW expr
                           |  expr  (TIMES | DIV)  expr
                           |  expr  (PLUS | MINUS) expr
                           ;
-func                      :     LABEL_   '('  arg_list? ')' ;
-arg_list                  :     expr   (',' expr)*    ;
+func                      :  LABEL_ '('  arg_list? ')' ;
+arg_list                  :  expr (',' expr)*        ;
 
 // FRAGMENTS OF KEYWORDS =======================================================
 
