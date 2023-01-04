@@ -23,7 +23,6 @@ package com.vaticle.typeql.lang.pattern.constraint;
 
 import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
-import com.vaticle.typeql.lang.pattern.expression.EvaluableExpression;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 
 import java.util.HashSet;
@@ -59,8 +58,8 @@ public abstract class ValueConstraint extends Constraint<BoundVariable> {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Predicate.class)));
     }
 
-    public ValueConstraint.Expression asExpression() {
-        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(ValueConstraint.Expression.class)));
+    public Expression asExpression() {
+        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Expression.class)));
     }
 
 
@@ -113,16 +112,16 @@ public abstract class ValueConstraint extends Constraint<BoundVariable> {
     }
 
     public static class Expression extends ValueConstraint {
-        private final EvaluableExpression expression;
+        private final com.vaticle.typeql.lang.pattern.expression.Expression expression;
         private final Set<BoundVariable> inputs;
 
-        public Expression(EvaluableExpression expression) {
+        public Expression(com.vaticle.typeql.lang.pattern.expression.Expression expression) {
             this.expression = expression;
             this.inputs = new HashSet<>();
             expression.variables().forEach(v -> this.inputs.add(v));
         }
 
-        public EvaluableExpression expression() { return expression; }
+        public com.vaticle.typeql.lang.pattern.expression.Expression expression() { return expression; }
 
         @Override
         public Set<BoundVariable> variables() {
@@ -133,7 +132,7 @@ public abstract class ValueConstraint extends Constraint<BoundVariable> {
             return true;
         }
 
-        public ValueConstraint.Expression asExpression() {
+        public Expression asExpression() {
             return this;
         }
 

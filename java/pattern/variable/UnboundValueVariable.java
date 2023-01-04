@@ -23,7 +23,7 @@ package com.vaticle.typeql.lang.pattern.variable;
 
 import com.vaticle.typeql.lang.pattern.constraint.Constraint;
 import com.vaticle.typeql.lang.pattern.constraint.ValueConstraint;
-import com.vaticle.typeql.lang.pattern.expression.EvaluableExpression;
+import com.vaticle.typeql.lang.pattern.expression.Expression;
 import com.vaticle.typeql.lang.pattern.variable.builder.PredicateBuilder;
 
 import java.util.List;
@@ -47,7 +47,7 @@ public class UnboundValueVariable extends UnboundVariable implements PredicateBu
         return this;
     }
 
-    public ValueVariable assign(EvaluableExpression assignment) {
+    public ValueVariable assign(Expression assignment) {
         return constrain(new ValueConstraint.Expression(assignment));
     }
 

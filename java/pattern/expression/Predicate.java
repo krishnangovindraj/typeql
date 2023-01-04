@@ -55,7 +55,7 @@ public abstract class Predicate<T> {
 
         assert !predicate.isEquality() || value instanceof Comparable
                 || value instanceof ThingVariable<?> || value instanceof com.vaticle.typeql.lang.pattern.variable.ValueVariable
-                || value instanceof EvaluableExpression;
+                || value instanceof Expression;
         assert !predicate.isSubString() || value instanceof java.lang.String;
 
         this.predicate = predicate;

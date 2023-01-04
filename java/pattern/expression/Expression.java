@@ -39,7 +39,7 @@ import static com.vaticle.typedb.common.util.Objects.className;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Char.COMMA_SPACE;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_CASTING;
 
-public abstract class EvaluableExpression {
+public abstract class Expression {
 
     public boolean isOperation() {
         return false;
@@ -65,16 +65,16 @@ public abstract class EvaluableExpression {
         return false;
     }
 
-    public EvaluableExpression.Operation asOperation() {
-        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(EvaluableExpression.Operation.class)));
+    public Expression.Operation asOperation() {
+        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Expression.Operation.class)));
     }
 
-    public EvaluableExpression.Function asFunction() {
-        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(EvaluableExpression.Function.class)));
+    public Expression.Function asFunction() {
+        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Expression.Function.class)));
     }
 
-    public EvaluableExpression.Bracketed asBracketed() {
-        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(EvaluableExpression.Bracketed.class)));
+    public Expression.Bracketed asBracketed() {
+        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Expression.Bracketed.class)));
     }
 
     public ThingVar asThingVar() {
@@ -85,27 +85,27 @@ public abstract class EvaluableExpression {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(ValVar.class)));
     }
 
-    public EvaluableExpression.Constant asConstant() {
-        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(EvaluableExpression.Constant.class)));
+    public Expression.Constant asConstant() {
+        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Expression.Constant.class)));
     }
 
     @Override
     public abstract String toString();
 
-    public static EvaluableExpression.Operation op(EvaluableExpression.Operation.OP op, EvaluableExpression a, EvaluableExpression b) {
-        return new EvaluableExpression.Operation(op, a, b);
+    public static Expression.Operation op(Expression.Operation.OP op, Expression a, Expression b) {
+        return new Expression.Operation(op, a, b);
     }
 
-    public static Function func(String funcId, EvaluableExpression... args) {
+    public static Function func(String funcId, Expression... args) {
         return func(funcId, list(args));
     }
 
-    public static Function func(String funcId, List<EvaluableExpression> args) {
+    public static Function func(String funcId, List<Expression> args) {
         return new Function(funcId, args);
     }
 
-    public static EvaluableExpression bracketed(EvaluableExpression nestedExpr) {
-        return new EvaluableExpression.Bracketed(nestedExpr);
+    public static Expression bracketed(Expression nestedExpr) {
+        return new Expression.Bracketed(nestedExpr);
     }
 
     public static ThingVar thingVar(UnboundDollarVariable variable) {
@@ -144,7 +144,7 @@ public abstract class EvaluableExpression {
 
     protected abstract void collectVariables(Set<BoundVariable> collector);
 
-    public static class Operation extends EvaluableExpression {
+    public static class Operation extends Expression {
 
         @Override
         protected void collectVariables(Set<BoundVariable> collector) {
@@ -171,10 +171,10 @@ public abstract class EvaluableExpression {
         }
 
         private final OP op;
-        private final EvaluableExpression a;
-        private final EvaluableExpression b;
+        private final Expression a;
+        private final Expression b;
 
-        public Operation(OP op, EvaluableExpression a, EvaluableExpression b) {
+        public Operation(OP op, Expression a, Expression b) {
             this.op = op;
             this.a = a;
             this.b = b;
@@ -184,7 +184,7 @@ public abstract class EvaluableExpression {
             return op;
         }
 
-        public Pair<EvaluableExpression, EvaluableExpression> operands() {
+        public Pair<Expression, Expression> operands() {
             return new Pair<>(a, b);
         }
 
@@ -199,11 +199,11 @@ public abstract class EvaluableExpression {
         }
     }
 
-    public static class Function extends EvaluableExpression {
+    public static class Function extends Expression {
         private final String symbol;
-        private final List<EvaluableExpression> argList;
+        private final List<Expression> argList;
 
-        public Function(String symbol, List<EvaluableExpression> argList) {
+        public Function(String symbol, List<Expression> argList) {
             this.symbol = symbol;
             this.argList = argList;
         }
@@ -212,7 +212,7 @@ public abstract class EvaluableExpression {
             return symbol;
         }
 
-        public List<EvaluableExpression> arguments() {
+        public List<Expression> arguments() {
             return argList;
         }
 
@@ -237,7 +237,7 @@ public abstract class EvaluableExpression {
         }
     }
 
-    public static class ThingVar extends EvaluableExpression {
+    public static class ThingVar extends Expression {
         private final ThingVariable variable;
 
         public ThingVar(ThingVariable variable) {
@@ -269,7 +269,7 @@ public abstract class EvaluableExpression {
         }
     }
 
-    public static class ValVar extends EvaluableExpression {
+    public static class ValVar extends Expression {
         private final ValueVariable variable;
 
         public ValVar(ValueVariable variable) {
@@ -302,7 +302,7 @@ public abstract class EvaluableExpression {
     }
 
     // TODO: Improve
-    public abstract static class Constant<T> extends EvaluableExpression {
+    public abstract static class Constant<T> extends Expression {
         T value;
 
         public Constant(T value) {
@@ -454,14 +454,14 @@ public abstract class EvaluableExpression {
         }
     }
 
-    public static class Bracketed extends EvaluableExpression {
-        private final EvaluableExpression nestedExpression;
+    public static class Bracketed extends Expression {
+        private final Expression nestedExpression;
 
-        public Bracketed(EvaluableExpression nestedExpression) {
+        public Bracketed(Expression nestedExpression) {
             this.nestedExpression = nestedExpression;
         }
 
-        public EvaluableExpression nestedExpression() {
+        public Expression nestedExpression() {
             return nestedExpression;
         }
 

@@ -35,7 +35,7 @@ import com.vaticle.typeql.lang.pattern.Disjunction;
 import com.vaticle.typeql.lang.pattern.Negation;
 import com.vaticle.typeql.lang.pattern.Pattern;
 import com.vaticle.typeql.lang.pattern.constraint.ValueConstraint;
-import com.vaticle.typeql.lang.pattern.expression.EvaluableExpression;
+import com.vaticle.typeql.lang.pattern.expression.Expression;
 import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
 import com.vaticle.typeql.lang.pattern.constraint.TypeConstraint;
 import com.vaticle.typeql.lang.pattern.expression.Predicate;
@@ -798,38 +798,38 @@ public class Parser extends TypeQLBaseVisitor {
     }
 
     @Override
-    public EvaluableExpression visitExpr(TypeQLParser.ExprContext ctx) {
+    public Expression visitExpr(TypeQLParser.ExprContext ctx) {
         if (ctx.POW() != null) {
-            return new EvaluableExpression.Operation(EvaluableExpression.Operation.OP.POW, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+            return new Expression.Operation(Expression.Operation.OP.POW, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
         } else if (ctx.DIV() != null) {
-            return new EvaluableExpression.Operation(EvaluableExpression.Operation.OP.DIV, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+            return new Expression.Operation(Expression.Operation.OP.DIV, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
         } else if (ctx.TIMES() != null) {
-            return new EvaluableExpression.Operation(EvaluableExpression.Operation.OP.TIMES, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+            return new Expression.Operation(Expression.Operation.OP.TIMES, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
         } else if (ctx.PLUS() != null) {
-            return new EvaluableExpression.Operation(EvaluableExpression.Operation.OP.PLUS, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+            return new Expression.Operation(Expression.Operation.OP.PLUS, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
         } else if (ctx.MINUS() != null) {
-            return new EvaluableExpression.Operation(EvaluableExpression.Operation.OP.MINUS, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+            return new Expression.Operation(Expression.Operation.OP.MINUS, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
         } else if (ctx.func() != null) {
             return visitFunc(ctx.func());
         } else if (ctx.LPAREN() != null || ctx.RPAREN() != null) {
             assert ctx.LPAREN() != null && ctx.RPAREN() != null;
             return visitExpr(ctx.expr(0));
         } else if (ctx.VAR_() != null) {
-            return new EvaluableExpression.ThingVar(getVar(ctx.VAR_()).toThing());
+            return new Expression.ThingVar(getVar(ctx.VAR_()).toThing());
         } else if (ctx.EVAR_() != null) {
-            return new EvaluableExpression.ValVar(getValVar(ctx.EVAR_()).toValue());
+            return new Expression.ValVar(getValVar(ctx.EVAR_()).toValue());
         } else if (ctx.value() != null) {
             Object value = visitValue(ctx.value());
             if (value instanceof Long) {
-                return new EvaluableExpression.Constant.Long((Long) value);
+                return new Expression.Constant.Long((Long) value);
             } else if (value instanceof Double) {
-                return new EvaluableExpression.Constant.Double((Double) value);
+                return new Expression.Constant.Double((Double) value);
             } else if (value instanceof Boolean) {
-                return new EvaluableExpression.Constant.Boolean((Boolean) value);
+                return new Expression.Constant.Boolean((Boolean) value);
             } else if (value instanceof String) {
-                return new EvaluableExpression.Constant.String((String) value);
+                return new Expression.Constant.String((String) value);
             } else if (value instanceof LocalDateTime) {
-                return new EvaluableExpression.Constant.DateTime((LocalDateTime) value);
+                return new Expression.Constant.DateTime((LocalDateTime) value);
             } else {
                 throw TypeQLException.of(ILLEGAL_GRAMMAR.message(ctx.getText()));
             }
@@ -840,13 +840,13 @@ public class Parser extends TypeQLBaseVisitor {
     }
 
     @Override
-    public EvaluableExpression.Function visitFunc(TypeQLParser.FuncContext ctx) {
-        return new EvaluableExpression.Function(ctx.LABEL_().getSymbol().getText(), visitArg_list(ctx.arg_list()));
+    public Expression.Function visitFunc(TypeQLParser.FuncContext ctx) {
+        return new Expression.Function(ctx.LABEL_().getSymbol().getText(), visitArg_list(ctx.arg_list()));
     }
 
     @Override
-    public List<EvaluableExpression> visitArg_list(TypeQLParser.Arg_listContext ctx) {
-        List<EvaluableExpression> args = new ArrayList<>();
+    public List<Expression> visitArg_list(TypeQLParser.Arg_listContext ctx) {
+        List<Expression> args = new ArrayList<>();
         if (ctx != null) {
             ctx.expr().forEach(expr -> args.add(visitExpr(expr)));
         }
