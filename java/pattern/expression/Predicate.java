@@ -25,7 +25,6 @@ import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.common.util.Strings;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
-import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -54,7 +53,7 @@ public abstract class Predicate<T> {
         else if (value == null) throw TypeQLException.of(MISSING_CONSTRAINT_VALUE);
 
         assert !predicate.isEquality() || value instanceof Comparable
-                || value instanceof ThingVariable<?> || value instanceof com.vaticle.typeql.lang.pattern.variable.ValueVariable
+                || value instanceof com.vaticle.typeql.lang.pattern.variable.ThingVariable<?> || value instanceof com.vaticle.typeql.lang.pattern.variable.ValueVariable
                 || value instanceof Expression;
         assert !predicate.isSubString() || value instanceof java.lang.String;
 
@@ -95,7 +94,7 @@ public abstract class Predicate<T> {
         return false;
     }
 
-    public boolean isVariable() {
+    public boolean isThingVariable() {
         return false;
     }
 
@@ -123,8 +122,8 @@ public abstract class Predicate<T> {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Predicate.DateTime.class)));
     }
 
-    public Predicate.Variable asVariable() {
-        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Predicate.Variable.class)));
+    public Predicate.ThingVariable asThingVariable() {
+        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Predicate.ThingVariable.class)));
     }
 
     public ValueVariable asValueVariable() {
@@ -133,7 +132,7 @@ public abstract class Predicate<T> {
 
     @Override
     public java.lang.String toString() {
-        if (predicate.equals(EQ) && !isVariable()) return Strings.valueToString(value);
+        if (predicate.equals(EQ) && !isThingVariable()) return Strings.valueToString(value);
         else return predicate.toString() + SPACE + Strings.valueToString(value);
     }
 
@@ -257,9 +256,9 @@ public abstract class Predicate<T> {
         }
     }
 
-    public static class Variable extends Predicate<ThingVariable<?>> {
+    public static class ThingVariable extends Predicate<com.vaticle.typeql.lang.pattern.variable.ThingVariable<?>> {
 
-        public Variable(TypeQLToken.Predicate.Equality predicate, ThingVariable<?> variable) {
+        public ThingVariable(TypeQLToken.Predicate.Equality predicate, com.vaticle.typeql.lang.pattern.variable.ThingVariable<?> variable) {
             super(predicate, variable);
         }
 
@@ -269,12 +268,12 @@ public abstract class Predicate<T> {
         }
 
         @Override
-        public boolean isVariable() {
+        public boolean isThingVariable() {
             return true;
         }
 
         @Override
-        public Variable asVariable() {
+        public ThingVariable asThingVariable() {
             return this;
         }
     }

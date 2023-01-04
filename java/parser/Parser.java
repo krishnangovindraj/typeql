@@ -723,7 +723,7 @@ public class Parser extends TypeQLBaseVisitor {
         } else if (value instanceof LocalDateTime) {
             return new Predicate.DateTime(predicate.asEquality(), (LocalDateTime) value);
         } else if (value instanceof UnboundDollarVariable) {
-            return new Predicate.Variable(predicate.asEquality(),((UnboundDollarVariable)value).toThing());
+            return new Predicate.ThingVariable(predicate.asEquality(),((UnboundDollarVariable)value).toThing());
         } else if (value instanceof UnboundValueVariable) {
             return new Predicate.ValueVariable(predicate.asEquality(), ((UnboundValueVariable)value).toValue());
         } else {

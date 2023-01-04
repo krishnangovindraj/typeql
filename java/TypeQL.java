@@ -223,7 +223,7 @@ public class TypeQL {
     }
 
     public static ThingConstraint.Predicate<ThingVariable<?>> eq(UnboundDollarVariable variable) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Variable(EQ, variable.toThing()));
+        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.ThingVariable(EQ, variable.toThing()));
     }
 
     public static ThingConstraint.Predicate<ValueVariable> eq(UnboundValueVariable variable) {
@@ -251,7 +251,7 @@ public class TypeQL {
     }
 
     public static ThingConstraint.Predicate<ThingVariable<?>> neq(UnboundDollarVariable variable) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Variable(NEQ, variable.toThing()));
+        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.ThingVariable(NEQ, variable.toThing()));
     }
 
     public static ThingConstraint.Predicate<ValueVariable> neq(UnboundValueVariable variable) {
@@ -279,7 +279,7 @@ public class TypeQL {
     }
 
     public static ThingConstraint.Predicate<ThingVariable<?>> gt(UnboundDollarVariable variable) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Variable(GT, variable.toThing()));
+        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.ThingVariable(GT, variable.toThing()));
     }
 
     public static ThingConstraint.Predicate<ValueVariable> gt(UnboundValueVariable variable) {
@@ -307,7 +307,7 @@ public class TypeQL {
     }
 
     public static ThingConstraint.Predicate<ThingVariable<?>> gte(UnboundDollarVariable variable) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Variable(GTE, variable.toThing()));
+        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.ThingVariable(GTE, variable.toThing()));
     }
 
     public static ThingConstraint.Predicate<ValueVariable> gte(UnboundValueVariable variable) {
@@ -335,7 +335,7 @@ public class TypeQL {
     }
 
     public static ThingConstraint.Predicate<ThingVariable<?>> lt(UnboundDollarVariable variable) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Variable(LT, variable.toThing()));
+        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.ThingVariable(LT, variable.toThing()));
     }
 
     public static ThingConstraint.Predicate<ValueVariable> lt(UnboundValueVariable variable) {
@@ -363,7 +363,7 @@ public class TypeQL {
     }
 
     public static ThingConstraint.Predicate<ThingVariable<?>> lte(UnboundDollarVariable variable) {
-        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.Variable(LTE, variable.toThing()));
+        return new ThingConstraint.Predicate<>(new com.vaticle.typeql.lang.pattern.expression.Predicate.ThingVariable(LTE, variable.toThing()));
     }
 
     public static ThingConstraint.Predicate<ValueVariable> lte(UnboundValueVariable variable) {

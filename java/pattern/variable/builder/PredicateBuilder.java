@@ -61,7 +61,7 @@ public interface PredicateBuilder<VAR_TYPE extends BoundVariable> {
     }
 
     default VAR_TYPE eq(UnboundDollarVariable variable) {
-        return eq(Predicate.Variable::new, variable.toThing());
+        return eq(Predicate.ThingVariable::new, variable.toThing());
     }
 
     default VAR_TYPE eq(UnboundValueVariable variable) {
@@ -94,7 +94,7 @@ public interface PredicateBuilder<VAR_TYPE extends BoundVariable> {
     }
 
     default VAR_TYPE neq(UnboundDollarVariable variable) {
-        return neq(Predicate.Variable::new, variable.toThing());
+        return neq(Predicate.ThingVariable::new, variable.toThing());
     }
     default VAR_TYPE neq(UnboundValueVariable variable) {
         return neq(Predicate.ValueVariable::new, variable.toValue());
@@ -127,7 +127,7 @@ public interface PredicateBuilder<VAR_TYPE extends BoundVariable> {
     }
 
     default VAR_TYPE gt(UnboundDollarVariable variable) {
-        return gt(Predicate.Variable::new, variable.toThing());
+        return gt(Predicate.ThingVariable::new, variable.toThing());
     }
 
     default VAR_TYPE gt(UnboundValueVariable variable) {
@@ -162,7 +162,7 @@ public interface PredicateBuilder<VAR_TYPE extends BoundVariable> {
     }
 
     default VAR_TYPE gte(UnboundDollarVariable variable) {
-        return gte(Predicate.Variable::new, variable.toThing());
+        return gte(Predicate.ThingVariable::new, variable.toThing());
     }
 
     default VAR_TYPE gte(UnboundValueVariable variable) {
@@ -197,7 +197,7 @@ public interface PredicateBuilder<VAR_TYPE extends BoundVariable> {
 
 
     default VAR_TYPE lt(UnboundDollarVariable variable) {
-        return lt(Predicate.Variable::new, variable.toThing());
+        return lt(Predicate.ThingVariable::new, variable.toThing());
     }
 
     default VAR_TYPE lt(UnboundValueVariable variable) {
@@ -231,7 +231,7 @@ public interface PredicateBuilder<VAR_TYPE extends BoundVariable> {
     }
 
     default VAR_TYPE lte(UnboundDollarVariable variable) {
-        return lte(Predicate.Variable::new, variable.toThing());
+        return lte(Predicate.ThingVariable::new, variable.toThing());
     }
 
     default VAR_TYPE lte(UnboundValueVariable variable) {
