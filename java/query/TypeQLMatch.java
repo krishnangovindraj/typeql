@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static com.vaticle.typedb.common.collection.Collections.list;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Char.COMMA_SPACE;
@@ -171,7 +172,7 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
     }
 
     private void hasBoundingConjunction() {
-        if (!conjunction.namedUnboundDollarVariables().findAny().isPresent()) {
+        if (!Stream.concat(conjunction.namedUnboundDollarVariables(), conjunction.namedUnboundValueVariables()).findAny().isPresent()) {
             throw TypeQLException.of(MATCH_HAS_NO_BOUNDING_NAMED_VARIABLE);
         }
     }
