@@ -56,7 +56,6 @@ public abstract class TypeQLWritable extends TypeQLQuery {
 
     abstract static class InsertOrDelete extends TypeQLWritable {
 
-        private List<UnboundVariable> namedVariablesUnbound;
         private final TypeQLToken.Command command;
         protected final List<ThingVariable<?>> variables;
         private final int hash;
@@ -68,14 +67,6 @@ public abstract class TypeQLWritable extends TypeQLQuery {
             this.command = command;
             this.variables = variables;
             this.hash = Objects.hash(this.command, this.match, this.variables);
-        }
-
-        public List<UnboundVariable> namedUnboudDollarVariables() {
-            if (namedVariablesUnbound == null) {
-                namedVariablesUnbound = variables.stream().flatMap(v -> concat(Stream.of(v), v.variables()))
-                        .filter(Variable::isNamed).map(BoundVariable::toUnbound).distinct().collect(toList());
-            }
-            return namedVariablesUnbound;
         }
 
         @Override

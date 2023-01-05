@@ -22,16 +22,25 @@
 package com.vaticle.typeql.lang.query;
 
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
+import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
+import com.vaticle.typeql.lang.pattern.variable.Variable;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.vaticle.typedb.common.collection.Collections.list;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Command.DELETE;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.VARIABLE_OUT_OF_SCOPE_DELETE;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Stream.concat;
 
 public class TypeQLDelete extends TypeQLWritable.InsertOrDelete {
+
+    private List<UnboundDollarVariable> namedDollarVariablesUnbound;
 
     TypeQLDelete(TypeQLMatch.Unfiltered match, List<ThingVariable<?>> variables) {
         super(DELETE, requireNonNull(match), validDeleteVars(match, variables));
@@ -57,6 +66,16 @@ public class TypeQLDelete extends TypeQLWritable.InsertOrDelete {
     }
 
     public List<ThingVariable<?>> variables() { return variables; }
+
+    public List<UnboundDollarVariable> namedUnboundDollarVariables() {
+        if (namedDollarVariablesUnbound == null) {
+            namedDollarVariablesUnbound = variables.stream().flatMap(v -> concat(Stream.of(v), v.variables()))
+                    .filter(Variable::isNamed).map(BoundVariable::toUnbound)
+                    .filter(UnboundVariable::isDollarVariable).map(UnboundVariable::asDollarVariable)
+                    .distinct().collect(toList());
+        }
+        return namedDollarVariablesUnbound;
+    }
 
     public TypeQLUpdate insert(ThingVariable<?>... things) {
         return insert(list(things));
