@@ -59,7 +59,7 @@ modifiers             : ( filter ';' )? ( sort ';' )? ( offset ';' )? ( limit ';
 
 filter                :   GET         either_var      ( ',' either_var)*                   ;
 sort                  :   SORT        var_order ( ',' var_order )*              ;
-var_order             :   VAR_ ORDER_?                                          ;
+var_order             :   either_var  ORDER_?                                          ;
 offset                :   OFFSET      LONG_                                     ;
 limit                 :   LIMIT       LONG_                                     ;
 

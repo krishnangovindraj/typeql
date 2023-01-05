@@ -387,13 +387,13 @@ public class Parser extends TypeQLBaseVisitor {
 
     @Override
     public Sortable.Sorting visitSort(TypeQLParser.SortContext ctx) {
-        List<Pair<UnboundDollarVariable, TypeQLArg.Order>> sorting = ctx.var_order().stream().map(this::visitVar_order).collect(toList());
+        List<Pair<UnboundVariable, TypeQLArg.Order>> sorting = ctx.var_order().stream().map(this::visitVar_order).collect(toList());
         return Sortable.Sorting.create(sorting);
     }
 
     @Override
-    public Pair<UnboundDollarVariable, TypeQLArg.Order> visitVar_order(TypeQLParser.Var_orderContext ctx) {
-        return new Pair<>(getVar(ctx.VAR_()), ctx.ORDER_() == null ? null : TypeQLArg.Order.of(ctx.ORDER_().getText()));
+    public Pair<UnboundVariable, TypeQLArg.Order> visitVar_order(TypeQLParser.Var_orderContext ctx) {
+        return new Pair<>(visitEither_var(ctx.either_var()), ctx.ORDER_() == null ? null : TypeQLArg.Order.of(ctx.ORDER_().getText()));
     }
 
 
