@@ -31,6 +31,7 @@ import com.vaticle.typeql.lang.pattern.Disjunction;
 import com.vaticle.typeql.lang.pattern.Negation;
 import com.vaticle.typeql.lang.pattern.Pattern;
 import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
+import com.vaticle.typeql.lang.pattern.expression.Expression;
 import com.vaticle.typeql.lang.pattern.expression.Predicate;
 import com.vaticle.typeql.lang.pattern.schema.Rule;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
@@ -377,5 +378,67 @@ public class TypeQL {
 
     public static ThingConstraint.Predicate<String> like(String value) {
         return new ThingConstraint.Predicate<>(new Predicate.String(LIKE, value));
+    }
+
+    public static abstract class Expr {
+        public static Expression.Operation op_plus(Expression a, Expression b) {
+            return new Expression.Operation(Expression.Operation.OP.PLUS, a, b);
+        }
+
+        public static Expression.Operation op_minus(Expression a, Expression b) {
+            return new Expression.Operation(Expression.Operation.OP.MINUS, a, b);
+        }
+
+        public static Expression.Operation op_times(Expression a, Expression b) {
+            return new Expression.Operation(Expression.Operation.OP.TIMES, a, b);
+        }
+
+        public static Expression.Operation op_div(Expression a, Expression b) {
+            return new Expression.Operation(Expression.Operation.OP.DIV, a, b);
+        }
+
+        public static Expression.Operation op_pow(Expression a, Expression b) {
+            return new Expression.Operation(Expression.Operation.OP.POW, a, b);
+        }
+
+        public static Expression.Function func(String funcId, Expression... args) {
+            return func(funcId, list(args));
+        }
+
+        public static Expression.Function func(String funcId, List<Expression> args) {
+            return new Expression.Function(funcId, args);
+        }
+
+        public static Expression bracketed(Expression nestedExpr) {
+            return new Expression.Bracketed(nestedExpr);
+        }
+
+        public static Expression.ThingVar thingVar(UnboundDollarVariable variable) {
+            return new Expression.ThingVar(variable.toThing());
+        }
+
+        public static Expression.ValVar valVar(UnboundValueVariable variable) {
+            return new Expression.ValVar(variable.toValue());
+        }
+
+        public static Expression.Constant.Boolean constant(Boolean value) {
+            return new Expression.Constant.Boolean(value);
+        }
+
+        public static Expression.Constant.Long constant(long value) {
+            return new Expression.Constant.Long(value);
+        }
+
+        public static Expression.Constant.Double constant(double value) {
+            return new Expression.Constant.Double(value);
+        }
+
+        public static Expression.Constant.String constant(String value) {
+            return new Expression.Constant.String(value);
+        }
+
+        public static Expression.Constant.DateTime constant(LocalDateTime value) {
+            return new Expression.Constant.DateTime(value);
+        }
     }
 }

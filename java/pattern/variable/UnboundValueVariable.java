@@ -26,9 +26,11 @@ import com.vaticle.typeql.lang.pattern.constraint.ValueConstraint;
 import com.vaticle.typeql.lang.pattern.expression.Expression;
 import com.vaticle.typeql.lang.pattern.variable.builder.PredicateBuilder;
 
+import java.util.Collections;
 import java.util.List;
+
 public class UnboundValueVariable extends UnboundVariable implements PredicateBuilder<ValueVariable> {
-    private UnboundValueVariable(Reference reference) {
+    UnboundValueVariable(Reference reference) {
         super(reference);
         assert reference.isNamedValue();
     }
@@ -69,7 +71,7 @@ public class UnboundValueVariable extends UnboundVariable implements PredicateBu
 
     @Override
     public List<? extends Constraint<?>> constraints() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

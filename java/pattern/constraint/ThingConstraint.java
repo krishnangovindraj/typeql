@@ -482,7 +482,7 @@ public abstract class ThingConstraint extends Constraint<BoundVariable> {
 
         @Override
         public Set<BoundVariable> variables() {
-            return set();
+            return predicate.variables();
         }
 
         @Override

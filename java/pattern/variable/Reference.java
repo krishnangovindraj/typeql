@@ -36,7 +36,7 @@ public abstract class Reference {
     final Type type;
     final boolean isVisible;
 
-    enum Type {NAMED_DOLLAR, LABEL, ANONYMOUS, NAMED_VALUE}
+    enum Type {NAMED_DOLLAR, ANONYMOUS, NAMED_VALUE, LABEL}
 
     Reference(Type type, boolean isVisible) {
         this.type = type;

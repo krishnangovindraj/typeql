@@ -22,15 +22,13 @@
 package com.vaticle.typeql.lang.parser.test;
 
 import com.vaticle.typeql.lang.TypeQL;
+import com.vaticle.typeql.lang.TypeQL.Expr;
 import com.vaticle.typeql.lang.common.TypeQLArg;
 import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.Conjunction;
 import com.vaticle.typeql.lang.pattern.Pattern;
 import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
-import com.vaticle.typeql.lang.pattern.expression.Expression;
-import com.vaticle.typeql.lang.pattern.expression.Expression.Operation.OP;
-import com.vaticle.typeql.lang.pattern.expression.Predicate;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 import com.vaticle.typeql.lang.query.TypeQLDefine;
 import com.vaticle.typeql.lang.query.TypeQLDelete;
@@ -415,6 +413,18 @@ public class ParserTest {
     }
 
     @Test
+    public void testAttributeQueryByValueVariable() {
+        final String query = "match\n" +
+                "?x = 5;\n" +
+                "$a ?x isa age;";
+        TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
+        TypeQLMatch expected = match(
+                valvar("x").assign(Expr.constant(5)),
+                var("a").eq(valvar("x")).isa("age"));
+        assertQueryEquals(expected, parsed, query);
+    }
+
+    @Test
     public void testAssignOps() {
         final String query = "match\n" +
                 "$x isa commodity,\n" +
@@ -426,10 +436,10 @@ public class ParserTest {
         TypeQLMatch expected = match(
                 var("x").isa("commodity").has("price", var("p")),
                 rel("commodity", "x").rel("qty", "q").isa("order"),
-                valvar("net").assign(Expression.op(OP.TIMES, Expression.thingVar(var("p")), Expression.thingVar(var("q")))),
-                valvar("gross").assign(Expression.op(OP.TIMES,
-                        Expression.valVar(valvar("net")),
-                        Expression.bracketed(Expression.op(OP.PLUS, Expression.constant(1.0), Expression.constant(0.21))))));
+                valvar("net").assign(Expr.op_times(Expr.thingVar(var("p")), Expr.thingVar(var("q")))),
+                valvar("gross").assign(Expr.op_times(
+                        Expr.valVar(valvar("net")),
+                        Expr.bracketed(Expr.op_plus(Expr.constant(1.0), Expr.constant(0.21))))));
 
         assertQueryEquals(expected, parsed, query);
     }
@@ -441,15 +451,15 @@ public class ParserTest {
         TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
         TypeQLMatch expected = match(
                 valvar("res").assign(
-                        Expression.op(OP.PLUS,
-                                Expression.op(OP.TIMES,
-                                        Expression.op(OP.DIV,
-                                                Expression.thingVar(var("a")),
-                                                Expression.thingVar(var("b"))),
-                                        Expression.thingVar(var("c"))),
-                                Expression.op(OP.DIV,
-                                        Expression.op(OP.POW, Expression.thingVar(var("d")), Expression.thingVar(var("e"))),
-                                        Expression.thingVar(var("f"))))));
+                        Expr.op_plus(
+                                Expr.op_times(
+                                        Expr.op_div(
+                                                Expr.thingVar(var("a")),
+                                                Expr.thingVar(var("b"))),
+                                        Expr.thingVar(var("c"))),
+                                Expr.op_div(
+                                        Expr.op_pow(Expr.thingVar(var("d")), Expr.thingVar(var("e"))),
+                                        Expr.thingVar(var("f"))))));
         assertQueryEquals(expected, parsed, query);
     }
 
@@ -461,15 +471,15 @@ public class ParserTest {
         TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
         TypeQLMatch expected = match(
                 valvar("res").assign(
-                        Expression.op(OP.PLUS,
-                                Expression.thingVar(var("a")),
-                                Expression.op(OP.TIMES,
-                                        Expression.bracketed(
-                                                Expression.op(OP.PLUS,
-                                                        Expression.func("foo",
-                                                                Expression.op(OP.PLUS, Expression.thingVar(var("b")), Expression.valVar(valvar("c")))),
-                                                        Expression.thingVar(var("d")))),
-                                        Expression.valVar(valvar("e"))))));
+                        Expr.op_plus(
+                                Expr.thingVar(var("a")),
+                                Expr.op_times(
+                                        Expr.bracketed(
+                                                Expr.op_plus(
+                                                        Expr.func("foo",
+                                                                Expr.op_plus(Expr.thingVar(var("b")), Expr.valVar(valvar("c")))),
+                                                        Expr.thingVar(var("d")))),
+                                        Expr.valVar(valvar("e"))))));
         assertQueryEquals(expected, parsed, query);
     }
 
@@ -486,10 +496,10 @@ public class ParserTest {
         TypeQLMatch expected = match(
                 var("x").isa("commodity").has("price", var("p")),
                 rel("commodity", "x").rel("qty", "q").isa("order"),
-                valvar("net").assign(Expression.op(OP.TIMES, Expression.thingVar(var("p")), Expression.thingVar(var("q")))),
-                valvar("gross").assign(Expression.func("percentOf",
-                        Expression.valVar(valvar("net")),
-                        Expression.op(OP.PLUS, Expression.constant(100.0), Expression.constant(21.0)))));
+                valvar("net").assign(Expr.op_times(Expr.thingVar(var("p")), Expr.thingVar(var("q")))),
+                valvar("gross").assign(Expr.func("percentOf",
+                        Expr.valVar(valvar("net")),
+                        Expr.op_plus(Expr.constant(100.0), Expr.constant(21.0)))));
 
         assertQueryEquals(expected, parsed, query);
     }
@@ -1096,10 +1106,9 @@ public class ParserTest {
     public void testRuleAttachAttributeByValue() {
         Conjunction<? extends Pattern> whenPattern = and(
                 var("x").has("age", var("a")),
-                valvar("d").assign(Expression.op(OP.TIMES, Expression.thingVar(var("a")), Expression.constant(365)))
+                valvar("d").assign(Expr.op_times(Expr.thingVar(var("a")), Expr.constant(365)))
         );
-        ThingVariable<?> thenPattern = var("x").has("days",
-                new ThingConstraint.Predicate(new Predicate.ValueVariable(TypeQLToken.Predicate.Equality.EQ, valvar("d").toValue())));
+        ThingVariable<?> thenPattern = var("x").has("days", valvar("d"));
         TypeQLDefine expected = define(rule("attach-val").when(whenPattern).then(thenPattern));
         final String query = "define\n" +
                 "rule attach-val:\n" +

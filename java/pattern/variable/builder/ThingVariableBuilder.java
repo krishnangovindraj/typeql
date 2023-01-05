@@ -26,6 +26,7 @@ import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
 import com.vaticle.typeql.lang.pattern.expression.Predicate;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundValueVariable;
 
 import java.time.LocalDateTime;
 
@@ -76,6 +77,10 @@ public interface ThingVariableBuilder {
 
         default T has(String type, LocalDateTime value) {
             return has(type, new ThingConstraint.Predicate(new Predicate.DateTime(EQ, value)));
+        }
+
+        default T has(String type, UnboundValueVariable value) {
+            return has(type, new ThingConstraint.Predicate(new Predicate.ValueVariable(EQ, value.toValue())));
         }
 
         default T has(String type, ThingConstraint.Predicate<?> predicate) {

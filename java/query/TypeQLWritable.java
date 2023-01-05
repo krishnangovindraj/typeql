@@ -26,7 +26,7 @@ import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
 import com.vaticle.typeql.lang.pattern.variable.Variable;
 
 import javax.annotation.Nullable;
@@ -56,7 +56,7 @@ public abstract class TypeQLWritable extends TypeQLQuery {
 
     abstract static class InsertOrDelete extends TypeQLWritable {
 
-        private List<UnboundDollarVariable> namedVariablesUnbound;
+        private List<UnboundVariable> namedVariablesUnbound;
         private final TypeQLToken.Command command;
         protected final List<ThingVariable<?>> variables;
         private final int hash;
@@ -70,7 +70,7 @@ public abstract class TypeQLWritable extends TypeQLQuery {
             this.hash = Objects.hash(this.command, this.match, this.variables);
         }
 
-        public List<UnboundDollarVariable> namedUnboudDollarVariables() {
+        public List<UnboundVariable> namedUnboudDollarVariables() {
             if (namedVariablesUnbound == null) {
                 namedVariablesUnbound = variables.stream().flatMap(v -> concat(Stream.of(v), v.variables()))
                         .filter(Variable::isNamed).map(BoundVariable::toUnbound).distinct().collect(toList());

@@ -57,6 +57,11 @@ public abstract class ThingVariable<T extends ThingVariable<T>> extends BoundVar
     abstract T getThis();
 
     @Override
+    public UnboundDollarVariable toUnbound() {
+        return new UnboundDollarVariable(reference);
+    }
+
+    @Override
     public List<ThingConstraint> constraints() {
         return constraints;
     }

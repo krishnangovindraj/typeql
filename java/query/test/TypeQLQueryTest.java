@@ -22,6 +22,7 @@
 package com.vaticle.typeql.lang.query.test;
 
 import com.vaticle.typeql.lang.TypeQL;
+import com.vaticle.typeql.lang.TypeQL.Expr;
 import com.vaticle.typeql.lang.common.TypeQLArg;
 import com.vaticle.typeql.lang.query.TypeQLDefine;
 import com.vaticle.typeql.lang.query.TypeQLInsert;
@@ -36,6 +37,7 @@ import static com.vaticle.typeql.lang.TypeQL.or;
 import static com.vaticle.typeql.lang.TypeQL.rel;
 import static com.vaticle.typeql.lang.TypeQL.rule;
 import static com.vaticle.typeql.lang.TypeQL.type;
+import static com.vaticle.typeql.lang.TypeQL.valvar;
 import static com.vaticle.typeql.lang.TypeQL.var;
 import static org.junit.Assert.assertEquals;
 
@@ -132,6 +134,12 @@ public class TypeQLQueryTest {
     public void testMatchInsertToString() {
         TypeQLInsert query = match(var("x").isa("movie")).insert(var("x").has("title", "hello"));
         assertEquals("match\n$x isa movie;\ninsert\n$x has title \"hello\";", query.toString());
+    }
+
+    @Test
+    public void testMatchInsertWithValueVariable() {
+        TypeQLInsert query = match(valvar("x").assign(Expr.constant(2))).insert(var("a").eq(valvar("x")).isa("prime"));
+        assertEquals("match\n?x = 2;\ninsert\n$a ?x isa prime;", query.toString());
     }
 
     @Test

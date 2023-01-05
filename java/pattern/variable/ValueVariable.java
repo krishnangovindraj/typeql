@@ -44,6 +44,11 @@ public class ValueVariable extends BoundVariable {
         constrain(constraint);
     }
 
+    @Override
+    public UnboundValueVariable toUnbound() {
+        return new UnboundValueVariable(reference);
+    }
+
     public ValueVariable constrain(ValueConstraint constraint) {
         if (this.constraint != null) {
             throw TypeQLException.of(ILLEGAL_CONSTRAINT_REPETITION.message(reference, ValueConstraint.class, constraint));

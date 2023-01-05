@@ -63,6 +63,11 @@ public class TypeVariable extends BoundVariable implements TypeVariableBuilder, 
     }
 
     @Override
+    public UnboundDollarVariable toUnbound() {
+        return new UnboundDollarVariable(reference);
+    }
+
+    @Override
     public List<TypeConstraint> constraints() {
         return constraints;
     }

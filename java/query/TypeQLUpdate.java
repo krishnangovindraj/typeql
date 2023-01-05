@@ -23,7 +23,7 @@ package com.vaticle.typeql.lang.query;
 
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
 import com.vaticle.typeql.lang.pattern.variable.Variable;
 
 import java.util.List;
@@ -44,8 +44,8 @@ public class TypeQLUpdate extends TypeQLWritable {
     private final List<ThingVariable<?>> insertVariables;
     private final int hash;
 
-    private List<UnboundDollarVariable> namedDeleteVariablesUnbound;
-    private List<UnboundDollarVariable> namedInsertVariablesUnbound;
+    private List<UnboundVariable> namedDeleteVariablesUnbound;
+    private List<UnboundVariable> namedInsertVariablesUnbound;
 
     public TypeQLUpdate(TypeQLMatch.Unfiltered match, List<ThingVariable<?>> deleteVariables,
                         List<ThingVariable<?>> insertVariables) {
@@ -69,7 +69,7 @@ public class TypeQLUpdate extends TypeQLWritable {
         return insertVariables;
     }
 
-    public List<UnboundDollarVariable> namedDeleteVariablesUnbound() {
+    public List<UnboundVariable> namedDeleteVariablesUnbound() {
         if (namedDeleteVariablesUnbound == null) {
             namedDeleteVariablesUnbound = deleteVariables.stream().flatMap(v -> concat(Stream.of(v), v.variables()))
                     .filter(Variable::isNamed).map(BoundVariable::toUnbound).distinct().collect(toList());
@@ -77,7 +77,7 @@ public class TypeQLUpdate extends TypeQLWritable {
         return namedDeleteVariablesUnbound;
     }
 
-    public List<UnboundDollarVariable> namedInsertVariablesUnbound() {
+    public List<UnboundVariable> namedInsertVariablesUnbound() {
         if (namedInsertVariablesUnbound == null) {
             namedInsertVariablesUnbound = insertVariables.stream().flatMap(v -> concat(Stream.of(v), v.variables()))
                     .filter(Variable::isNamed).map(BoundVariable::toUnbound).distinct().collect(toList());

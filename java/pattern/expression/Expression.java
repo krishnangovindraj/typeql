@@ -93,50 +93,6 @@ public abstract class Expression {
     @Override
     public abstract String toString();
 
-    public static Expression.Operation op(Expression.Operation.OP op, Expression a, Expression b) {
-        return new Expression.Operation(op, a, b);
-    }
-
-    public static Function func(String funcId, Expression... args) {
-        return func(funcId, list(args));
-    }
-
-    public static Function func(String funcId, List<Expression> args) {
-        return new Function(funcId, args);
-    }
-
-    public static Expression bracketed(Expression nestedExpr) {
-        return new Expression.Bracketed(nestedExpr);
-    }
-
-    public static ThingVar thingVar(UnboundDollarVariable variable) {
-        return new ThingVar(variable.toThing());
-    }
-
-    public static ValVar valVar(UnboundValueVariable variable) {
-        return new ValVar(variable.toValue());
-    }
-
-    public static Constant.Boolean constant(Boolean value) {
-        return new Constant.Boolean(value);
-    }
-
-    public static Constant.Long constant(long value) {
-        return new Constant.Long(value);
-    }
-
-    public static Constant.Double constant(double value) {
-        return new Constant.Double(value);
-    }
-
-    public static Constant.String constant(String value) {
-        return new Constant.String(value);
-    }
-
-    public static Constant.DateTime constant(LocalDateTime value) {
-        return new Constant.DateTime(value);
-    }
-
     public Set<BoundVariable> variables() {
         Set<BoundVariable> collector = new HashSet<>();
         collectVariables(collector);
