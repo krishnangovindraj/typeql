@@ -48,6 +48,7 @@ import static com.vaticle.typedb.common.collection.Collections.set;
 import static com.vaticle.typedb.common.util.Objects.className;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Char.COLON;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Char.COMMA_SPACE;
+import static com.vaticle.typeql.lang.common.TypeQLToken.Char.EQUAL;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Char.PARAN_CLOSE;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Char.PARAN_OPEN;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Char.SPACE;
@@ -436,7 +437,12 @@ public abstract class ThingConstraint extends Constraint<BoundVariable> {
 
         @Override
         public Set<BoundVariable> variables() {
-            return set(attribute);
+            Set<BoundVariable> variables = new HashSet<>();
+            variables.add(attribute);
+            if (attribute.predicate().map(p -> p.predicate.predicate().equals(TypeQLToken.Predicate.Equality.EQ)).orElse(false)) {
+                variables.addAll(attribute.predicate().get().variables());
+            }
+            return variables;
         }
 
         @Override
@@ -453,7 +459,7 @@ public abstract class ThingConstraint extends Constraint<BoundVariable> {
         public String toString() {
             return String.valueOf(HAS) + SPACE +
                     (type != null ? type.label().get().label() + SPACE : "") +
-                    (attribute.isNamed() ? attribute.reference() : attribute.value().get());
+                    (attribute.isNamed() ? attribute.reference() : attribute.predicate().get());
         }
 
         @Override

@@ -88,7 +88,7 @@ public abstract class ThingVariable<T extends ThingVariable<T>> extends BoundVar
         return Optional.ofNullable(isConstraint);
     }
 
-    public Optional<ThingConstraint.Predicate<?>> value() {
+    public Optional<ThingConstraint.Predicate<?>> predicate() {
         return Optional.ofNullable(predicateConstraint);
     }
 
@@ -234,10 +234,10 @@ public abstract class ThingVariable<T extends ThingVariable<T>> extends BoundVar
 
         @Override
         public String toString(boolean pretty) {
-            assert value().isPresent();
+            assert predicate().isPresent();
             StringBuilder attribute = new StringBuilder();
             if (isVisible()) attribute.append(reference.syntax()).append(SPACE);
-            attribute.append(value().get());
+            attribute.append(predicate().get());
             String constraints;
             if (pretty) {
                 constraints = Stream.of(isaSyntax(), hasSyntax())

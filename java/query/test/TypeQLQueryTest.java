@@ -143,6 +143,14 @@ public class TypeQLQueryTest {
     }
 
     @Test
+    public void testMatchInsertOwnershipWithValueVariable() {
+        TypeQLInsert query = match(
+                valvar("x").assign(Expr.constant(2))
+        ).insert(var("p").has("prime", valvar("x")));
+        assertEquals("match\n?x = 2;\ninsert\n$p has prime ?x;", query.toString());
+    }
+
+    @Test
     public void testZeroToString() {
         assertEquals("match\n$x 0.0;", match(var("x").eq(0.0)).toString());
     }
