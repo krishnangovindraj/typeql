@@ -217,7 +217,7 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
     }
 
     @Override
-    public Aggregate aggregate(TypeQLToken.Aggregate.Method method, UnboundDollarVariable var) {
+    public Aggregate aggregate(TypeQLToken.Aggregate.Method method, UnboundVariable var) {
         return new Aggregate(this, method, var);
     }
 
@@ -409,10 +409,10 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
 
         private final TypeQLMatch query;
         private final TypeQLToken.Aggregate.Method method;
-        private final UnboundDollarVariable var;
+        private final UnboundVariable var;
         private final int hash;
 
-        public Aggregate(TypeQLMatch query, TypeQLToken.Aggregate.Method method, UnboundDollarVariable var) {
+        public Aggregate(TypeQLMatch query, TypeQLToken.Aggregate.Method method, UnboundVariable var) {
             if (query == null) throw new NullPointerException("MatchQuery is null");
             if (method == null) throw new NullPointerException("Method is null");
 
@@ -443,7 +443,7 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
             return method;
         }
 
-        public UnboundDollarVariable var() {
+        public UnboundVariable var() {
             return var;
         }
 
@@ -505,7 +505,7 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
         }
 
         @Override
-        public Aggregate aggregate(TypeQLToken.Aggregate.Method method, UnboundDollarVariable var) {
+        public Aggregate aggregate(TypeQLToken.Aggregate.Method method, UnboundVariable var) {
             return new Aggregate(this, method, var);
         }
 
@@ -533,10 +533,10 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
 
             private final TypeQLMatch.Group group;
             private final TypeQLToken.Aggregate.Method method;
-            private final UnboundDollarVariable var;
+            private final UnboundVariable var;
             private final int hash;
 
-            public Aggregate(TypeQLMatch.Group group, TypeQLToken.Aggregate.Method method, UnboundDollarVariable var) {
+            public Aggregate(TypeQLMatch.Group group, TypeQLToken.Aggregate.Method method, UnboundVariable var) {
                 if (group == null) throw new NullPointerException("TypeQLMatch.Group is null");
                 if (method == null) throw new NullPointerException("Method is null");
                 if (var == null && !method.equals(TypeQLToken.Aggregate.Method.COUNT)) {
@@ -566,7 +566,7 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
                 return method;
             }
 
-            public UnboundDollarVariable var() {
+            public UnboundVariable var() {
                 return var;
             }
 

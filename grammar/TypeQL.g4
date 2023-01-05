@@ -69,7 +69,7 @@ limit                 :   LIMIT       LONG_                                     
 // An aggregate function is composed of 2 things:
 // The aggregate method name, followed by the variable to apply the function to
 
-match_aggregate       :   aggregate_method    VAR_?   ';';                      // method and, optionally, a variable
+match_aggregate       :   aggregate_method    either_var?   ';';                      // method and, optionally, a variable
 aggregate_method      :   COUNT   |   MAX     |   MEAN    |   MEDIAN            // calculate statistical values
                       |   MIN     |   STD     |   SUM     ;
 

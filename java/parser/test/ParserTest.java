@@ -701,7 +701,7 @@ public class ParserTest {
                 "$x has age $a;\n" +
                 "group $x; max $a;";
         TypeQLMatch.Group.Aggregate parsed = parseQuery(query).asMatchGroupAggregate();
-        TypeQLMatch.Group.Aggregate expected = match(var("x").has("age", var("a"))).group("x").max("a");
+        TypeQLMatch.Group.Aggregate expected = match(var("x").has("age", var("a"))).group("x").max(var("a"));
 
         assertQueryEquals(expected, parsed, query);
     }
@@ -716,7 +716,7 @@ public class ParserTest {
         TypeQLMatch.Group.Aggregate expected = match(
                 rel("x").rel("y").isa("friendship"),
                 var("y").has("age", var("z"))
-        ).group("x").max("z");
+        ).group("x").max(var("z"));
 
         assertQueryEquals(expected, parsed, query);
     }
@@ -732,7 +732,26 @@ public class ParserTest {
         TypeQLMatch.Group.Aggregate expected = match(
                 rel("x").rel("y").isa("friendship"),
                 var("y").has("age", var("z"))
-        ).get("x", "y", "z").group("x").max("z");
+        ).get("x", "y", "z").group("x").max(var("z"));
+
+        assertQueryEquals(expected, parsed, query);
+    }
+
+    @Test
+    public void testFilteredGroupAggregatesOnValueVariable() {
+        final String query = "match\n" +
+                "$i ($x, $s) isa income-source;\n" +
+                "$i has value $v,\n" +
+                "    has tax-rate $r;\n" +
+                "?t = $r * $v;\n" +
+                "get $x, ?t;\n" +
+                "group $x; sum ?t;";
+        TypeQLMatch.Group.Aggregate parsed = parseQuery(query).asMatchGroupAggregate();
+        TypeQLMatch.Group.Aggregate expected = match(
+                var("i").rel("x").rel("s").isa("income-source"),
+                var("i").has("value", var("v")).has("tax-rate", var("r")),
+                valvar("t").assign(Expr.op_times(Expr.thingVar(var("r")), Expr.thingVar(var("v"))))
+        ).get(list(var("x"), valvar("t"))).group("x").sum(valvar("t"));
 
         assertQueryEquals(expected, parsed, query);
     }
@@ -1162,7 +1181,7 @@ public class ParserTest {
                 "$x isa movie;\n" +
                 "std $x;";
         TypeQLMatch.Aggregate parsed = parseQuery(query).asMatchAggregate();
-        TypeQLMatch.Aggregate expected = match(var("x").isa("movie")).std("x");
+        TypeQLMatch.Aggregate expected = match(var("x").isa("movie")).std(var("x"));
 
         assertQueryEquals(expected, parsed, query);
     }

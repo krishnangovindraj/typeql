@@ -357,7 +357,7 @@ public class Parser extends TypeQLBaseVisitor {
 
         return visitQuery_match(ctx.query_match()).aggregate(
                 TypeQLToken.Aggregate.Method.of(function.aggregate_method().getText()),
-                function.VAR_() != null ? getVar(function.VAR_()) : null
+                function.either_var() != null ? visitEither_var(function.either_var()) : null
         );
     }
 
@@ -374,7 +374,7 @@ public class Parser extends TypeQLBaseVisitor {
 
         return visitQuery_match(ctx.query_match()).group(var).aggregate(
                 TypeQLToken.Aggregate.Method.of(function.aggregate_method().getText()),
-                function.VAR_() != null ? getVar(function.VAR_()) : null
+                function.either_var() != null ? visitEither_var(function.either_var()) : null
         );
     }
 
