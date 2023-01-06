@@ -106,6 +106,8 @@ pattern_variable      :   variable_concept
                       |   variable_value
                       ;
 
+either_var            :   VAR_            |   VALVAR_         ;
+
 // CONCEPT VARAIBLES ===========================================================
 
 variable_concept      :   VAR_  IS  VAR_  ;
@@ -122,6 +124,11 @@ type_constraint       :   ABSTRACT
                       |   REGEX       STRING_
                       |   TYPE        label_any
                       ;
+
+// VALUE VARIABLES =============================================================
+
+variable_value            : VALVAR_ predicate
+                          | VALVAR_ ASSIGN expr;
 
 // THING VARIABLES =============================================================
 
@@ -154,7 +161,7 @@ attributes            :   attribute ( ',' attribute )* ;
 attribute             :   HAS label ( VAR_ | predicate )                        // ownership by labeled variable or value
                       |   HAS VAR_ ;                                            // or just value
 
-// ATTRIBUTE VALUATION CONSTRUCTS ==============================================
+// PREDICATE CONSTRUCTS ========================================================
 
 predicate             :   value |   VALVAR_   |
                       |   predicate_equality   predicate_value
@@ -164,6 +171,18 @@ predicate_equality    :   EQ | NEQ | GT | GTE | LT | LTE ;
 predicate_substring   :   CONTAINS | LIKE ;
 
 predicate_value       :   value | VAR_  | VALVAR_ ;
+
+// ARITHMETIC EXPRESSION CONSTRUCTS ============================================
+
+expr                      :  VAR_   | VALVAR_
+                          |  func   | value
+                          |  '(' expr ')'
+                          |  expr  POW expr
+                          |  expr  (TIMES | DIV)  expr
+                          |  expr  (PLUS | MINUS) expr
+                          ;
+func                      :  LABEL_ '('  arg_list? ')' ;
+arg_list                  :  expr (',' expr)*        ;
 
 // SCHEMA CONSTRUCT =============================================================
 
@@ -181,8 +200,6 @@ label_scoped          :   LABEL_SCOPED_ ;
 label                 :   LABEL_        | schema_native | type_native   | unreserved    ;
 
 // LITERAL INPUT VALUES =======================================================
-
-either_var            :   VAR_            |   VALVAR_         ;
 
 schema_native         :   RULE            ;
 
@@ -286,26 +303,12 @@ IID_            : '0x'[0-9a-f]+ ;
 LABEL_          : TYPE_CHAR_H_ TYPE_CHAR_T_* ;
 LABEL_SCOPED_   : LABEL_ ':' LABEL_ ;
 
-
 // ARITHMETIC
 POW                 : '^'         ;
 DIV                 : '/'         ;     TIMES               : '*'         ;
 PLUS                : '+'         ;     MINUS               : '-'         ;
 LPAREN              : '('         ;     RPAREN              : ')'         ;
 ASSIGN              : '=';
-
-variable_value            : VALVAR_ predicate
-                          | VALVAR_ ASSIGN expr;
-
-expr                      :  VAR_   | VALVAR_
-                          |  func   | value
-                          |  '(' expr ')'
-                          |  expr  POW expr
-                          |  expr  (TIMES | DIV)  expr
-                          |  expr  (PLUS | MINUS) expr
-                          ;
-func                      :  LABEL_ '('  arg_list? ')' ;
-arg_list                  :  expr (',' expr)*        ;
 
 // FRAGMENTS OF KEYWORDS =======================================================
 
