@@ -45,7 +45,9 @@ public abstract class Constraint<VARIABLE extends BoundVariable> {
         return false;
     }
 
-    public boolean isValue() { return false; }
+    public boolean isValue() {
+        return false;
+    }
 
     public ConceptConstraint asConcept() {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(ConceptConstraint.class)));

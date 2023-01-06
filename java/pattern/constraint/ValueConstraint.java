@@ -123,7 +123,9 @@ public abstract class ValueConstraint extends Constraint<BoundVariable> {
             this.hash = Objects.hash(Expression.class, this.expression);
         }
 
-        public com.vaticle.typeql.lang.pattern.expression.Expression expression() { return expression; }
+        public com.vaticle.typeql.lang.pattern.expression.Expression expression() {
+            return expression;
+        }
 
         @Override
         public Set<BoundVariable> variables() {

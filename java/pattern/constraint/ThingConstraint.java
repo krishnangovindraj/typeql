@@ -48,7 +48,6 @@ import static com.vaticle.typedb.common.collection.Collections.set;
 import static com.vaticle.typedb.common.util.Objects.className;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Char.COLON;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Char.COMMA_SPACE;
-import static com.vaticle.typeql.lang.common.TypeQLToken.Char.EQUAL;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Char.PARAN_CLOSE;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Char.PARAN_OPEN;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Char.SPACE;
