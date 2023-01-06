@@ -148,7 +148,7 @@ public class UnboundDollarVariable extends UnboundVariable implements
     }
 
     @Override
-    public ThingVariable.Attribute constrain(com.vaticle.typeql.lang.pattern.expression.Predicate predicate) {
+    public ThingVariable.Attribute constrain(com.vaticle.typeql.lang.pattern.expression.Predicate<?> predicate) {
         return constrain(new ThingConstraint.Predicate(predicate));
     }
 

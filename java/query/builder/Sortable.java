@@ -24,7 +24,6 @@ package com.vaticle.typeql.lang.query.builder;
 import com.vaticle.typedb.common.collection.Pair;
 import com.vaticle.typeql.lang.common.TypeQLArg;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
-import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
 
 import java.util.ArrayList;
@@ -47,13 +46,22 @@ public interface Sortable<S, O, L> {
         return sort(pairs);
     }
 
-    default S sort(Pair<UnboundVariable, String> varOrder1, Pair<UnboundVariable, String>... varOrders) {
-        List<Pair<UnboundVariable, TypeQLArg.Order>> pairs = new ArrayList<>();
-        pairs.add(new Pair<>(varOrder1.first(), (varOrder1.second() == null ? null : TypeQLArg.Order.of(varOrder1.second()))));
-        for (Pair<UnboundVariable, String> vo : varOrders) {
-            pairs.add(new Pair<>(vo.first(), (vo.second() == null ? null : TypeQLArg.Order.of(vo.second()))));
-        }
-        return sort(pairs);
+    default S sort(Pair<UnboundVariable, String> varOrder1) {
+        return sort(list(parseVarOrder(varOrder1)));
+    }
+
+    default S sort(Pair<UnboundVariable, String> varOrder1, Pair<UnboundVariable, String> varOrder2) {
+        return sort(list(parseVarOrder(varOrder1), parseVarOrder(varOrder2)));
+    }
+
+    default S sort(Pair<UnboundVariable, String> varOrder1,
+                   Pair<UnboundVariable, String> varOrder2,
+                   Pair<UnboundVariable, String> varOrder3) {
+        return sort(list(parseVarOrder(varOrder1), parseVarOrder(varOrder2), parseVarOrder(varOrder3)));
+    }
+
+    static Pair<UnboundVariable, TypeQLArg.Order> parseVarOrder(Pair<UnboundVariable, String> varOrder) {
+        return new Pair<>(varOrder.first(), TypeQLArg.Order.of(varOrder.second()));
     }
 
     default S sort(List<Pair<UnboundVariable, TypeQLArg.Order>> varOrders) {

@@ -96,6 +96,7 @@ public interface PredicateBuilder<VAR_TYPE extends BoundVariable> {
     default VAR_TYPE neq(UnboundDollarVariable variable) {
         return neq(Predicate.ThingVariable::new, variable.toThing());
     }
+
     default VAR_TYPE neq(UnboundValueVariable variable) {
         return neq(Predicate.ValueVariable::new, variable.toValue());
     }

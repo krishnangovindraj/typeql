@@ -31,6 +31,7 @@ import com.vaticle.typeql.lang.pattern.variable.UnboundValueVariable;
 import java.time.LocalDateTime;
 
 import static com.vaticle.typeql.lang.common.TypeQLToken.Predicate.Equality.EQ;
+
 public interface ThingVariableBuilder {
 
     interface Common<T> {

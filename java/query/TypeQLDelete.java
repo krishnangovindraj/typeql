@@ -52,7 +52,8 @@ public class TypeQLDelete extends TypeQLWritable.InsertOrDelete {
                 throw TypeQLException.of(VARIABLE_OUT_OF_SCOPE_DELETE.message(var.reference()));
             }
             var.variables().forEach(nestedVar -> {
-                if (nestedVar.isNamed() && !match.namedUnboudDollarVariables().contains(nestedVar.toUnbound())) {
+                if (nestedVar.isNamed() && nestedVar.toUnbound().isDollarVariable()
+                        && !match.namedUnboudDollarVariables().contains(nestedVar.toUnbound().asDollarVariable())) {
                     throw TypeQLException.of(VARIABLE_OUT_OF_SCOPE_DELETE.message(nestedVar.reference()));
                 }
             });
@@ -65,7 +66,9 @@ public class TypeQLDelete extends TypeQLWritable.InsertOrDelete {
         return match;
     }
 
-    public List<ThingVariable<?>> variables() { return variables; }
+    public List<ThingVariable<?>> variables() {
+        return variables;
+    }
 
     public List<UnboundDollarVariable> namedUnboundDollarVariables() {
         if (namedDollarVariablesUnbound == null) {

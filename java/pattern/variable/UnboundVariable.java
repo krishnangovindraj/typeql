@@ -30,6 +30,7 @@ public abstract class UnboundVariable extends Variable {
     UnboundVariable(Reference reference) {
         super(reference);
     }
+
     @Override
     public boolean isUnbound() {
         return true;
