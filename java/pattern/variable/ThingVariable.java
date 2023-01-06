@@ -43,7 +43,7 @@ public abstract class ThingVariable<T extends ThingVariable<T>> extends BoundVar
     ThingConstraint.IID iidConstraint;
     ThingConstraint.Isa isaConstraint;
     ConceptConstraint.Is isConstraint;
-    ThingConstraint.Predicate<?> predicateConstraint;
+    ThingConstraint.Predicate predicateConstraint;
     ThingConstraint.Relation relationConstraint;
     List<ThingConstraint.Has> hasConstraints;
     List<ThingConstraint> constraints;
@@ -88,7 +88,7 @@ public abstract class ThingVariable<T extends ThingVariable<T>> extends BoundVar
         return Optional.ofNullable(isConstraint);
     }
 
-    public Optional<ThingConstraint.Predicate<?>> predicate() {
+    public Optional<ThingConstraint.Predicate> predicate() {
         return Optional.ofNullable(predicateConstraint);
     }
 
@@ -221,7 +221,7 @@ public abstract class ThingVariable<T extends ThingVariable<T>> extends BoundVar
 
     public static class Attribute extends ThingVariable<Attribute> implements ThingVariableBuilder.Common<Attribute> {
 
-        Attribute(Reference reference, ThingConstraint.Predicate<?> predicateConstraint) {
+        Attribute(Reference reference, ThingConstraint.Predicate predicateConstraint) {
             super(reference);
             this.predicateConstraint = predicateConstraint;
             constraints.add(predicateConstraint);

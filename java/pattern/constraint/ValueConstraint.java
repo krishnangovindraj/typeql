@@ -54,7 +54,7 @@ public abstract class ValueConstraint extends Constraint<BoundVariable> {
         return false;
     }
 
-    public Predicate<?> asPredicate() {
+    public Predicate asPredicate() {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Predicate.class)));
     }
 
@@ -63,7 +63,7 @@ public abstract class ValueConstraint extends Constraint<BoundVariable> {
     }
 
 
-    public static class Predicate<T> extends ValueConstraint {
+    public static class Predicate extends ValueConstraint {
 
         private final com.vaticle.typeql.lang.pattern.expression.Predicate predicate;
         private final int hash;
@@ -84,7 +84,7 @@ public abstract class ValueConstraint extends Constraint<BoundVariable> {
         }
 
         @Override
-        public Predicate<?> asPredicate() {
+        public Predicate asPredicate() {
             return this;
         }
 
@@ -101,7 +101,7 @@ public abstract class ValueConstraint extends Constraint<BoundVariable> {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            Predicate<?> that = (Predicate<?>) o;
+            Predicate that = (Predicate) o;
             return this.predicate.equals(that.predicate);
         }
 

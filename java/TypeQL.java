@@ -35,7 +35,6 @@ import com.vaticle.typeql.lang.pattern.expression.Expression;
 import com.vaticle.typeql.lang.pattern.expression.Predicate;
 import com.vaticle.typeql.lang.pattern.schema.Rule;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
-import com.vaticle.typeql.lang.pattern.variable.ValueVariable;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 import com.vaticle.typeql.lang.pattern.variable.TypeVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
@@ -210,180 +209,180 @@ public class TypeQL {
         return hidden().rel(roleType, playerVar);
     }
 
-    public static ThingConstraint.Predicate<Long> eq(long value) {
-        return new ThingConstraint.Predicate<>(new Predicate.Long(EQ, value));
+    public static ThingConstraint.Predicate eq(long value) {
+        return new ThingConstraint.Predicate(new Predicate.Long(EQ, value));
     }
 
-    public static ThingConstraint.Predicate<Double> eq(double value) {
-        return new ThingConstraint.Predicate<>(new Predicate.Double(EQ, value));
+    public static ThingConstraint.Predicate eq(double value) {
+        return new ThingConstraint.Predicate(new Predicate.Double(EQ, value));
     }
 
-    public static ThingConstraint.Predicate<Boolean> eq(boolean value) {
-        return new ThingConstraint.Predicate<>(new Predicate.Boolean(EQ, value));
+    public static ThingConstraint.Predicate eq(boolean value) {
+        return new ThingConstraint.Predicate(new Predicate.Boolean(EQ, value));
     }
 
-    public static ThingConstraint.Predicate<String> eq(String value) {
-        return new ThingConstraint.Predicate<>(new Predicate.String(EQ, value));
+    public static ThingConstraint.Predicate eq(String value) {
+        return new ThingConstraint.Predicate(new Predicate.String(EQ, value));
     }
 
-    public static ThingConstraint.Predicate<LocalDateTime> eq(LocalDateTime value) {
-        return new ThingConstraint.Predicate<>(new Predicate.DateTime(EQ, value));
+    public static ThingConstraint.Predicate eq(LocalDateTime value) {
+        return new ThingConstraint.Predicate(new Predicate.DateTime(EQ, value));
     }
 
-    public static ThingConstraint.Predicate<ThingVariable<?>> eq(UnboundDollarVariable variable) {
-        return new ThingConstraint.Predicate<>(new Predicate.ThingVariable(EQ, variable.toThing()));
+    public static ThingConstraint.Predicate eq(UnboundDollarVariable variable) {
+        return new ThingConstraint.Predicate(new Predicate.ThingVariable(EQ, variable.toThing()));
     }
 
-    public static ThingConstraint.Predicate<ValueVariable> eq(UnboundValueVariable variable) {
-        return new ThingConstraint.Predicate<>(new Predicate.ValueVariable(EQ, variable.toValue()));
+    public static ThingConstraint.Predicate eq(UnboundValueVariable variable) {
+        return new ThingConstraint.Predicate(new Predicate.ValueVariable(EQ, variable.toValue()));
     }
 
-    public static ThingConstraint.Predicate<Long> neq(long value) {
-        return new ThingConstraint.Predicate<>(new Predicate.Long(NEQ, value));
+    public static ThingConstraint.Predicate neq(long value) {
+        return new ThingConstraint.Predicate(new Predicate.Long(NEQ, value));
     }
 
-    public static ThingConstraint.Predicate<Double> neq(double value) {
-        return new ThingConstraint.Predicate<>(new Predicate.Double(NEQ, value));
+    public static ThingConstraint.Predicate neq(double value) {
+        return new ThingConstraint.Predicate(new Predicate.Double(NEQ, value));
     }
 
-    public static ThingConstraint.Predicate<Boolean> neq(boolean value) {
-        return new ThingConstraint.Predicate<>(new Predicate.Boolean(NEQ, value));
+    public static ThingConstraint.Predicate neq(boolean value) {
+        return new ThingConstraint.Predicate(new Predicate.Boolean(NEQ, value));
     }
 
-    public static ThingConstraint.Predicate<String> neq(String value) {
-        return new ThingConstraint.Predicate<>(new Predicate.String(NEQ, value));
+    public static ThingConstraint.Predicate neq(String value) {
+        return new ThingConstraint.Predicate(new Predicate.String(NEQ, value));
     }
 
-    public static ThingConstraint.Predicate<LocalDateTime> neq(LocalDateTime value) {
-        return new ThingConstraint.Predicate<>(new Predicate.DateTime(NEQ, value));
+    public static ThingConstraint.Predicate neq(LocalDateTime value) {
+        return new ThingConstraint.Predicate(new Predicate.DateTime(NEQ, value));
     }
 
-    public static ThingConstraint.Predicate<ThingVariable<?>> neq(UnboundDollarVariable variable) {
-        return new ThingConstraint.Predicate<>(new Predicate.ThingVariable(NEQ, variable.toThing()));
+    public static ThingConstraint.Predicate neq(UnboundDollarVariable variable) {
+        return new ThingConstraint.Predicate(new Predicate.ThingVariable(NEQ, variable.toThing()));
     }
 
-    public static ThingConstraint.Predicate<ValueVariable> neq(UnboundValueVariable variable) {
-        return new ThingConstraint.Predicate<>(new Predicate.ValueVariable(NEQ, variable.toValue()));
+    public static ThingConstraint.Predicate neq(UnboundValueVariable variable) {
+        return new ThingConstraint.Predicate(new Predicate.ValueVariable(NEQ, variable.toValue()));
     }
 
-    public static ThingConstraint.Predicate<Long> gt(long value) {
-        return new ThingConstraint.Predicate<>(new Predicate.Long(GT, value));
+    public static ThingConstraint.Predicate gt(long value) {
+        return new ThingConstraint.Predicate(new Predicate.Long(GT, value));
     }
 
-    public static ThingConstraint.Predicate<Double> gt(double value) {
-        return new ThingConstraint.Predicate<>(new Predicate.Double(GT, value));
+    public static ThingConstraint.Predicate gt(double value) {
+        return new ThingConstraint.Predicate(new Predicate.Double(GT, value));
     }
 
-    public static ThingConstraint.Predicate<Boolean> gt(boolean value) {
-        return new ThingConstraint.Predicate<>(new Predicate.Boolean(GT, value));
+    public static ThingConstraint.Predicate gt(boolean value) {
+        return new ThingConstraint.Predicate(new Predicate.Boolean(GT, value));
     }
 
-    public static ThingConstraint.Predicate<String> gt(String value) {
-        return new ThingConstraint.Predicate<>(new Predicate.String(GT, value));
+    public static ThingConstraint.Predicate gt(String value) {
+        return new ThingConstraint.Predicate(new Predicate.String(GT, value));
     }
 
-    public static ThingConstraint.Predicate<LocalDateTime> gt(LocalDateTime value) {
-        return new ThingConstraint.Predicate<>(new Predicate.DateTime(GT, value));
+    public static ThingConstraint.Predicate gt(LocalDateTime value) {
+        return new ThingConstraint.Predicate(new Predicate.DateTime(GT, value));
     }
 
-    public static ThingConstraint.Predicate<ThingVariable<?>> gt(UnboundDollarVariable variable) {
-        return new ThingConstraint.Predicate<>(new Predicate.ThingVariable(GT, variable.toThing()));
+    public static ThingConstraint.Predicate gt(UnboundDollarVariable variable) {
+        return new ThingConstraint.Predicate(new Predicate.ThingVariable(GT, variable.toThing()));
     }
 
-    public static ThingConstraint.Predicate<ValueVariable> gt(UnboundValueVariable variable) {
-        return new ThingConstraint.Predicate<>(new Predicate.ValueVariable(GT, variable.toValue()));
+    public static ThingConstraint.Predicate gt(UnboundValueVariable variable) {
+        return new ThingConstraint.Predicate(new Predicate.ValueVariable(GT, variable.toValue()));
     }
 
-    public static ThingConstraint.Predicate<Long> gte(long value) {
-        return new ThingConstraint.Predicate<>(new Predicate.Long(GTE, value));
+    public static ThingConstraint.Predicate gte(long value) {
+        return new ThingConstraint.Predicate(new Predicate.Long(GTE, value));
     }
 
-    public static ThingConstraint.Predicate<Double> gte(double value) {
-        return new ThingConstraint.Predicate<>(new Predicate.Double(GTE, value));
+    public static ThingConstraint.Predicate gte(double value) {
+        return new ThingConstraint.Predicate(new Predicate.Double(GTE, value));
     }
 
-    public static ThingConstraint.Predicate<Boolean> gte(boolean value) {
-        return new ThingConstraint.Predicate<>(new Predicate.Boolean(GTE, value));
+    public static ThingConstraint.Predicate gte(boolean value) {
+        return new ThingConstraint.Predicate(new Predicate.Boolean(GTE, value));
     }
 
-    public static ThingConstraint.Predicate<String> gte(String value) {
-        return new ThingConstraint.Predicate<>(new Predicate.String(GTE, value));
+    public static ThingConstraint.Predicate gte(String value) {
+        return new ThingConstraint.Predicate(new Predicate.String(GTE, value));
     }
 
-    public static ThingConstraint.Predicate<LocalDateTime> gte(LocalDateTime value) {
-        return new ThingConstraint.Predicate<>(new Predicate.DateTime(GTE, value));
+    public static ThingConstraint.Predicate gte(LocalDateTime value) {
+        return new ThingConstraint.Predicate(new Predicate.DateTime(GTE, value));
     }
 
-    public static ThingConstraint.Predicate<ThingVariable<?>> gte(UnboundDollarVariable variable) {
-        return new ThingConstraint.Predicate<>(new Predicate.ThingVariable(GTE, variable.toThing()));
+    public static ThingConstraint.Predicate gte(UnboundDollarVariable variable) {
+        return new ThingConstraint.Predicate(new Predicate.ThingVariable(GTE, variable.toThing()));
     }
 
-    public static ThingConstraint.Predicate<ValueVariable> gte(UnboundValueVariable variable) {
-        return new ThingConstraint.Predicate<>(new Predicate.ValueVariable(GTE, variable.toValue()));
+    public static ThingConstraint.Predicate gte(UnboundValueVariable variable) {
+        return new ThingConstraint.Predicate(new Predicate.ValueVariable(GTE, variable.toValue()));
     }
 
-    public static ThingConstraint.Predicate<Long> lt(long value) {
-        return new ThingConstraint.Predicate<>(new Predicate.Long(LT, value));
+    public static ThingConstraint.Predicate lt(long value) {
+        return new ThingConstraint.Predicate(new Predicate.Long(LT, value));
     }
 
-    public static ThingConstraint.Predicate<Double> lt(double value) {
-        return new ThingConstraint.Predicate<>(new Predicate.Double(LT, value));
+    public static ThingConstraint.Predicate lt(double value) {
+        return new ThingConstraint.Predicate(new Predicate.Double(LT, value));
     }
 
-    public static ThingConstraint.Predicate<Boolean> lt(boolean value) {
-        return new ThingConstraint.Predicate<>(new Predicate.Boolean(LT, value));
+    public static ThingConstraint.Predicate lt(boolean value) {
+        return new ThingConstraint.Predicate(new Predicate.Boolean(LT, value));
     }
 
-    public static ThingConstraint.Predicate<String> lt(String value) {
-        return new ThingConstraint.Predicate<>(new Predicate.String(LT, value));
+    public static ThingConstraint.Predicate lt(String value) {
+        return new ThingConstraint.Predicate(new Predicate.String(LT, value));
     }
 
-    public static ThingConstraint.Predicate<LocalDateTime> lt(LocalDateTime value) {
-        return new ThingConstraint.Predicate<>(new Predicate.DateTime(LT, value));
+    public static ThingConstraint.Predicate lt(LocalDateTime value) {
+        return new ThingConstraint.Predicate(new Predicate.DateTime(LT, value));
     }
 
-    public static ThingConstraint.Predicate<ThingVariable<?>> lt(UnboundDollarVariable variable) {
-        return new ThingConstraint.Predicate<>(new Predicate.ThingVariable(LT, variable.toThing()));
+    public static ThingConstraint.Predicate lt(UnboundDollarVariable variable) {
+        return new ThingConstraint.Predicate(new Predicate.ThingVariable(LT, variable.toThing()));
     }
 
-    public static ThingConstraint.Predicate<ValueVariable> lt(UnboundValueVariable variable) {
-        return new ThingConstraint.Predicate<>(new Predicate.ValueVariable(LT, variable.toValue()));
+    public static ThingConstraint.Predicate lt(UnboundValueVariable variable) {
+        return new ThingConstraint.Predicate(new Predicate.ValueVariable(LT, variable.toValue()));
     }
 
-    public static ThingConstraint.Predicate<Long> lte(long value) {
-        return new ThingConstraint.Predicate<>(new Predicate.Long(LTE, value));
+    public static ThingConstraint.Predicate lte(long value) {
+        return new ThingConstraint.Predicate(new Predicate.Long(LTE, value));
     }
 
-    public static ThingConstraint.Predicate<Double> lte(double value) {
-        return new ThingConstraint.Predicate<>(new Predicate.Double(LTE, value));
+    public static ThingConstraint.Predicate lte(double value) {
+        return new ThingConstraint.Predicate(new Predicate.Double(LTE, value));
     }
 
-    public static ThingConstraint.Predicate<Boolean> lte(boolean value) {
-        return new ThingConstraint.Predicate<>(new Predicate.Boolean(LTE, value));
+    public static ThingConstraint.Predicate lte(boolean value) {
+        return new ThingConstraint.Predicate(new Predicate.Boolean(LTE, value));
     }
 
-    public static ThingConstraint.Predicate<String> lte(String value) {
-        return new ThingConstraint.Predicate<>(new Predicate.String(LTE, value));
+    public static ThingConstraint.Predicate lte(String value) {
+        return new ThingConstraint.Predicate(new Predicate.String(LTE, value));
     }
 
-    public static ThingConstraint.Predicate<LocalDateTime> lte(LocalDateTime value) {
-        return new ThingConstraint.Predicate<>(new Predicate.DateTime(LTE, value));
+    public static ThingConstraint.Predicate lte(LocalDateTime value) {
+        return new ThingConstraint.Predicate(new Predicate.DateTime(LTE, value));
     }
 
-    public static ThingConstraint.Predicate<ThingVariable<?>> lte(UnboundDollarVariable variable) {
-        return new ThingConstraint.Predicate<>(new Predicate.ThingVariable(LTE, variable.toThing()));
+    public static ThingConstraint.Predicate lte(UnboundDollarVariable variable) {
+        return new ThingConstraint.Predicate(new Predicate.ThingVariable(LTE, variable.toThing()));
     }
 
-    public static ThingConstraint.Predicate<ValueVariable> lte(UnboundValueVariable variable) {
-        return new ThingConstraint.Predicate<>(new Predicate.ValueVariable(LTE, variable.toValue()));
+    public static ThingConstraint.Predicate lte(UnboundValueVariable variable) {
+        return new ThingConstraint.Predicate(new Predicate.ValueVariable(LTE, variable.toValue()));
     }
 
-    public static ThingConstraint.Predicate<String> contains(String value) {
-        return new ThingConstraint.Predicate<>(new Predicate.String(CONTAINS, value));
+    public static ThingConstraint.Predicate contains(String value) {
+        return new ThingConstraint.Predicate(new Predicate.String(CONTAINS, value));
     }
 
-    public static ThingConstraint.Predicate<String> like(String value) {
-        return new ThingConstraint.Predicate<>(new Predicate.String(LIKE, value));
+    public static ThingConstraint.Predicate like(String value) {
+        return new ThingConstraint.Predicate(new Predicate.String(LIKE, value));
     }
 
     public static abstract class Expr {

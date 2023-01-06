@@ -83,7 +83,7 @@ public interface ThingVariableBuilder {
             return has(type, new ThingConstraint.Predicate(new Predicate.ValueVariable(EQ, value.toValue())));
         }
 
-        default T has(String type, ThingConstraint.Predicate<?> predicate) {
+        default T has(String type, ThingConstraint.Predicate predicate) {
             return constrain(new ThingConstraint.Has(type, predicate));
         }
 
@@ -135,6 +135,6 @@ public interface ThingVariableBuilder {
     }
 
     interface Attribute {
-        ThingVariable.Attribute constrain(ThingConstraint.Predicate<?> constraint);
+        ThingVariable.Attribute constrain(ThingConstraint.Predicate constraint);
     }
 }

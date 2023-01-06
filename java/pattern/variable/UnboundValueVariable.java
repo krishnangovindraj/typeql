@@ -54,10 +54,10 @@ public class UnboundValueVariable extends UnboundVariable implements PredicateBu
     }
 
     public ValueVariable constrain(com.vaticle.typeql.lang.pattern.expression.Predicate predicate) {
-        return constrain(new ValueConstraint.Predicate<>(predicate));
+        return constrain(new ValueConstraint.Predicate(predicate));
     }
 
-    public ValueVariable constrain(ValueConstraint.Predicate<?> constraint) {
+    public ValueVariable constrain(ValueConstraint.Predicate constraint) {
         return new ValueVariable(reference.asNamedValue(), constraint);
     }
 
