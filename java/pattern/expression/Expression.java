@@ -26,16 +26,12 @@ import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.ValueVariable;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundValueVariable;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.vaticle.typedb.common.collection.Collections.list;
 import static com.vaticle.typedb.common.util.Objects.className;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Char.COMMA_SPACE;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_CASTING;
@@ -86,7 +82,7 @@ public abstract class Expression {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(ValVar.class)));
     }
 
-    public Expression.Constant asConstant() {
+    public Expression.Constant<?> asConstant() {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Expression.Constant.class)));
     }
 
@@ -213,7 +209,7 @@ public abstract class Expression {
 
         @Override
         public String toString() {
-            return symbol + "(" + argList.stream().map(e -> e.toString()).collect(COMMA_SPACE.joiner()) + ")";
+            return symbol + "(" + argList.stream().map(Expression::toString).collect(COMMA_SPACE.joiner()) + ")";
         }
 
         @Override
@@ -231,15 +227,15 @@ public abstract class Expression {
     }
 
     public static class ThingVar extends Expression {
-        private final ThingVariable variable;
+        private final ThingVariable<?> variable;
         private final int hash;
 
-        public ThingVar(ThingVariable variable) {
+        public ThingVar(ThingVariable<?> variable) {
             this.variable = variable;
             this.hash = Objects.hash(ThingVar.class, variable);
         }
 
-        public ThingVariable variable() {
+        public ThingVariable<?> variable() {
             return variable;
         }
 
@@ -454,7 +450,6 @@ public abstract class Expression {
                 return this;
             }
         }
-
 
         public static class String extends Constant<java.lang.String> {
             public String(java.lang.String value) {

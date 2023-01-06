@@ -477,10 +477,10 @@ public abstract class ThingConstraint extends Constraint<BoundVariable> {
 
     public static class Predicate extends ThingConstraint {
 
-        private final com.vaticle.typeql.lang.pattern.expression.Predicate predicate;
+        private final com.vaticle.typeql.lang.pattern.expression.Predicate<?> predicate;
         private final int hash;
 
-        public Predicate(com.vaticle.typeql.lang.pattern.expression.Predicate predicate) {
+        public Predicate(com.vaticle.typeql.lang.pattern.expression.Predicate<?> predicate) {
             this.predicate = predicate;
             this.hash = Objects.hash(Predicate.class, predicate);
         }
@@ -500,7 +500,7 @@ public abstract class ThingConstraint extends Constraint<BoundVariable> {
             return this;
         }
 
-        public com.vaticle.typeql.lang.pattern.expression.Predicate predicate() {
+        public com.vaticle.typeql.lang.pattern.expression.Predicate<?> predicate() {
             return predicate;
         }
 

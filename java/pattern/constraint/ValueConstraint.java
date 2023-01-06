@@ -62,13 +62,12 @@ public abstract class ValueConstraint extends Constraint<BoundVariable> {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(Expression.class)));
     }
 
-
     public static class Predicate extends ValueConstraint {
 
-        private final com.vaticle.typeql.lang.pattern.expression.Predicate predicate;
+        private final com.vaticle.typeql.lang.pattern.expression.Predicate<?> predicate;
         private final int hash;
 
-        public Predicate(com.vaticle.typeql.lang.pattern.expression.Predicate predicate) {
+        public Predicate(com.vaticle.typeql.lang.pattern.expression.Predicate<?> predicate) {
             this.predicate = predicate;
             this.hash = Objects.hash(Predicate.class, this.predicate);
         }
@@ -88,7 +87,7 @@ public abstract class ValueConstraint extends Constraint<BoundVariable> {
             return this;
         }
 
-        public com.vaticle.typeql.lang.pattern.expression.Predicate predicate() {
+        public com.vaticle.typeql.lang.pattern.expression.Predicate<?> predicate() {
             return predicate;
         }
 
@@ -119,7 +118,7 @@ public abstract class ValueConstraint extends Constraint<BoundVariable> {
         public Expression(com.vaticle.typeql.lang.pattern.expression.Expression expression) {
             this.expression = expression;
             this.inputs = new HashSet<>();
-            expression.variables().forEach(v -> this.inputs.add(v));
+            this.inputs.addAll(expression.variables());
             this.hash = Objects.hash(Expression.class, this.expression);
         }
 
