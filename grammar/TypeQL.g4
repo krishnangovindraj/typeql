@@ -269,6 +269,14 @@ GT              : '>'           ;   GTE             : '>='          ;
 LT              : '<'           ;   LTE             : '<='          ;
 LIKE            : 'like'        ;   CONTAINS        : 'contains'    ;
 
+// ARITHMETIC SYMBOLS
+
+POW                 : '^'         ;
+DIV                 : '/'         ;     TIMES               : '*'         ;
+PLUS                : '+'         ;     MINUS               : '-'         ;
+LPAREN              : '('         ;     RPAREN              : ')'         ;
+ASSIGN              : '=';
+
 // GROUP AND AGGREGATE QUERY KEYWORDS (also used by COMPUTE QUERY)
 
 GROUP           : 'group'       ;   COUNT           : 'count'       ;
@@ -302,13 +310,6 @@ VALVAR_         : '?' [a-zA-Z0-9][a-zA-Z0-9_-]* ;
 IID_            : '0x'[0-9a-f]+ ;
 LABEL_          : TYPE_CHAR_H_ TYPE_CHAR_T_* ;
 LABEL_SCOPED_   : LABEL_ ':' LABEL_ ;
-
-// ARITHMETIC
-POW                 : '^'         ;
-DIV                 : '/'         ;     TIMES               : '*'         ;
-PLUS                : '+'         ;     MINUS               : '-'         ;
-LPAREN              : '('         ;     RPAREN              : ')'         ;
-ASSIGN              : '=';
 
 // FRAGMENTS OF KEYWORDS =======================================================
 

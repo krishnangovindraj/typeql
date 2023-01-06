@@ -525,6 +525,18 @@ public class Parser extends TypeQLBaseVisitor {
         return type;
     }
 
+    // VALUE VARIABLES =========================================================
+
+    @Override
+    public ValueVariable visitVariable_value(TypeQLParser.Variable_valueContext ctx) {
+        UnboundValueVariable ownerBuilder = getValVar(ctx.VALVAR_());
+        if (ctx.predicate() != null) {
+            return ownerBuilder.constrain(new ValueConstraint.Predicate(visitPredicate(ctx.predicate())));
+        } else if (ctx.ASSIGN() != null) {
+            return ownerBuilder.constrain(new ValueConstraint.Expression(visitExpr(ctx.expr())));
+        } else throw TypeQLException.of(ILLEGAL_STATE);
+    }
+
     // THING VARIABLES =========================================================
 
     @Override
@@ -685,7 +697,64 @@ public class Parser extends TypeQLBaseVisitor {
         return pair(scopedLabel[0], scopedLabel[1]);
     }
 
-    // ATTRIBUTE OPERATION CONSTRUCTS ==========================================
+    // ARITHMETIC EXPRESSIONS ==================================================
+
+    @Override
+    public Expression visitExpr(TypeQLParser.ExprContext ctx) {
+        if (ctx.POW() != null) {
+            return new Expression.Operation(Expression.Operation.OP.POW, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+        } else if (ctx.DIV() != null) {
+            return new Expression.Operation(Expression.Operation.OP.DIV, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+        } else if (ctx.TIMES() != null) {
+            return new Expression.Operation(Expression.Operation.OP.TIMES, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+        } else if (ctx.PLUS() != null) {
+            return new Expression.Operation(Expression.Operation.OP.PLUS, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+        } else if (ctx.MINUS() != null) {
+            return new Expression.Operation(Expression.Operation.OP.MINUS, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+        } else if (ctx.func() != null) {
+            return visitFunc(ctx.func());
+        } else if (ctx.LPAREN() != null || ctx.RPAREN() != null) {
+            assert ctx.LPAREN() != null && ctx.RPAREN() != null;
+            return new Expression.Bracketed(visitExpr(ctx.expr(0)));
+        } else if (ctx.VAR_() != null) {
+            return new Expression.ThingVar(getVar(ctx.VAR_()).toThing());
+        } else if (ctx.VALVAR_() != null) {
+            return new Expression.ValVar(getValVar(ctx.VALVAR_()).toValue());
+        } else if (ctx.value() != null) {
+            Object value = visitValue(ctx.value());
+            if (value instanceof Long) {
+                return new Expression.Constant.Long((Long) value);
+            } else if (value instanceof Double) {
+                return new Expression.Constant.Double((Double) value);
+            } else if (value instanceof Boolean) {
+                return new Expression.Constant.Boolean((Boolean) value);
+            } else if (value instanceof String) {
+                return new Expression.Constant.String((String) value);
+            } else if (value instanceof LocalDateTime) {
+                return new Expression.Constant.DateTime((LocalDateTime) value);
+            } else {
+                throw TypeQLException.of(ILLEGAL_GRAMMAR.message(ctx.getText()));
+            }
+        } else {
+            throw TypeQLException.of(ILLEGAL_GRAMMAR.message(ctx.getText()));
+        }
+    }
+
+    @Override
+    public Expression.Function visitFunc(TypeQLParser.FuncContext ctx) {
+        return new Expression.Function(ctx.LABEL_().getSymbol().getText(), visitArg_list(ctx.arg_list()));
+    }
+
+    @Override
+    public List<Expression> visitArg_list(TypeQLParser.Arg_listContext ctx) {
+        List<Expression> args = new ArrayList<>();
+        if (ctx != null) {
+            ctx.expr().forEach(expr -> args.add(visitExpr(expr)));
+        }
+        return args;
+    }
+
+    // PREDICATES ==============================================================
 
     @Override
     public Predicate<?> visitPredicate(TypeQLParser.PredicateContext ctx) {
@@ -784,72 +853,6 @@ public class Parser extends TypeQLBaseVisitor {
         } else {
             throw TypeQLException.of(ILLEGAL_GRAMMAR.message(ctx.getText()));
         }
-    }
-
-    // Arithmetic
-    @Override
-    public ValueVariable visitVariable_value(TypeQLParser.Variable_valueContext ctx) {
-        UnboundValueVariable ownerBuilder = getValVar(ctx.VALVAR_());
-        if (ctx.predicate() != null) {
-            return ownerBuilder.constrain(new ValueConstraint.Predicate(visitPredicate(ctx.predicate())));
-        } else if (ctx.ASSIGN() != null) {
-            return ownerBuilder.constrain(new ValueConstraint.Expression(visitExpr(ctx.expr())));
-        } else throw TypeQLException.of(ILLEGAL_STATE);
-    }
-
-    @Override
-    public Expression visitExpr(TypeQLParser.ExprContext ctx) {
-        if (ctx.POW() != null) {
-            return new Expression.Operation(Expression.Operation.OP.POW, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
-        } else if (ctx.DIV() != null) {
-            return new Expression.Operation(Expression.Operation.OP.DIV, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
-        } else if (ctx.TIMES() != null) {
-            return new Expression.Operation(Expression.Operation.OP.TIMES, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
-        } else if (ctx.PLUS() != null) {
-            return new Expression.Operation(Expression.Operation.OP.PLUS, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
-        } else if (ctx.MINUS() != null) {
-            return new Expression.Operation(Expression.Operation.OP.MINUS, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
-        } else if (ctx.func() != null) {
-            return visitFunc(ctx.func());
-        } else if (ctx.LPAREN() != null || ctx.RPAREN() != null) {
-            assert ctx.LPAREN() != null && ctx.RPAREN() != null;
-            return new Expression.Bracketed(visitExpr(ctx.expr(0)));
-        } else if (ctx.VAR_() != null) {
-            return new Expression.ThingVar(getVar(ctx.VAR_()).toThing());
-        } else if (ctx.VALVAR_() != null) {
-            return new Expression.ValVar(getValVar(ctx.VALVAR_()).toValue());
-        } else if (ctx.value() != null) {
-            Object value = visitValue(ctx.value());
-            if (value instanceof Long) {
-                return new Expression.Constant.Long((Long) value);
-            } else if (value instanceof Double) {
-                return new Expression.Constant.Double((Double) value);
-            } else if (value instanceof Boolean) {
-                return new Expression.Constant.Boolean((Boolean) value);
-            } else if (value instanceof String) {
-                return new Expression.Constant.String((String) value);
-            } else if (value instanceof LocalDateTime) {
-                return new Expression.Constant.DateTime((LocalDateTime) value);
-            } else {
-                throw TypeQLException.of(ILLEGAL_GRAMMAR.message(ctx.getText()));
-            }
-        } else {
-            throw TypeQLException.of(ILLEGAL_GRAMMAR.message(ctx.getText()));
-        }
-    }
-
-    @Override
-    public Expression.Function visitFunc(TypeQLParser.FuncContext ctx) {
-        return new Expression.Function(ctx.LABEL_().getSymbol().getText(), visitArg_list(ctx.arg_list()));
-    }
-
-    @Override
-    public List<Expression> visitArg_list(TypeQLParser.Arg_listContext ctx) {
-        List<Expression> args = new ArrayList<>();
-        if (ctx != null) {
-            ctx.expr().forEach(expr -> args.add(visitExpr(expr)));
-        }
-        return args;
     }
 
     private String getString(TerminalNode string) {
