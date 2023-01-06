@@ -589,7 +589,7 @@ public class Parser extends TypeQLBaseVisitor {
         if (ctx.VAR_() != null) unbound = getVar(ctx.VAR_());
         else unbound = hidden();
 
-        ThingVariable.Attribute attribute = unbound.constrain(new ThingConstraint.Predicate(visitPredicate(ctx.predicate())));
+        ThingVariable.Attribute attribute = unbound.constrain(new ThingConstraint.Predicate<>(visitPredicate(ctx.predicate())));
         if (ctx.ISA_() != null) attribute = attribute.constrain(getIsaConstraint(ctx.ISA_(), ctx.type()));
 
         if (ctx.attributes() != null) {
@@ -688,21 +688,21 @@ public class Parser extends TypeQLBaseVisitor {
     // ATTRIBUTE OPERATION CONSTRUCTS ==========================================
 
     @Override
-    public Predicate visitPredicate(TypeQLParser.PredicateContext ctx) {
+    public Predicate<?> visitPredicate(TypeQLParser.PredicateContext ctx) {
         TypeQLToken.Predicate predicate;
         Object value;
 
         if (ctx.value() != null) {
             predicate = TypeQLToken.Predicate.Equality.EQ;
             value = visitValue(ctx.value());
-        } else if (ctx.EVAR_() != null) {
+        } else if (ctx.VALVAR_() != null) {
             predicate = TypeQLToken.Predicate.Equality.EQ;
-            value = getValVar(ctx.EVAR_());
+            value = getValVar(ctx.VALVAR_());
         } else if (ctx.predicate_equality() != null) {
             predicate = TypeQLToken.Predicate.Equality.of(ctx.predicate_equality().getText());
             if (ctx.predicate_value().value() != null) value = visitValue(ctx.predicate_value().value());
             else if (ctx.predicate_value().VAR_() != null) value = getVar(ctx.predicate_value().VAR_());
-            else if (ctx.predicate_value().EVAR_() != null) value = getValVar(ctx.predicate_value().EVAR_());
+            else if (ctx.predicate_value().VALVAR_() != null) value = getValVar(ctx.predicate_value().VALVAR_());
             else throw TypeQLException.of(ILLEGAL_STATE);
         } else if (ctx.predicate_substring() != null) {
             predicate = TypeQLToken.Predicate.SubString.of(ctx.predicate_substring().getText());
@@ -739,7 +739,7 @@ public class Parser extends TypeQLBaseVisitor {
 
     @Override
     public UnboundVariable visitEither_var(TypeQLParser.Either_varContext ctx) {
-        if (ctx.EVAR_() != null) return getValVar(ctx.EVAR_());
+        if (ctx.VALVAR_() != null) return getValVar(ctx.VALVAR_());
         else if (ctx.VAR_() != null) return getVar(ctx.VAR_());
         else throw TypeQLException.of(ILLEGAL_STATE);
     }
@@ -789,9 +789,9 @@ public class Parser extends TypeQLBaseVisitor {
     // Arithmetic
     @Override
     public ValueVariable visitVariable_value(TypeQLParser.Variable_valueContext ctx) {
-        UnboundValueVariable ownerBuilder = getValVar(ctx.EVAR_());
+        UnboundValueVariable ownerBuilder = getValVar(ctx.VALVAR_());
         if (ctx.predicate() != null) {
-            return ownerBuilder.constrain(new ValueConstraint.Predicate(visitPredicate(ctx.predicate())));
+            return ownerBuilder.constrain(new ValueConstraint.Predicate<>(visitPredicate(ctx.predicate())));
         } else if (ctx.ASSIGN() != null) {
             return ownerBuilder.constrain(new ValueConstraint.Expression(visitExpr(ctx.expr())));
         } else throw TypeQLException.of(ILLEGAL_STATE);
@@ -816,8 +816,8 @@ public class Parser extends TypeQLBaseVisitor {
             return new Expression.Bracketed(visitExpr(ctx.expr(0)));
         } else if (ctx.VAR_() != null) {
             return new Expression.ThingVar(getVar(ctx.VAR_()).toThing());
-        } else if (ctx.EVAR_() != null) {
-            return new Expression.ValVar(getValVar(ctx.EVAR_()).toValue());
+        } else if (ctx.VALVAR_() != null) {
+            return new Expression.ValVar(getValVar(ctx.VALVAR_()).toValue());
         } else if (ctx.value() != null) {
             Object value = visitValue(ctx.value());
             if (value instanceof Long) {

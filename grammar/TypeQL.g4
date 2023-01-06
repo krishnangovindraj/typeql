@@ -57,9 +57,9 @@ query_match_group_agg :   query_match   match_group       match_aggregate  ;
 
 modifiers             : ( filter ';' )? ( sort ';' )? ( offset ';' )? ( limit ';' )?;
 
-filter                :   GET         either_var      ( ',' either_var)*                   ;
-sort                  :   SORT        var_order ( ',' var_order )*              ;
-var_order             :   either_var  ORDER_?                                          ;
+filter                :   GET         either_var    ( ',' either_var)*          ;
+sort                  :   SORT        var_order     ( ',' var_order )*          ;
+var_order             :   either_var  ORDER_?                                   ;
 offset                :   OFFSET      LONG_                                     ;
 limit                 :   LIMIT       LONG_                                     ;
 
@@ -69,7 +69,7 @@ limit                 :   LIMIT       LONG_                                     
 // An aggregate function is composed of 2 things:
 // The aggregate method name, followed by the variable to apply the function to
 
-match_aggregate       :   aggregate_method    either_var?   ';';                      // method and, optionally, a variable
+match_aggregate       :   aggregate_method  either_var?  ';'            ;       // method and, optionally, a variable
 aggregate_method      :   COUNT   |   MAX     |   MEAN    |   MEDIAN            // calculate statistical values
                       |   MIN     |   STD     |   SUM     ;
 
@@ -156,14 +156,14 @@ attribute             :   HAS label ( VAR_ | predicate )                        
 
 // ATTRIBUTE VALUATION CONSTRUCTS ==============================================
 
-predicate             :   value |   EVAR_   |
+predicate             :   value |   VALVAR_   |
                       |   predicate_equality   predicate_value
                       |   predicate_substring  STRING_
                       ;
 predicate_equality    :   EQ | NEQ | GT | GTE | LT | LTE ;
 predicate_substring   :   CONTAINS | LIKE ;
 
-predicate_value       :   value | VAR_  | EVAR_ ;
+predicate_value       :   value | VAR_  | VALVAR_ ;
 
 // SCHEMA CONSTRUCT =============================================================
 
@@ -182,7 +182,7 @@ label                 :   LABEL_        | schema_native | type_native   | unrese
 
 // LITERAL INPUT VALUES =======================================================
 
-either_var            :   VAR_            |   EVAR_           ;
+either_var            :   VAR_            |   VALVAR_         ;
 
 schema_native         :   RULE            ;
 
@@ -281,7 +281,7 @@ DATETIME_       : DATE_FRAGMENT_ 'T' TIME_              ;
 VAR_            : VAR_ANONYMOUS_ | VAR_NAMED_ ;
 VAR_ANONYMOUS_  : '$_' ;
 VAR_NAMED_      : '$' [a-zA-Z0-9][a-zA-Z0-9_-]* ;
-EVAR_           : '?' [a-zA-Z0-9][a-zA-Z0-9_-]* ;
+VALVAR_         : '?' [a-zA-Z0-9][a-zA-Z0-9_-]* ;
 IID_            : '0x'[0-9a-f]+ ;
 LABEL_          : TYPE_CHAR_H_ TYPE_CHAR_T_* ;
 LABEL_SCOPED_   : LABEL_ ':' LABEL_ ;
@@ -294,10 +294,10 @@ PLUS                : '+'         ;     MINUS               : '-'         ;
 LPAREN              : '('         ;     RPAREN              : ')'         ;
 ASSIGN              : '=';
 
-variable_value            : EVAR_ predicate
-                          | EVAR_ ASSIGN expr;
+variable_value            : VALVAR_ predicate
+                          | VALVAR_ ASSIGN expr;
 
-expr                      :  VAR_   | EVAR_
+expr                      :  VAR_   | VALVAR_
                           |  func   | value
                           |  '(' expr ')'
                           |  expr  POW expr
