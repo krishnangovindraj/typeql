@@ -21,6 +21,7 @@
 
 package com.vaticle.typeql.lang.pattern.variable;
 
+import com.vaticle.typeql.lang.pattern.Predicate;
 import com.vaticle.typeql.lang.pattern.constraint.ConceptConstraint;
 import com.vaticle.typeql.lang.pattern.constraint.Constraint;
 import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
@@ -148,7 +149,7 @@ public class UnboundDollarVariable extends UnboundVariable implements
     }
 
     @Override
-    public ThingVariable.Attribute constrain(com.vaticle.typeql.lang.pattern.expression.Predicate<?> predicate) {
+    public ThingVariable.Attribute constrain(Predicate<?> predicate) {
         return constrain(new ThingConstraint.Predicate(predicate));
     }
 

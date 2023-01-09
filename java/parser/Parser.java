@@ -35,10 +35,9 @@ import com.vaticle.typeql.lang.pattern.Disjunction;
 import com.vaticle.typeql.lang.pattern.Negation;
 import com.vaticle.typeql.lang.pattern.Pattern;
 import com.vaticle.typeql.lang.pattern.constraint.ValueConstraint;
-import com.vaticle.typeql.lang.pattern.expression.Expression;
 import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
 import com.vaticle.typeql.lang.pattern.constraint.TypeConstraint;
-import com.vaticle.typeql.lang.pattern.expression.Predicate;
+import com.vaticle.typeql.lang.pattern.Predicate;
 import com.vaticle.typeql.lang.pattern.schema.Rule;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.ConceptVariable;
@@ -533,7 +532,7 @@ public class Parser extends TypeQLBaseVisitor {
         if (ctx.predicate() != null) {
             return ownerBuilder.constrain(new ValueConstraint.Predicate(visitPredicate(ctx.predicate())));
         } else if (ctx.ASSIGN() != null) {
-            return ownerBuilder.constrain(new ValueConstraint.Expression(visitExpr(ctx.expr())));
+            return ownerBuilder.constrain(new ValueConstraint.Assignment(visitExpr(ctx.expr())));
         } else throw TypeQLException.of(ILLEGAL_STATE);
     }
 
@@ -700,40 +699,40 @@ public class Parser extends TypeQLBaseVisitor {
     // ARITHMETIC EXPRESSIONS ==================================================
 
     @Override
-    public Expression visitExpr(TypeQLParser.ExprContext ctx) {
+    public ValueConstraint.Assignment.Expression visitExpr(TypeQLParser.ExprContext ctx) {
         if (ctx.POW() != null) {
-            return new Expression.Operation(Expression.Operation.OP.POW, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.POW, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
         } else if (ctx.DIV() != null) {
-            return new Expression.Operation(Expression.Operation.OP.DIV, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.DIV, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
         } else if (ctx.TIMES() != null) {
-            return new Expression.Operation(Expression.Operation.OP.TIMES, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.TIMES, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
         } else if (ctx.MOD() != null) {
-            return new Expression.Operation(Expression.Operation.OP.MOD, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.MOD, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
         } else if (ctx.PLUS() != null) {
-            return new Expression.Operation(Expression.Operation.OP.PLUS, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.PLUS, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
         } else if (ctx.MINUS() != null) {
-            return new Expression.Operation(Expression.Operation.OP.MINUS, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.MINUS, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
         } else if (ctx.func() != null) {
             return visitFunc(ctx.func());
         } else if (ctx.LPAREN() != null || ctx.RPAREN() != null) {
             assert ctx.LPAREN() != null && ctx.RPAREN() != null;
-            return new Expression.Bracketed(visitExpr(ctx.expr(0)));
+            return new ValueConstraint.Assignment.Expression.Bracketed(visitExpr(ctx.expr(0)));
         } else if (ctx.VAR_() != null) {
-            return new Expression.ThingVar(getVar(ctx.VAR_()).toThing());
+            return new ValueConstraint.Assignment.Expression.ThingVar(getVar(ctx.VAR_()).toThing());
         } else if (ctx.VALVAR_() != null) {
-            return new Expression.ValVar(getValVar(ctx.VALVAR_()).toValue());
+            return new ValueConstraint.Assignment.Expression.ValVar(getValVar(ctx.VALVAR_()).toValue());
         } else if (ctx.value() != null) {
             Object value = visitValue(ctx.value());
             if (value instanceof Long) {
-                return new Expression.Constant.Long((Long) value);
+                return new ValueConstraint.Assignment.Expression.Constant.Long((Long) value);
             } else if (value instanceof Double) {
-                return new Expression.Constant.Double((Double) value);
+                return new ValueConstraint.Assignment.Expression.Constant.Double((Double) value);
             } else if (value instanceof Boolean) {
-                return new Expression.Constant.Boolean((Boolean) value);
+                return new ValueConstraint.Assignment.Expression.Constant.Boolean((Boolean) value);
             } else if (value instanceof String) {
-                return new Expression.Constant.String((String) value);
+                return new ValueConstraint.Assignment.Expression.Constant.String((String) value);
             } else if (value instanceof LocalDateTime) {
-                return new Expression.Constant.DateTime((LocalDateTime) value);
+                return new ValueConstraint.Assignment.Expression.Constant.DateTime((LocalDateTime) value);
             } else {
                 throw TypeQLException.of(ILLEGAL_GRAMMAR.message(ctx.getText()));
             }
@@ -743,13 +742,13 @@ public class Parser extends TypeQLBaseVisitor {
     }
 
     @Override
-    public Expression.Function visitFunc(TypeQLParser.FuncContext ctx) {
-        return new Expression.Function(ctx.LABEL_().getSymbol().getText(), visitArg_list(ctx.arg_list()));
+    public ValueConstraint.Assignment.Expression.Function visitFunc(TypeQLParser.FuncContext ctx) {
+        return new ValueConstraint.Assignment.Expression.Function(ctx.LABEL_().getSymbol().getText(), visitArg_list(ctx.arg_list()));
     }
 
     @Override
-    public List<Expression> visitArg_list(TypeQLParser.Arg_listContext ctx) {
-        List<Expression> args = new ArrayList<>();
+    public List<ValueConstraint.Assignment.Expression> visitArg_list(TypeQLParser.Arg_listContext ctx) {
+        List<ValueConstraint.Assignment.Expression> args = new ArrayList<>();
         if (ctx != null) {
             ctx.expr().forEach(expr -> args.add(visitExpr(expr)));
         }

@@ -19,11 +19,12 @@
  * under the License.
  */
 
-package com.vaticle.typeql.lang.pattern.expression;
+package com.vaticle.typeql.lang.pattern;
 
 import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.common.util.Strings;
+import com.vaticle.typeql.lang.pattern.constraint.ValueConstraint;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 
 import java.time.LocalDateTime;
@@ -54,7 +55,7 @@ public abstract class Predicate<T> {
 
         assert !predicate.isEquality() || value instanceof Comparable
                 || value instanceof com.vaticle.typeql.lang.pattern.variable.ThingVariable<?> || value instanceof com.vaticle.typeql.lang.pattern.variable.ValueVariable
-                || value instanceof Expression;
+                || value instanceof ValueConstraint.Assignment.Expression;
         assert !predicate.isSubString() || value instanceof java.lang.String;
 
         this.predicate = predicate;

@@ -21,9 +21,9 @@
 
 package com.vaticle.typeql.lang.pattern.variable;
 
+import com.vaticle.typeql.lang.pattern.Predicate;
 import com.vaticle.typeql.lang.pattern.constraint.Constraint;
 import com.vaticle.typeql.lang.pattern.constraint.ValueConstraint;
-import com.vaticle.typeql.lang.pattern.expression.Expression;
 import com.vaticle.typeql.lang.pattern.variable.builder.PredicateBuilder;
 
 import java.util.Collections;
@@ -49,11 +49,11 @@ public class UnboundValueVariable extends UnboundVariable implements PredicateBu
         return this;
     }
 
-    public ValueVariable assign(Expression assignment) {
-        return constrain(new ValueConstraint.Expression(assignment));
+    public ValueVariable assign(ValueConstraint.Assignment.Expression assignment) {
+        return constrain(new ValueConstraint.Assignment(assignment));
     }
 
-    public ValueVariable constrain(com.vaticle.typeql.lang.pattern.expression.Predicate<?> predicate) {
+    public ValueVariable constrain(Predicate<?> predicate) {
         return constrain(new ValueConstraint.Predicate(predicate));
     }
 
@@ -61,7 +61,7 @@ public class UnboundValueVariable extends UnboundVariable implements PredicateBu
         return new ValueVariable(reference.asNamedValue(), constraint);
     }
 
-    public ValueVariable constrain(ValueConstraint.Expression constraint) {
+    public ValueVariable constrain(ValueConstraint.Assignment constraint) {
         return new ValueVariable(reference.asNamedValue(), constraint);
     }
 

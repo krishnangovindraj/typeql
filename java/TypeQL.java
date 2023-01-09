@@ -31,8 +31,8 @@ import com.vaticle.typeql.lang.pattern.Disjunction;
 import com.vaticle.typeql.lang.pattern.Negation;
 import com.vaticle.typeql.lang.pattern.Pattern;
 import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
-import com.vaticle.typeql.lang.pattern.expression.Expression;
-import com.vaticle.typeql.lang.pattern.expression.Predicate;
+import com.vaticle.typeql.lang.pattern.constraint.ValueConstraint;
+import com.vaticle.typeql.lang.pattern.Predicate;
 import com.vaticle.typeql.lang.pattern.schema.Rule;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
@@ -386,64 +386,64 @@ public class TypeQL {
     }
 
     public static abstract class Expr {
-        public static Expression.Operation op_plus(Expression a, Expression b) {
-            return new Expression.Operation(Expression.Operation.OP.PLUS, a, b);
+        public static ValueConstraint.Assignment.Expression.Operation op_plus(ValueConstraint.Assignment.Expression a, ValueConstraint.Assignment.Expression b) {
+            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.PLUS, a, b);
         }
 
-        public static Expression.Operation op_minus(Expression a, Expression b) {
-            return new Expression.Operation(Expression.Operation.OP.MINUS, a, b);
+        public static ValueConstraint.Assignment.Expression.Operation op_minus(ValueConstraint.Assignment.Expression a, ValueConstraint.Assignment.Expression b) {
+            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.MINUS, a, b);
         }
 
-        public static Expression.Operation op_times(Expression a, Expression b) {
-            return new Expression.Operation(Expression.Operation.OP.TIMES, a, b);
+        public static ValueConstraint.Assignment.Expression.Operation op_times(ValueConstraint.Assignment.Expression a, ValueConstraint.Assignment.Expression b) {
+            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.TIMES, a, b);
         }
 
-        public static Expression.Operation op_div(Expression a, Expression b) {
-            return new Expression.Operation(Expression.Operation.OP.DIV, a, b);
+        public static ValueConstraint.Assignment.Expression.Operation op_div(ValueConstraint.Assignment.Expression a, ValueConstraint.Assignment.Expression b) {
+            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.DIV, a, b);
         }
 
-        public static Expression.Operation op_pow(Expression a, Expression b) {
-            return new Expression.Operation(Expression.Operation.OP.POW, a, b);
+        public static ValueConstraint.Assignment.Expression.Operation op_pow(ValueConstraint.Assignment.Expression a, ValueConstraint.Assignment.Expression b) {
+            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.POW, a, b);
         }
 
-        public static Expression.Function func(String funcId, Expression... args) {
+        public static ValueConstraint.Assignment.Expression.Function func(String funcId, ValueConstraint.Assignment.Expression... args) {
             return func(funcId, list(args));
         }
 
-        public static Expression.Function func(String funcId, List<Expression> args) {
-            return new Expression.Function(funcId, args);
+        public static ValueConstraint.Assignment.Expression.Function func(String funcId, List<ValueConstraint.Assignment.Expression> args) {
+            return new ValueConstraint.Assignment.Expression.Function(funcId, args);
         }
 
-        public static Expression bracketed(Expression nestedExpr) {
-            return new Expression.Bracketed(nestedExpr);
+        public static ValueConstraint.Assignment.Expression bracketed(ValueConstraint.Assignment.Expression nestedExpr) {
+            return new ValueConstraint.Assignment.Expression.Bracketed(nestedExpr);
         }
 
-        public static Expression.ThingVar thingVar(UnboundDollarVariable variable) {
-            return new Expression.ThingVar(variable.toThing());
+        public static ValueConstraint.Assignment.Expression.ThingVar thingVar(UnboundDollarVariable variable) {
+            return new ValueConstraint.Assignment.Expression.ThingVar(variable.toThing());
         }
 
-        public static Expression.ValVar valVar(UnboundValueVariable variable) {
-            return new Expression.ValVar(variable.toValue());
+        public static ValueConstraint.Assignment.Expression.ValVar valVar(UnboundValueVariable variable) {
+            return new ValueConstraint.Assignment.Expression.ValVar(variable.toValue());
         }
 
-        public static Expression.Constant.Boolean constant(Boolean value) {
-            return new Expression.Constant.Boolean(value);
+        public static ValueConstraint.Assignment.Expression.Constant.Boolean constant(Boolean value) {
+            return new ValueConstraint.Assignment.Expression.Constant.Boolean(value);
         }
 
-        public static Expression.Constant.Long constant(long value) {
-            return new Expression.Constant.Long(value);
+        public static ValueConstraint.Assignment.Expression.Constant.Long constant(long value) {
+            return new ValueConstraint.Assignment.Expression.Constant.Long(value);
         }
 
-        public static Expression.Constant.Double constant(double value) {
-            return new Expression.Constant.Double(value);
+        public static ValueConstraint.Assignment.Expression.Constant.Double constant(double value) {
+            return new ValueConstraint.Assignment.Expression.Constant.Double(value);
         }
 
-        public static Expression.Constant.String constant(String value) {
-            return new Expression.Constant.String(value);
+        public static ValueConstraint.Assignment.Expression.Constant.String constant(String value) {
+            return new ValueConstraint.Assignment.Expression.Constant.String(value);
         }
 
-        public static Expression.Constant.DateTime constant(LocalDateTime value) {
-            return new Expression.Constant.DateTime(value);
+        public static ValueConstraint.Assignment.Expression.Constant.DateTime constant(LocalDateTime value) {
+            return new ValueConstraint.Assignment.Expression.Constant.DateTime(value);
         }
     }
 }

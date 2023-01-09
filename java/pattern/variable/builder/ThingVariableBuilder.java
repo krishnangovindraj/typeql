@@ -23,7 +23,7 @@ package com.vaticle.typeql.lang.pattern.variable.builder;
 
 import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
-import com.vaticle.typeql.lang.pattern.expression.Predicate;
+import com.vaticle.typeql.lang.pattern.Predicate;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundValueVariable;
