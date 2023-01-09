@@ -445,7 +445,7 @@ public class ParserTest {
     @Test
     public void testOpPrecedence() {
         final String query = "match\n" +
-                "?res = $a / $b * $c + $d ^ $e / $f;";
+                "?res = $a / $b * $c + $d ^ $e ^ $f / $g;";
         TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
         TypeQLMatch expected = match(
                 valvar("res").assign(
@@ -456,8 +456,12 @@ public class ParserTest {
                                                 Expr.thingVar(var("b"))),
                                         Expr.thingVar(var("c"))),
                                 Expr.op_div(
-                                        Expr.op_pow(Expr.thingVar(var("d")), Expr.thingVar(var("e"))),
-                                        Expr.thingVar(var("f"))))));
+                                        Expr.op_pow(
+                                                Expr.thingVar(var("d")),
+                                                Expr.op_pow(
+                                                        Expr.thingVar(var("e")),
+                                                        Expr.thingVar(var("f")))),
+                                        Expr.thingVar(var("g"))))));
         assertQueryEquals(expected, parsed, query);
     }
 
@@ -1143,6 +1147,7 @@ public class ParserTest {
         );
         ThingVariable<?> thenPattern = var("x").has("days", valvar("d"));
         TypeQLDefine expected = define(rule("attach-val").when(whenPattern).then(thenPattern));
+
         final String query = "define\n" +
                 "rule attach-val:\n" +
                 "    when {\n" +
@@ -1153,7 +1158,6 @@ public class ParserTest {
                 "        $x has days ?d;\n" +
                 "    };";
         TypeQLDefine parsed = TypeQL.parseQuery(query).asDefine();
-
 
         assertQueryEquals(expected, parsed, query.replace("'", "\""));
     }

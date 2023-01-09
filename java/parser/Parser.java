@@ -707,6 +707,8 @@ public class Parser extends TypeQLBaseVisitor {
             return new Expression.Operation(Expression.Operation.OP.DIV, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
         } else if (ctx.TIMES() != null) {
             return new Expression.Operation(Expression.Operation.OP.TIMES, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+        } else if (ctx.MOD() != null) {
+            return new Expression.Operation(Expression.Operation.OP.MOD, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
         } else if (ctx.PLUS() != null) {
             return new Expression.Operation(Expression.Operation.OP.PLUS, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
         } else if (ctx.MINUS() != null) {

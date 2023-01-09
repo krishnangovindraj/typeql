@@ -138,7 +138,6 @@ public class TypeQLToken {
         NEW_LINE("\n"),
         INDENTATION("    "),
         UNDERSCORE("_"),
-        ASSIGN("="),
         $_("$_"),
         $("$");
 
@@ -407,6 +406,37 @@ public class TypeQLToken {
                 }
                 return null;
             }
+        }
+    }
+
+    public enum Arithmetic {
+        ASSIGN("="),
+        POW("^"),
+        TIMES("*"),
+        DIV("/"),
+        MOD("%"),
+        PLUS("+"),
+        MINUS("-");
+
+
+        private final String operator;
+
+        Arithmetic(String operator) {
+            this.operator = operator;
+        }
+
+        @Override
+        public String toString() {
+            return this.operator;
+        }
+
+        public static Operator of(String value) {
+            for (Operator c : Operator.values()) {
+                if (c.operator.equals(value)) {
+                    return c;
+                }
+            }
+            return null;
         }
     }
 

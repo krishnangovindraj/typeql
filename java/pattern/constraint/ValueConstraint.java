@@ -141,7 +141,7 @@ public abstract class ValueConstraint extends Constraint<BoundVariable> {
 
         @Override
         public String toString() {
-            return TypeQLToken.Char.ASSIGN.toString() + SPACE + this.expression.toString();
+            return TypeQLToken.Arithmetic.ASSIGN.toString() + SPACE + this.expression.toString();
         }
 
         @Override

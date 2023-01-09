@@ -22,6 +22,7 @@
 package com.vaticle.typeql.lang.pattern.expression;
 
 import com.vaticle.typedb.common.collection.Pair;
+import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.ValueVariable;
@@ -106,14 +107,16 @@ public abstract class Expression {
     public static class Operation extends Expression {
 
         public enum OP {
-            POW("^"), TIMES("*"), DIV("/"), PLUS("+"), MINUS("-");
-            private final String symbol;
+            POW(TypeQLToken.Arithmetic.POW),
+            TIMES(TypeQLToken.Arithmetic.TIMES), DIV(TypeQLToken.Arithmetic.DIV), MOD(TypeQLToken.Arithmetic.MOD),
+            PLUS(TypeQLToken.Arithmetic.PLUS), MINUS(TypeQLToken.Arithmetic.MINUS);
+            private final TypeQLToken.Arithmetic symbol;
 
-            OP(String symbol) {
+            OP(TypeQLToken.Arithmetic symbol) {
                 this.symbol = symbol;
             }
 
-            public String symbol() {
+            public TypeQLToken.Arithmetic symbol() {
                 return symbol;
             }
         }

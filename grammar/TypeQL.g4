@@ -174,12 +174,12 @@ predicate_value       :   value | VAR_  | VALVAR_ ;
 
 // ARITHMETIC EXPRESSION CONSTRUCTS ============================================
 
-expr                      :  VAR_   | VALVAR_
-                          |  func   | value
-                          |  '(' expr ')'
-                          |  expr  POW expr
-                          |  expr  (TIMES | DIV)  expr
+expr                      :  LPAREN expr RPAREN
+                          |  <assoc=right> expr POW expr
+                          |  expr  (TIMES | DIV | MOD)  expr
                           |  expr  (PLUS | MINUS) expr
+                          |  VAR_   | VALVAR_
+                          |  func   | value
                           ;
 func                      :  LABEL_ '('  arg_list? ')' ;
 arg_list                  :  expr (',' expr)*        ;
@@ -271,11 +271,11 @@ LIKE            : 'like'        ;   CONTAINS        : 'contains'    ;
 
 // ARITHMETIC SYMBOLS
 
-POW                 : '^'         ;
-DIV                 : '/'         ;     TIMES               : '*'         ;
-PLUS                : '+'         ;     MINUS               : '-'         ;
+ASSIGN              : '='         ;
 LPAREN              : '('         ;     RPAREN              : ')'         ;
-ASSIGN              : '=';
+POW                 : '^'         ;
+DIV                 : '/'         ;     TIMES               : '*'         ;      MOD                 : '%'         ;
+PLUS                : '+'         ;     MINUS               : '-'         ;
 
 // GROUP AND AGGREGATE QUERY KEYWORDS (also used by COMPUTE QUERY)
 

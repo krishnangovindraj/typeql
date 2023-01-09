@@ -82,9 +82,7 @@ public class ValueVariable extends BoundVariable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ValueVariable that = (ValueVariable) o;
-        return this.reference.equals(that.reference) && (
-                (this.constraint == null && that.constraint == null) ||
-                        (this.constraint != null && this.constraint.equals(that.constraint)));
+        return this.reference.equals(that.reference) && Objects.equals(this.constraint, that.constraint);
     }
 
     @Override
