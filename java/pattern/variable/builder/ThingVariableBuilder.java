@@ -135,7 +135,7 @@ public interface ThingVariableBuilder {
         ThingVariable.Relation constrain(ThingConstraint.Relation.RolePlayer rolePlayer);
     }
 
-    interface Attribute {
+    interface Attribute extends PredicateBuilder<ThingVariable.Attribute> {
         ThingVariable.Attribute constrain(ThingConstraint.Predicate constraint);
     }
 }

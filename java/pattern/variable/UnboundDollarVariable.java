@@ -27,7 +27,6 @@ import com.vaticle.typeql.lang.pattern.constraint.Constraint;
 import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
 import com.vaticle.typeql.lang.pattern.constraint.TypeConstraint;
 import com.vaticle.typeql.lang.pattern.variable.builder.ConceptVariableBuilder;
-import com.vaticle.typeql.lang.pattern.variable.builder.PredicateBuilder;
 import com.vaticle.typeql.lang.pattern.variable.builder.ThingVariableBuilder;
 import com.vaticle.typeql.lang.pattern.variable.builder.TypeVariableBuilder;
 
@@ -35,7 +34,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class UnboundDollarVariable extends UnboundVariable implements
-        PredicateBuilder<ThingVariable.Attribute>,
         ConceptVariableBuilder,
         TypeVariableBuilder,
         ThingVariableBuilder.Common<ThingVariable.Thing>,

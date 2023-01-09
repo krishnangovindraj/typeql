@@ -24,12 +24,12 @@ package com.vaticle.typeql.lang.pattern.variable;
 import com.vaticle.typeql.lang.pattern.Predicate;
 import com.vaticle.typeql.lang.pattern.constraint.Constraint;
 import com.vaticle.typeql.lang.pattern.constraint.ValueConstraint;
-import com.vaticle.typeql.lang.pattern.variable.builder.PredicateBuilder;
+import com.vaticle.typeql.lang.pattern.variable.builder.ValueVariableBuilder;
 
 import java.util.Collections;
 import java.util.List;
 
-public class UnboundValueVariable extends UnboundVariable implements PredicateBuilder<ValueVariable> {
+public class UnboundValueVariable extends UnboundVariable implements ValueVariableBuilder {
     UnboundValueVariable(Reference reference) {
         super(reference);
         assert reference.isNamedValue();
@@ -47,14 +47,6 @@ public class UnboundValueVariable extends UnboundVariable implements PredicateBu
     @Override
     public UnboundValueVariable asValueVariable() {
         return this;
-    }
-
-    public ValueVariable assign(ValueConstraint.Assignment.Expression assignment) {
-        return constrain(new ValueConstraint.Assignment(assignment));
-    }
-
-    public ValueVariable constrain(Predicate<?> predicate) {
-        return constrain(new ValueConstraint.Predicate(predicate));
     }
 
     public ValueVariable constrain(ValueConstraint.Predicate constraint) {
