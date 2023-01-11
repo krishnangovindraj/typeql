@@ -22,25 +22,16 @@
 package com.vaticle.typeql.lang.query;
 
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
-import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundConceptVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
-import com.vaticle.typeql.lang.pattern.variable.Variable;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import static com.vaticle.typedb.common.collection.Collections.list;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Command.DELETE;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.VARIABLE_OUT_OF_SCOPE_DELETE;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Stream.concat;
 
 public class TypeQLDelete extends TypeQLWritable.InsertOrDelete {
-
-    private List<UnboundConceptVariable> namedConceptVariablesUnbound;
 
     TypeQLDelete(TypeQLMatch.Unfiltered match, List<ThingVariable<?>> variables) {
         super(DELETE, requireNonNull(match), validDeleteVars(match, variables));
@@ -48,12 +39,11 @@ public class TypeQLDelete extends TypeQLWritable.InsertOrDelete {
 
     static List<ThingVariable<?>> validDeleteVars(TypeQLMatch.Unfiltered match, List<ThingVariable<?>> variables) {
         variables.forEach(var -> {
-            if (var.isNamed() && !match.namedUnboudConceptVariables().contains(var.toUnbound())) {
+            if (var.isNamed() && !match.namedVariablesUnbound().contains(var.toUnbound())) {
                 throw TypeQLException.of(VARIABLE_OUT_OF_SCOPE_DELETE.message(var.reference()));
             }
             var.variables().forEach(nestedVar -> {
-                if (nestedVar.isNamed() && nestedVar.toUnbound().isConceptVariable()
-                        && !match.namedUnboudConceptVariables().contains(nestedVar.toUnbound().asConceptVariable())) {
+                if (nestedVar.isNamed() && !match.namedVariablesUnbound().contains(nestedVar.toUnbound())) {
                     throw TypeQLException.of(VARIABLE_OUT_OF_SCOPE_DELETE.message(nestedVar.reference()));
                 }
             });
@@ -66,19 +56,7 @@ public class TypeQLDelete extends TypeQLWritable.InsertOrDelete {
         return match;
     }
 
-    public List<ThingVariable<?>> variables() {
-        return variables;
-    }
-
-    public List<UnboundConceptVariable> namedUnboundConceptVariables() {
-        if (namedConceptVariablesUnbound == null) {
-            namedConceptVariablesUnbound = variables.stream().flatMap(v -> concat(Stream.of(v), v.variables()))
-                    .filter(Variable::isNamed).map(BoundVariable::toUnbound)
-                    .filter(UnboundVariable::isConceptVariable).map(UnboundVariable::asConceptVariable)
-                    .distinct().collect(toList());
-        }
-        return namedConceptVariablesUnbound;
-    }
+    public List<ThingVariable<?>> variables() { return variables; }
 
     public TypeQLUpdate insert(ThingVariable<?>... things) {
         return insert(list(things));

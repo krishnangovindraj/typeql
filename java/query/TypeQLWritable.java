@@ -24,16 +24,22 @@ package com.vaticle.typeql.lang.query;
 import com.vaticle.typeql.lang.common.TypeQLArg;
 import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
+import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
+import com.vaticle.typeql.lang.pattern.variable.Variable;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import static com.vaticle.typeql.lang.common.TypeQLToken.Char.NEW_LINE;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Command.DELETE;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Command.INSERT;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.MISSING_PATTERNS;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Stream.concat;
 
 public abstract class TypeQLWritable extends TypeQLQuery {
 
@@ -50,6 +56,7 @@ public abstract class TypeQLWritable extends TypeQLQuery {
 
     abstract static class InsertOrDelete extends TypeQLWritable {
 
+        private List<UnboundVariable> namedVariablesUnbound;
         private final TypeQLToken.Command command;
         protected final List<ThingVariable<?>> variables;
         private final int hash;
@@ -61,6 +68,14 @@ public abstract class TypeQLWritable extends TypeQLQuery {
             this.command = command;
             this.variables = variables;
             this.hash = Objects.hash(this.command, this.match, this.variables);
+        }
+
+        public List<UnboundVariable> namedVariablesUnbound() {
+            if (namedVariablesUnbound == null) {
+                namedVariablesUnbound = variables.stream().flatMap(v -> concat(Stream.of(v), v.variables()))
+                        .filter(Variable::isNamed).map(BoundVariable::toUnbound).distinct().collect(toList());
+            }
+            return namedVariablesUnbound;
         }
 
         @Override
