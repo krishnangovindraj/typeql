@@ -26,7 +26,7 @@ import com.vaticle.typeql.lang.common.exception.ErrorMessage;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundValueVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundConceptVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
 
 import java.util.AbstractList;
@@ -74,11 +74,13 @@ public class Conjunction<T extends Pattern> implements Pattern {
     }
 
     public Stream<UnboundValueVariable> namedUnboundValueVariables() {
-        return variables().filter(v -> v.reference().isNamedValue()).map(v -> UnboundValueVariable.named(v.name())).distinct();
+        return variables().filter(v -> v.isValue() && v.reference().isName())
+                .map(v -> v.asValue().toUnbound()).distinct();
     }
 
-    public Stream<UnboundDollarVariable> namedUnboundDollarVariables() {
-        return variables().filter(v -> v.reference().isNamedDollar()).map(v -> UnboundDollarVariable.named(v.name())).distinct();
+    public Stream<UnboundConceptVariable> namedUnboundConceptVariables() {
+        return variables().filter(v -> v.isConcept() && v.reference().isName())
+                .map(v -> v.asConcept().toUnbound()).distinct();
     }
 
     @Override
@@ -87,14 +89,16 @@ public class Conjunction<T extends Pattern> implements Pattern {
     }
 
     @Override
-    public void validateIsBoundedBy(Set<UnboundDollarVariable> bounds) {
-        Set<UnboundDollarVariable> unboundDollars = variables().map(BoundVariable::toUnbound).filter(UnboundVariable::isDollarVariable).map(UnboundVariable::asDollarVariable).collect(Collectors.toSet());
-        if (unboundDollars.stream().noneMatch(bounds::contains)) {
+    public void validateIsBoundedBy(Set<UnboundConceptVariable> bounds) {
+        Set<UnboundConceptVariable> unboundConceptVariables = variables().map(BoundVariable::toUnbound)
+                .filter(UnboundVariable::isConceptVariable).map(UnboundVariable::asConceptVariable)
+                .collect(Collectors.toSet());
+        if (unboundConceptVariables.stream().noneMatch(bounds::contains)) {
             String str = toString().replace("\n", " ");
             throw TypeQLException.of(MATCH_HAS_UNBOUNDED_NESTED_PATTERN.message(str));
         }
-        HashSet<UnboundDollarVariable> union = new HashSet<>(bounds);
-        union.addAll(unboundDollars);
+        HashSet<UnboundConceptVariable> union = new HashSet<>(bounds);
+        union.addAll(unboundConceptVariables);
         patterns.stream().filter(pattern -> !pattern.isVariable()).forEach(pattern -> {
             pattern.validateIsBoundedBy(union);
         });

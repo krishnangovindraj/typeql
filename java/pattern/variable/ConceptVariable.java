@@ -48,8 +48,8 @@ public class ConceptVariable extends BoundVariable {
     }
 
     @Override
-    public UnboundDollarVariable toUnbound() {
-        return new UnboundDollarVariable(reference);
+    public UnboundConceptVariable toUnbound() {
+        return new UnboundConceptVariable(reference);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class ConceptVariable extends BoundVariable {
     }
 
     @Override
-    public List<ConceptConstraint> constraints() {
+    public List<? extends ConceptConstraint<?>> constraints() {
         return (isConstraint != null) ? list(isConstraint) : Collections.emptyList();
     }
 

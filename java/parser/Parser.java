@@ -44,7 +44,7 @@ import com.vaticle.typeql.lang.pattern.variable.ConceptVariable;
 import com.vaticle.typeql.lang.pattern.variable.ValueVariable;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 import com.vaticle.typeql.lang.pattern.variable.TypeVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundConceptVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundValueVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
 import com.vaticle.typeql.lang.query.TypeQLDefine;
@@ -82,7 +82,7 @@ import static com.vaticle.typedb.common.collection.Collections.pair;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.ILLEGAL_GRAMMAR;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.ILLEGAL_STATE;
 import static com.vaticle.typeql.lang.common.util.Strings.unescapeRegex;
-import static com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable.hidden;
+import static com.vaticle.typeql.lang.pattern.variable.UnboundConceptVariable.hidden;
 import static java.util.stream.Collectors.toList;
 import static org.antlr.v4.runtime.atn.PredictionMode.LL_EXACT_AMBIG_DETECTION;
 import static org.antlr.v4.runtime.atn.PredictionMode.SLL;
@@ -187,13 +187,13 @@ public class Parser extends TypeQLBaseVisitor {
 
     // GLOBAL HELPER METHODS ===================================================
 
-    private UnboundDollarVariable getVar(TerminalNode variable) {
+    private UnboundConceptVariable getVar(TerminalNode variable) {
         // Remove '$' prefix
         String name = variable.getSymbol().getText().substring(1);
         if (name.equals(TypeQLToken.Char.UNDERSCORE.toString())) {
-            return UnboundDollarVariable.anonymous();
+            return UnboundConceptVariable.anonymous();
         } else {
-            return UnboundDollarVariable.named(name);
+            return UnboundConceptVariable.named(name);
         }
     }
 
@@ -362,13 +362,13 @@ public class Parser extends TypeQLBaseVisitor {
 
     @Override
     public TypeQLMatch.Group visitQuery_match_group(TypeQLParser.Query_match_groupContext ctx) {
-        UnboundDollarVariable var = getVar(ctx.match_group().VAR_());
+        UnboundConceptVariable var = getVar(ctx.match_group().VAR_());
         return visitQuery_match(ctx.query_match()).group(var);
     }
 
     @Override
     public TypeQLMatch.Group.Aggregate visitQuery_match_group_agg(TypeQLParser.Query_match_group_aggContext ctx) {
-        UnboundDollarVariable var = getVar(ctx.match_group().VAR_());
+        UnboundConceptVariable var = getVar(ctx.match_group().VAR_());
         TypeQLParser.Match_aggregateContext function = ctx.match_aggregate();
 
         return visitQuery_match(ctx.query_match()).group(var).aggregate(
@@ -491,7 +491,7 @@ public class Parser extends TypeQLBaseVisitor {
     public TypeVariable visitVariable_type(TypeQLParser.Variable_typeContext ctx) {
         TypeVariable type = visitType_any(ctx.type_any()).apply(
                 scopedLabel -> hidden().constrain(new TypeConstraint.Label(scopedLabel.first(), scopedLabel.second())),
-                UnboundDollarVariable::toType
+                UnboundConceptVariable::toType
         );
 
         for (TypeQLParser.Type_constraintContext constraint : ctx.type_constraint()) {
@@ -501,13 +501,13 @@ public class Parser extends TypeQLBaseVisitor {
                 TypeQLToken.Constraint sub = TypeQLToken.Constraint.of(constraint.SUB_().getText());
                 type = type.constrain(new TypeConstraint.Sub(visitType_any(constraint.type_any()), sub == TypeQLToken.Constraint.SUBX));
             } else if (constraint.OWNS() != null) {
-                Either<String, UnboundDollarVariable> overridden = constraint.AS() == null ? null : visitType(constraint.type(1));
+                Either<String, UnboundConceptVariable> overridden = constraint.AS() == null ? null : visitType(constraint.type(1));
                 type = type.constrain(new TypeConstraint.Owns(visitType(constraint.type(0)), overridden, constraint.IS_KEY() != null));
             } else if (constraint.PLAYS() != null) {
-                Either<String, UnboundDollarVariable> overridden = constraint.AS() == null ? null : visitType(constraint.type(0));
+                Either<String, UnboundConceptVariable> overridden = constraint.AS() == null ? null : visitType(constraint.type(0));
                 type = type.constrain(new TypeConstraint.Plays(visitType_scoped(constraint.type_scoped()), overridden));
             } else if (constraint.RELATES() != null) {
-                Either<String, UnboundDollarVariable> overridden = constraint.AS() == null ? null : visitType(constraint.type(1));
+                Either<String, UnboundConceptVariable> overridden = constraint.AS() == null ? null : visitType(constraint.type(1));
                 type = type.constrain(new TypeConstraint.Relates(visitType(constraint.type(0)), overridden));
             } else if (constraint.VALUE() != null) {
                 type = type.value(TypeQLArg.ValueType.of(constraint.value_type().getText()));
@@ -559,7 +559,7 @@ public class Parser extends TypeQLBaseVisitor {
     @Override
     public ThingVariable.Thing visitVariable_thing(TypeQLParser.Variable_thingContext ctx) {
 
-        UnboundDollarVariable unbound = getVar(ctx.VAR_());
+        UnboundConceptVariable unbound = getVar(ctx.VAR_());
         ThingVariable.Thing thing = null;
 
         if (ctx.ISA_() != null) {
@@ -579,7 +579,7 @@ public class Parser extends TypeQLBaseVisitor {
 
     @Override
     public ThingVariable.Relation visitVariable_relation(TypeQLParser.Variable_relationContext ctx) {
-        UnboundDollarVariable unbound;
+        UnboundConceptVariable unbound;
         if (ctx.VAR_() != null) unbound = getVar(ctx.VAR_());
         else unbound = hidden();
 
@@ -596,7 +596,7 @@ public class Parser extends TypeQLBaseVisitor {
 
     @Override
     public ThingVariable.Attribute visitVariable_attribute(TypeQLParser.Variable_attributeContext ctx) {
-        UnboundDollarVariable unbound;
+        UnboundConceptVariable unbound;
         if (ctx.VAR_() != null) unbound = getVar(ctx.VAR_());
         else unbound = hidden();
 
@@ -647,9 +647,9 @@ public class Parser extends TypeQLBaseVisitor {
         List<ThingConstraint.Relation.RolePlayer> rolePlayers = new ArrayList<>();
 
         for (TypeQLParser.Role_playerContext rolePlayerCtx : ctx.role_player()) {
-            UnboundDollarVariable player = getVar(rolePlayerCtx.player().VAR_());
+            UnboundConceptVariable player = getVar(rolePlayerCtx.player().VAR_());
             if (rolePlayerCtx.type() != null) {
-                Either<String, UnboundDollarVariable> roleType = visitType(rolePlayerCtx.type());
+                Either<String, UnboundConceptVariable> roleType = visitType(rolePlayerCtx.type());
                 rolePlayers.add(new ThingConstraint.Relation.RolePlayer(roleType, player));
             } else {
                 rolePlayers.add(new ThingConstraint.Relation.RolePlayer(player));
@@ -661,7 +661,7 @@ public class Parser extends TypeQLBaseVisitor {
     // TYPE, LABEL, AND IDENTIFIER CONSTRUCTS ==================================
 
     @Override
-    public Either<Pair<String, String>, UnboundDollarVariable> visitType_any(TypeQLParser.Type_anyContext ctx) {
+    public Either<Pair<String, String>, UnboundConceptVariable> visitType_any(TypeQLParser.Type_anyContext ctx) {
         if (ctx.VAR_() != null) return Either.second(getVar(ctx.VAR_()));
         else if (ctx.type() != null)
             return visitType(ctx.type()).apply(s -> Either.first(pair(null, s)), Either::second);
@@ -670,14 +670,14 @@ public class Parser extends TypeQLBaseVisitor {
     }
 
     @Override
-    public Either<Pair<String, String>, UnboundDollarVariable> visitType_scoped(TypeQLParser.Type_scopedContext ctx) {
+    public Either<Pair<String, String>, UnboundConceptVariable> visitType_scoped(TypeQLParser.Type_scopedContext ctx) {
         if (ctx.label_scoped() != null) return Either.first(visitLabel_scoped(ctx.label_scoped()));
         else if (ctx.VAR_() != null) return Either.second(getVar(ctx.VAR_()));
         else return null;
     }
 
     @Override
-    public Either<String, UnboundDollarVariable> visitType(TypeQLParser.TypeContext ctx) {
+    public Either<String, UnboundConceptVariable> visitType(TypeQLParser.TypeContext ctx) {
         if (ctx.label() != null) return Either.first(ctx.label().getText());
         else if (ctx.VAR_() != null) return Either.second(getVar(ctx.VAR_()));
         else return null;
@@ -792,8 +792,8 @@ public class Parser extends TypeQLBaseVisitor {
             return new Predicate.String(predicate, (String) value);
         } else if (value instanceof LocalDateTime) {
             return new Predicate.DateTime(predicate.asEquality(), (LocalDateTime) value);
-        } else if (value instanceof UnboundDollarVariable) {
-            return new Predicate.ThingVariable(predicate.asEquality(), ((UnboundDollarVariable) value).toThing());
+        } else if (value instanceof UnboundConceptVariable) {
+            return new Predicate.ThingVariable(predicate.asEquality(), ((UnboundConceptVariable) value).toThing());
         } else if (value instanceof UnboundValueVariable) {
             return new Predicate.ValueVariable(predicate.asEquality(), ((UnboundValueVariable) value).toValue());
         } else {

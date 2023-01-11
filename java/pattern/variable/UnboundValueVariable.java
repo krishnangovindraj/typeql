@@ -32,7 +32,7 @@ import java.util.List;
 public class UnboundValueVariable extends UnboundVariable implements ValueVariableBuilder {
     UnboundValueVariable(Reference reference) {
         super(reference);
-        assert reference.isNamedValue();
+        assert reference.isName() && reference.refersToValue();
     }
 
     public static UnboundValueVariable named(String name) {
@@ -50,15 +50,15 @@ public class UnboundValueVariable extends UnboundVariable implements ValueVariab
     }
 
     public ValueVariable constrain(ValueConstraint.Predicate constraint) {
-        return new ValueVariable(reference.asNamedValue(), constraint);
+        return new ValueVariable(reference.asName(), constraint);
     }
 
     public ValueVariable constrain(ValueConstraint.Assignment constraint) {
-        return new ValueVariable(reference.asNamedValue(), constraint);
+        return new ValueVariable(reference.asName(), constraint);
     }
 
     public ValueVariable toValue() {
-        return new ValueVariable(reference.asNamedValue());
+        return new ValueVariable(reference.asName());
     }
 
     @Override

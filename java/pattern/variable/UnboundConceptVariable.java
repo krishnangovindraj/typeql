@@ -33,7 +33,7 @@ import com.vaticle.typeql.lang.pattern.variable.builder.TypeVariableBuilder;
 import java.util.Collections;
 import java.util.List;
 
-public class UnboundDollarVariable extends UnboundVariable implements
+public class UnboundConceptVariable extends UnboundVariable implements
         ConceptVariableBuilder,
         TypeVariableBuilder,
         ThingVariableBuilder.Common<ThingVariable.Thing>,
@@ -41,29 +41,30 @@ public class UnboundDollarVariable extends UnboundVariable implements
         ThingVariableBuilder.Relation,
         ThingVariableBuilder.Attribute {
 
-    UnboundDollarVariable(Reference reference) {
+    UnboundConceptVariable(Reference reference) {
         super(reference);
+        assert reference.refersToConcept();
     }
 
-    public static UnboundDollarVariable named(String name) {
-        return new UnboundDollarVariable(Reference.namedDollar(name));
+    public static UnboundConceptVariable named(String name) {
+        return new UnboundConceptVariable(Reference.namedConcept(name));
     }
 
-    public static UnboundDollarVariable anonymous() {
-        return new UnboundDollarVariable(Reference.anonymous(true));
+    public static UnboundConceptVariable anonymous() {
+        return new UnboundConceptVariable(Reference.anonymous(true));
     }
 
-    public static UnboundDollarVariable hidden() {
-        return new UnboundDollarVariable(Reference.anonymous(false));
+    public static UnboundConceptVariable hidden() {
+        return new UnboundConceptVariable(Reference.anonymous(false));
     }
 
     @Override
-    public boolean isDollarVariable() {
+    public boolean isConceptVariable() {
         return true;
     }
 
     @Override
-    public UnboundDollarVariable asDollarVariable() {
+    public UnboundConceptVariable asConceptVariable() {
         return this;
     }
 
@@ -175,7 +176,7 @@ public class UnboundDollarVariable extends UnboundVariable implements
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        UnboundDollarVariable that = (UnboundDollarVariable) o;
+        UnboundConceptVariable that = (UnboundConceptVariable) o;
         return this.reference.equals(that.reference);
     }
 

@@ -38,7 +38,7 @@ import static com.vaticle.typeql.lang.common.TypeQLToken.Char.SPACE;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.ILLEGAL_CONSTRAINT_REPETITION;
 import static com.vaticle.typeql.lang.common.util.Strings.indent;
 
-public abstract class ThingVariable<T extends ThingVariable<T>> extends BoundVariable {
+public abstract class ThingVariable<T extends ThingVariable<T>> extends ConceptVariable {
 
     ThingConstraint.IID iidConstraint;
     ThingConstraint.Isa isaConstraint;
@@ -50,6 +50,7 @@ public abstract class ThingVariable<T extends ThingVariable<T>> extends BoundVar
 
     ThingVariable(Reference reference) {
         super(reference);
+        assert reference.refersToConcept();
         this.hasConstraints = new LinkedList<>();
         this.constraints = new LinkedList<>();
     }
@@ -57,8 +58,8 @@ public abstract class ThingVariable<T extends ThingVariable<T>> extends BoundVar
     abstract T getThis();
 
     @Override
-    public UnboundDollarVariable toUnbound() {
-        return new UnboundDollarVariable(reference);
+    public UnboundConceptVariable toUnbound() {
+        return new UnboundConceptVariable(reference);
     }
 
     @Override

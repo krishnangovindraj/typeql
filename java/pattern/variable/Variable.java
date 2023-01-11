@@ -65,7 +65,7 @@ public abstract class Variable {
     }
 
     public UnboundVariable asUnbound() {
-        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(UnboundDollarVariable.class)));
+        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(UnboundConceptVariable.class)));
     }
 
     public BoundVariable asBound() {
@@ -82,10 +82,8 @@ public abstract class Variable {
 
     public String name() {
         switch (reference.type()) {
-            case NAMED_DOLLAR:
-                return reference.asNamedDollar().name();
-            case NAMED_VALUE:
-                return reference.asNamedValue().name();
+            case NAME:
+                return reference.name();
             case LABEL:
             case ANONYMOUS:
                 return null;

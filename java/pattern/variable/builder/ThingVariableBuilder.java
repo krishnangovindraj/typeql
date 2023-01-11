@@ -25,7 +25,7 @@ import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
 import com.vaticle.typeql.lang.pattern.Predicate;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundConceptVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundValueVariable;
 
 import java.time.LocalDateTime;
@@ -44,7 +44,7 @@ public interface ThingVariableBuilder {
             return constrain(new ThingConstraint.Isa(type, false));
         }
 
-        default T isa(UnboundDollarVariable var) {
+        default T isa(UnboundConceptVariable var) {
             return constrain(new ThingConstraint.Isa(var, false));
         }
 
@@ -56,7 +56,7 @@ public interface ThingVariableBuilder {
             return constrain(new ThingConstraint.Isa(type, true));
         }
 
-        default T isaX(UnboundDollarVariable var) {
+        default T isaX(UnboundConceptVariable var) {
             return constrain(new ThingConstraint.Isa(var, true));
         }
 
@@ -88,11 +88,11 @@ public interface ThingVariableBuilder {
             return constrain(new ThingConstraint.Has(type, predicate));
         }
 
-        default T has(String type, UnboundDollarVariable variable) {
+        default T has(String type, UnboundConceptVariable variable) {
             return constrain(new ThingConstraint.Has(type, variable));
         }
 
-        default T has(UnboundDollarVariable variable) {
+        default T has(UnboundConceptVariable variable) {
             return constrain(new ThingConstraint.Has(variable));
         }
 
@@ -113,22 +113,22 @@ public interface ThingVariableBuilder {
     interface Relation {
 
         default ThingVariable.Relation rel(String playerVar) {
-            return rel(UnboundDollarVariable.named(playerVar));
+            return rel(UnboundConceptVariable.named(playerVar));
         }
 
-        default ThingVariable.Relation rel(UnboundDollarVariable playerVar) {
+        default ThingVariable.Relation rel(UnboundConceptVariable playerVar) {
             return constrain(new ThingConstraint.Relation.RolePlayer(playerVar));
         }
 
         default ThingVariable.Relation rel(String roleType, String playerVar) {
-            return constrain(new ThingConstraint.Relation.RolePlayer(roleType, UnboundDollarVariable.named(playerVar)));
+            return constrain(new ThingConstraint.Relation.RolePlayer(roleType, UnboundConceptVariable.named(playerVar)));
         }
 
-        default ThingVariable.Relation rel(String roleType, UnboundDollarVariable playerVar) {
+        default ThingVariable.Relation rel(String roleType, UnboundConceptVariable playerVar) {
             return constrain(new ThingConstraint.Relation.RolePlayer(roleType, playerVar));
         }
 
-        default ThingVariable.Relation rel(UnboundDollarVariable roleTypeVar, UnboundDollarVariable playerVar) {
+        default ThingVariable.Relation rel(UnboundConceptVariable roleTypeVar, UnboundConceptVariable playerVar) {
             return constrain(new ThingConstraint.Relation.RolePlayer(roleTypeVar, playerVar));
         }
 

@@ -34,12 +34,13 @@ import static com.vaticle.typeql.lang.common.exception.ErrorMessage.ILLEGAL_CONS
 public class ValueVariable extends BoundVariable {
     private ValueConstraint constraint;
 
-    public ValueVariable(Reference.Name.NamedValue reference) {
+    public ValueVariable(Reference.Name reference) {
         super(reference);
+        assert reference.refersToValue();
         this.constraint = null;
     }
 
-    public ValueVariable(Reference.Name.NamedValue reference, ValueConstraint constraint) {
+    public ValueVariable(Reference.Name reference, ValueConstraint constraint) {
         this(reference);
         constrain(constraint);
     }

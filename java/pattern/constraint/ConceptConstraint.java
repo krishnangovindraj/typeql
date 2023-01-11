@@ -22,8 +22,9 @@
 package com.vaticle.typeql.lang.pattern.constraint;
 
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
+import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.ConceptVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundConceptVariable;
 
 import java.util.Objects;
 import java.util.Set;
@@ -34,7 +35,7 @@ import static com.vaticle.typeql.lang.common.TypeQLToken.Char.SPACE;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Constraint.IS;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_CASTING;
 
-public abstract class ConceptConstraint extends Constraint<ConceptVariable> {
+public abstract class ConceptConstraint<T extends BoundVariable> extends Constraint<T> {
 
     @Override
     public boolean isConcept() {
@@ -47,7 +48,7 @@ public abstract class ConceptConstraint extends Constraint<ConceptVariable> {
     }
 
     @Override
-    public Set<ConceptVariable> variables() {
+    public Set<T> variables() {
         return null;
     }
 
@@ -59,12 +60,12 @@ public abstract class ConceptConstraint extends Constraint<ConceptVariable> {
         throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(ConceptConstraint.Is.class)));
     }
 
-    public static class Is extends ConceptConstraint {
+    public static class Is extends ConceptConstraint<ConceptVariable> {
 
         private final ConceptVariable variable;
         private final int hash;
 
-        public Is(UnboundDollarVariable variable) {
+        public Is(UnboundConceptVariable variable) {
             this(variable.toConcept());
         }
 

@@ -23,7 +23,7 @@ package com.vaticle.typeql.lang.pattern;
 
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundDollarVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundConceptVariable;
 
 import java.util.List;
 import java.util.Set;
@@ -37,7 +37,7 @@ public interface Pattern {
 
     List<? extends Pattern> patterns();
 
-    void validateIsBoundedBy(Set<UnboundDollarVariable> bounds);
+    void validateIsBoundedBy(Set<UnboundConceptVariable> bounds);
 
     default boolean isVariable() { return false; }
 
