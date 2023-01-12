@@ -356,24 +356,24 @@ public class Parser extends TypeQLBaseVisitor {
 
         return visitQuery_match(ctx.query_match()).aggregate(
                 TypeQLToken.Aggregate.Method.of(function.aggregate_method().getText()),
-                function.var_either() != null ? getVarEither(function.var_either()) : null
+                function.var_any() != null ? getVarAny(function.var_any()) : null
         );
     }
 
     @Override
     public TypeQLMatch.Group visitQuery_match_group(TypeQLParser.Query_match_groupContext ctx) {
-        UnboundVariable var = getVarEither(ctx.match_group().var_either());
+        UnboundVariable var = getVarAny(ctx.match_group().var_any());
         return visitQuery_match(ctx.query_match()).group(var);
     }
 
     @Override
     public TypeQLMatch.Group.Aggregate visitQuery_match_group_agg(TypeQLParser.Query_match_group_aggContext ctx) {
-        UnboundVariable var = getVarEither(ctx.match_group().var_either());
+        UnboundVariable var = getVarAny(ctx.match_group().var_any());
         TypeQLParser.Match_aggregateContext function = ctx.match_aggregate();
 
         return visitQuery_match(ctx.query_match()).group(var).aggregate(
                 TypeQLToken.Aggregate.Method.of(function.aggregate_method().getText()),
-                function.var_either() != null ? getVarEither(function.var_either()) : null
+                function.var_any() != null ? getVarAny(function.var_any()) : null
         );
     }
 
@@ -381,7 +381,7 @@ public class Parser extends TypeQLBaseVisitor {
 
     @Override
     public List<UnboundVariable> visitFilter(TypeQLParser.FilterContext ctx) {
-        return ctx.var_either().stream().map(this::getVarEither).collect(toList());
+        return ctx.var_any().stream().map(this::getVarAny).collect(toList());
     }
 
     @Override
@@ -392,7 +392,7 @@ public class Parser extends TypeQLBaseVisitor {
 
     @Override
     public Pair<UnboundVariable, TypeQLArg.Order> visitVar_order(TypeQLParser.Var_orderContext ctx) {
-        return new Pair<>(getVarEither(ctx.var_either()), ctx.ORDER_() == null ? null : TypeQLArg.Order.of(ctx.ORDER_().getText()));
+        return new Pair<>(getVarAny(ctx.var_any()), ctx.ORDER_() == null ? null : TypeQLArg.Order.of(ctx.ORDER_().getText()));
     }
 
 
@@ -700,23 +700,39 @@ public class Parser extends TypeQLBaseVisitor {
 
     @Override
     public ValueConstraint.Assignment.Expression visitExpr(TypeQLParser.ExprContext ctx) {
+        if (ctx.expr_op() != null) return visitExpr_op(ctx.expr_op());
+        else if (ctx.expr_base() != null) return visitExpr_base(ctx.expr_base());
+        else throw TypeQLException.of(ILLEGAL_STATE);
+    }
+
+    @Override
+    public ValueConstraint.Assignment.Expression visitExpr_op(TypeQLParser.Expr_opContext ctx) {
         if (ctx.POW() != null) {
-            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.POW, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.POW, visitExpr_op(ctx.expr_op(0)), visitExpr_op(ctx.expr_op(1)));
         } else if (ctx.DIV() != null) {
-            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.DIV, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.DIV, visitExpr_op(ctx.expr_op(0)), visitExpr_op(ctx.expr_op(1)));
         } else if (ctx.TIMES() != null) {
-            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.TIMES, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.TIMES, visitExpr_op(ctx.expr_op(0)), visitExpr_op(ctx.expr_op(1)));
         } else if (ctx.MOD() != null) {
-            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.MOD, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.MOD, visitExpr_op(ctx.expr_op(0)), visitExpr_op(ctx.expr_op(1)));
         } else if (ctx.PLUS() != null) {
-            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.PLUS, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
+            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.PLUS, visitExpr_op(ctx.expr_op(0)), visitExpr_op(ctx.expr_op(1)));
         } else if (ctx.MINUS() != null) {
-            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.MINUS, visitExpr(ctx.expr(0)), visitExpr(ctx.expr(1)));
-        } else if (ctx.func() != null) {
+            return new ValueConstraint.Assignment.Expression.Operation(ValueConstraint.Assignment.Expression.Operation.OP.MINUS, visitExpr_op(ctx.expr_op(0)), visitExpr_op(ctx.expr_op(1)));
+        } else if (ctx.expr_base() != null) {
+            return visitExpr_base(ctx.expr_base());
+        } else {
+            throw TypeQLException.of(ILLEGAL_GRAMMAR.message(ctx.getText()));
+        }
+    }
+
+    @Override
+    public ValueConstraint.Assignment.Expression visitExpr_base(TypeQLParser.Expr_baseContext ctx) {
+        if (ctx.func() != null) {
             return visitFunc(ctx.func());
         } else if (ctx.LPAREN() != null || ctx.RPAREN() != null) {
             assert ctx.LPAREN() != null && ctx.RPAREN() != null;
-            return new ValueConstraint.Assignment.Expression.Bracketed(visitExpr(ctx.expr(0)));
+            return new ValueConstraint.Assignment.Expression.Bracketed(visitExpr(ctx.expr()));
         } else if (ctx.VAR_CONCEPT_() != null) {
             return new ValueConstraint.Assignment.Expression.ThingVar(getVarConcept(ctx.VAR_CONCEPT_()).toThing());
         } else if (ctx.VAR_VALUE_NAMED_() != null) {
@@ -807,7 +823,7 @@ public class Parser extends TypeQLBaseVisitor {
         return unescapeRegex(unquoteString(string));
     }
 
-    public UnboundVariable getVarEither(TypeQLParser.Var_eitherContext ctx) {
+    public UnboundVariable getVarAny(TypeQLParser.Var_anyContext ctx) {
         if (ctx.VAR_VALUE_NAMED_() != null) return getVarValue(ctx.VAR_VALUE_NAMED_());
         else if (ctx.VAR_CONCEPT_() != null) return getVarConcept(ctx.VAR_CONCEPT_());
         else throw TypeQLException.of(ILLEGAL_STATE);

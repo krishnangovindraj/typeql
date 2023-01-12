@@ -57,11 +57,11 @@ query_match_group_agg :   query_match   match_group       match_aggregate  ;
 
 modifiers             : ( filter ';' )? ( sort ';' )? ( offset ';' )? ( limit ';' )?;
 
-filter                :   GET         var_either    ( ',' var_either)*          ;
-sort                  :   SORT        var_order     ( ',' var_order )*          ;
-var_order             :   var_either  ORDER_?                                   ;
-offset                :   OFFSET      LONG_                                     ;
-limit                 :   LIMIT       LONG_                                     ;
+filter                :   GET         var_any    ( ',' var_any)*         ;
+sort                  :   SORT        var_order     ( ',' var_order )*   ;
+var_order             :   var_any  ORDER_?                               ;
+offset                :   OFFSET      LONG_                              ;
+limit                 :   LIMIT       LONG_                              ;
 
 
 // GET AGGREGATE QUERY =========================================================
@@ -69,7 +69,7 @@ limit                 :   LIMIT       LONG_                                     
 // An aggregate function is composed of 2 things:
 // The aggregate method name, followed by the variable to apply the function to
 
-match_aggregate       :   aggregate_method  var_either?  ';'            ;       // method and, optionally, a variable
+match_aggregate       :   aggregate_method  var_any?  ';'            ;       // method and, optionally, a variable
 aggregate_method      :   COUNT   |   MAX     |   MEAN    |   MEDIAN            // calculate statistical values
                       |   MIN     |   STD     |   SUM     ;
 
@@ -78,11 +78,7 @@ aggregate_method      :   COUNT   |   MAX     |   MEAN    |   MEDIAN            
 // An group function is composed of 2 things:
 // The 'GROUP' method name, followed by the variable to group the results by
 
-match_group           :   GROUP   var_either    ';' ;
-
-// Convenience
-
-var_either            :   VAR_CONCEPT_     | VAR_VALUE_NAMED_ ;
+match_group           :   GROUP   var_any    ';' ;
 
 // SCHEMA QUERY ===============================================================
 
@@ -174,14 +170,17 @@ predicate_substring   :   CONTAINS | LIKE ;
 
 predicate_value       :   value | VAR_CONCEPT_  | VAR_VALUE_NAMED_ ;
 
-// ARITHMETIC EXPRESSION CONSTRUCTS ============================================
+// EXPRESSION CONSTRUCTS ============================================
+expr                      :  expr_op    |   expr_base;
 
-expr                      :  LPAREN expr RPAREN
-                          |  <assoc=right> expr POW expr
-                          |  expr  (TIMES | DIV | MOD)  expr
-                          |  expr  (PLUS | MINUS) expr
+expr_op                   :  <assoc=right> expr_op POW expr_op
+                          |  expr_op  (TIMES | DIV | MOD)  expr_op
+                          |  expr_op  (PLUS  | MINUS) expr_op
+                          |  expr_base
+                          ;
+expr_base                 :  LPAREN expr RPAREN
                           |  VAR_CONCEPT_   | VAR_VALUE_NAMED_
-                          |  func   | value
+                          |  func           | value
                           ;
 func                      :  LABEL_ '('  arg_list? ')' ;
 arg_list                  :  expr (',' expr)*        ;
@@ -271,7 +270,7 @@ GT              : '>'           ;   GTE             : '>='          ;
 LT              : '<'           ;   LTE             : '<='          ;
 LIKE            : 'like'        ;   CONTAINS        : 'contains'    ;
 
-// ARITHMETIC SYMBOLS
+// EXPRESSION SYMBOLS
 
 ASSIGN              : '='         ;
 LPAREN              : '('         ;     RPAREN              : ')'         ;
@@ -305,6 +304,7 @@ DATETIME_       : DATE_FRAGMENT_ 'T' TIME_              ;
 
 // TYPEQL INPUT TOKEN PATTERNS
 // All token names must end with an underscore ('_')
+var_any                 : VAR_CONCEPT_           | VAR_VALUE_NAMED_ ;
 VAR_CONCEPT_            : VAR_CONCEPT_ANONYMOUS_ | VAR_CONCEPT_NAMED_ ;
 VAR_CONCEPT_ANONYMOUS_  : '$_' ;
 VAR_CONCEPT_NAMED_      : '$'  [a-zA-Z0-9][a-zA-Z0-9_-]* ;
