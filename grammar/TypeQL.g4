@@ -57,7 +57,7 @@ query_match_group_agg :   query_match   match_group       match_aggregate  ;
 
 modifiers             : ( filter ';' )? ( sort ';' )? ( offset ';' )? ( limit ';' )?;
 
-filter                :   GET         var_any    ( ',' var_any)*         ;
+filter                :   GET         var_any       ( ',' var_any)*         ;
 sort                  :   SORT        var_order     ( ',' var_order )*   ;
 var_order             :   var_any  ORDER_?                               ;
 offset                :   OFFSET      LONG_                              ;
@@ -108,7 +108,7 @@ pattern_variable      :   variable_concept
 
 // CONCEPT VARAIBLES ===========================================================
 
-variable_concept      :   VAR_CONCEPT_  IS  VAR_CONCEPT_  ;
+variable_concept      :   VAR_NATIVE_  IS  VAR_NATIVE_  ;
 
 // TYPE VARIABLES ==============================================================
 
@@ -125,8 +125,8 @@ type_constraint       :   ABSTRACT
 
 // VALUE VARIABLES =============================================================
 
-variable_value            : VAR_VALUE_NAMED_ predicate
-                          | VAR_VALUE_NAMED_ ASSIGN expr;
+variable_value        : VAR_VALUE_NAMED_ predicate
+                      | VAR_VALUE_NAMED_ ASSIGN expr;
 
 // THING VARIABLES =============================================================
 
@@ -135,15 +135,15 @@ variable_thing_any    :   variable_thing
                       |   variable_relation
                       |   variable_attribute
                       ;
-variable_thing        :   VAR_CONCEPT_            ISA_ type   ( ',' attributes )?
-                      |   VAR_CONCEPT_            IID  IID_   ( ',' attributes )?
-                      |   VAR_CONCEPT_            attributes
+variable_thing        :   var_thing            ISA_ type   ( ',' attributes )?
+                      |   var_thing            IID  IID_   ( ',' attributes )?
+                      |   var_thing            attributes
                       ;
-variable_relation     :   VAR_CONCEPT_? relation  ISA_ type   ( ',' attributes )?
-                      |   VAR_CONCEPT_? relation  attributes?
+variable_relation     :   var_thing? relation  ISA_ type   ( ',' attributes )?
+                      |   var_thing? relation  attributes?
                       ;
-variable_attribute    :   VAR_CONCEPT_? predicate ISA_ type   ( ',' attributes )?
-                      |   VAR_CONCEPT_? predicate attributes?
+variable_attribute    :   var_thing? predicate ISA_ type   ( ',' attributes )?
+                      |   var_thing? predicate attributes?
                       ;
 
 // RELATION CONSTRUCT ==========================================================
@@ -151,39 +151,39 @@ variable_attribute    :   VAR_CONCEPT_? predicate ISA_ type   ( ',' attributes )
 relation              :   '(' role_player ( ',' role_player )* ')' ;            // A list of role players in a Relations
 role_player           :   type ':' player                                       // The Role type and and player variable
                       |            player ;                                     // Or just the player variable
-player                :   VAR_CONCEPT_ ;                                                // A player is just a variable
+player                :   var_thing       ;                                                // A player is just a variable
 
 // ATTRIBUTE CONSTRUCT =========================================================
 
 attributes            :   attribute ( ',' attribute )* ;
-attribute             :   HAS label ( VAR_CONCEPT_ | predicate )                        // ownership by labeled variable or value
-                      |   HAS VAR_CONCEPT_ ;                                            // or just value
+attribute             :   HAS label ( var_thing | predicate )                        // ownership by labeled variable or value
+                      |   HAS var_thing ;                                            // or just value
 
 // PREDICATE CONSTRUCTS ========================================================
 
-predicate             :   value |   VAR_VALUE_NAMED_   |
+predicate             :   value |   var_value   |
                       |   predicate_equality   predicate_value
                       |   predicate_substring  STRING_
                       ;
 predicate_equality    :   EQ | NEQ | GT | GTE | LT | LTE ;
 predicate_substring   :   CONTAINS | LIKE ;
 
-predicate_value       :   value | VAR_CONCEPT_  | VAR_VALUE_NAMED_ ;
+predicate_value       :   value | var_value  | var_thing ;
 
 // EXPRESSION CONSTRUCTS ============================================
-expr                      :  expr_op    |   expr_base;
+expr                  :  expr_op    |   expr_base;
 
-expr_op                   :  <assoc=right> expr_op POW expr_op
-                          |  expr_op  (TIMES | DIV | MOD)  expr_op
-                          |  expr_op  (PLUS  | MINUS) expr_op
-                          |  expr_base
-                          ;
-expr_base                 :  LPAREN expr RPAREN
-                          |  VAR_CONCEPT_   | VAR_VALUE_NAMED_
-                          |  func           | value
-                          ;
-func                      :  LABEL_ '('  arg_list? ')' ;
-arg_list                  :  expr (',' expr)*        ;
+expr_op               :  <assoc=right> expr_op POW expr_op
+                      |  expr_op  (TIMES | DIV | MOD)  expr_op
+                      |  expr_op  (PLUS  | MINUS) expr_op
+                      |  expr_base
+                      ;
+expr_base             :  LPAREN expr RPAREN
+                      |  var_thing      | var_value
+                      |  func           | value
+                      ;
+func                  :  LABEL_ '('  arg_list? ')' ;
+arg_list              :  expr (',' expr)*          ;
 
 // SCHEMA CONSTRUCT =============================================================
 
@@ -192,9 +192,9 @@ schema_rule           :   RULE label
 
 // TYPE, LABEL AND IDENTIFIER CONSTRUCTS =======================================
 
-type_any              :   type_scoped   | type          | VAR_CONCEPT_          ;
-type_scoped           :   label_scoped                  | VAR_CONCEPT_          ;
-type                  :   label                         | VAR_CONCEPT_          ;       // A type can be a label or variable
+type_any              :   type_scoped   | type          | VAR_NATIVE_          ;
+type_scoped           :   label_scoped                  | VAR_NATIVE_          ;
+type                  :   label                         | VAR_NATIVE_          ;       // A type can be a label or variable
 
 label_any             :   label_scoped  | label         ;
 label_scoped          :   LABEL_SCOPED_ ;
@@ -304,10 +304,13 @@ DATETIME_       : DATE_FRAGMENT_ 'T' TIME_              ;
 
 // TYPEQL INPUT TOKEN PATTERNS
 // All token names must end with an underscore ('_')
-var_any                 : VAR_CONCEPT_           | VAR_VALUE_NAMED_ ;
-VAR_CONCEPT_            : VAR_CONCEPT_ANONYMOUS_ | VAR_CONCEPT_NAMED_ ;
-VAR_CONCEPT_ANONYMOUS_  : '$_' ;
-VAR_CONCEPT_NAMED_      : '$'  [a-zA-Z0-9][a-zA-Z0-9_-]* ;
+var_thing               : VAR_NATIVE_       ;
+var_type                : VAR_NATIVE_       ;
+var_value               : VAR_VALUE_NAMED_  ;
+var_any                 : VAR_NATIVE_           | VAR_VALUE_NAMED_  ;
+VAR_NATIVE_             : VAR_NATIVE_ANONYMOUS_ | VAR_NATIVE_NAMED_ ;
+VAR_NATIVE_ANONYMOUS_   : '$_' ;
+VAR_NATIVE_NAMED_       : '$'  [a-zA-Z0-9][a-zA-Z0-9_-]* ;
 VAR_VALUE_NAMED_        : '?'  [a-zA-Z0-9][a-zA-Z0-9_-]* ;
 IID_                    : '0x' [0-9a-f]+ ;
 LABEL_                  : TYPE_CHAR_H_ TYPE_CHAR_T_* ;
