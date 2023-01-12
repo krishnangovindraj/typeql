@@ -187,7 +187,7 @@ public class Parser extends TypeQLBaseVisitor {
 
     // GLOBAL HELPER METHODS ===================================================
 
-    private UnboundConceptVariable getVar(TerminalNode variable) {
+    private UnboundConceptVariable getVarConcept(TerminalNode variable) {
         // Remove '$' prefix
         String name = variable.getSymbol().getText().substring(1);
         if (name.equals(TypeQLToken.Char.UNDERSCORE.toString())) {
@@ -197,7 +197,7 @@ public class Parser extends TypeQLBaseVisitor {
         }
     }
 
-    private UnboundValueVariable getValVar(TerminalNode variable) {
+    private UnboundValueVariable getVarValue(TerminalNode variable) {
         // Remove '?' prefix
         String name = variable.getSymbol().getText().substring(1);
         return UnboundValueVariable.named(name);
@@ -356,24 +356,24 @@ public class Parser extends TypeQLBaseVisitor {
 
         return visitQuery_match(ctx.query_match()).aggregate(
                 TypeQLToken.Aggregate.Method.of(function.aggregate_method().getText()),
-                function.either_var() != null ? visitEither_var(function.either_var()) : null
+                function.var_either() != null ? getVarEitherNamed(function.var_either()) : null
         );
     }
 
     @Override
     public TypeQLMatch.Group visitQuery_match_group(TypeQLParser.Query_match_groupContext ctx) {
-        UnboundConceptVariable var = getVar(ctx.match_group().VAR_());
+        UnboundConceptVariable var = getVarConcept(ctx.match_group().VAR_CONCEPT_());
         return visitQuery_match(ctx.query_match()).group(var);
     }
 
     @Override
     public TypeQLMatch.Group.Aggregate visitQuery_match_group_agg(TypeQLParser.Query_match_group_aggContext ctx) {
-        UnboundConceptVariable var = getVar(ctx.match_group().VAR_());
+        UnboundConceptVariable var = getVarConcept(ctx.match_group().VAR_CONCEPT_());
         TypeQLParser.Match_aggregateContext function = ctx.match_aggregate();
 
         return visitQuery_match(ctx.query_match()).group(var).aggregate(
                 TypeQLToken.Aggregate.Method.of(function.aggregate_method().getText()),
-                function.either_var() != null ? visitEither_var(function.either_var()) : null
+                function.var_either() != null ? getVarEitherNamed(function.var_either()) : null
         );
     }
 
@@ -381,7 +381,7 @@ public class Parser extends TypeQLBaseVisitor {
 
     @Override
     public List<UnboundVariable> visitFilter(TypeQLParser.FilterContext ctx) {
-        return ctx.either_var().stream().map(this::visitEither_var).collect(toList());
+        return ctx.var_either().stream().map(this::getVarEitherNamed).collect(toList());
     }
 
     @Override
@@ -392,7 +392,7 @@ public class Parser extends TypeQLBaseVisitor {
 
     @Override
     public Pair<UnboundVariable, TypeQLArg.Order> visitVar_order(TypeQLParser.Var_orderContext ctx) {
-        return new Pair<>(visitEither_var(ctx.either_var()), ctx.ORDER_() == null ? null : TypeQLArg.Order.of(ctx.ORDER_().getText()));
+        return new Pair<>(getVarEitherNamed(ctx.var_either()), ctx.ORDER_() == null ? null : TypeQLArg.Order.of(ctx.ORDER_().getText()));
     }
 
 
@@ -482,7 +482,7 @@ public class Parser extends TypeQLBaseVisitor {
 
     @Override
     public ConceptVariable visitVariable_concept(TypeQLParser.Variable_conceptContext ctx) {
-        return getVar(ctx.VAR_(0)).is(getVar(ctx.VAR_(1)));
+        return getVarConcept(ctx.VAR_CONCEPT_(0)).is(getVarConcept(ctx.VAR_CONCEPT_(1)));
     }
 
     // TYPE VARIABLES ==========================================================
@@ -528,7 +528,7 @@ public class Parser extends TypeQLBaseVisitor {
 
     @Override
     public ValueVariable visitVariable_value(TypeQLParser.Variable_valueContext ctx) {
-        UnboundValueVariable ownerBuilder = getValVar(ctx.VALVAR_());
+        UnboundValueVariable ownerBuilder = getVarValue(ctx.VAR_VALUE_NAMED_());
         if (ctx.predicate() != null) {
             return ownerBuilder.constrain(new ValueConstraint.Predicate(visitPredicate(ctx.predicate())));
         } else if (ctx.ASSIGN() != null) {
@@ -559,7 +559,7 @@ public class Parser extends TypeQLBaseVisitor {
     @Override
     public ThingVariable.Thing visitVariable_thing(TypeQLParser.Variable_thingContext ctx) {
 
-        UnboundConceptVariable unbound = getVar(ctx.VAR_());
+        UnboundConceptVariable unbound = getVarConcept(ctx.VAR_CONCEPT_());
         ThingVariable.Thing thing = null;
 
         if (ctx.ISA_() != null) {
@@ -580,7 +580,7 @@ public class Parser extends TypeQLBaseVisitor {
     @Override
     public ThingVariable.Relation visitVariable_relation(TypeQLParser.Variable_relationContext ctx) {
         UnboundConceptVariable unbound;
-        if (ctx.VAR_() != null) unbound = getVar(ctx.VAR_());
+        if (ctx.VAR_CONCEPT_() != null) unbound = getVarConcept(ctx.VAR_CONCEPT_());
         else unbound = hidden();
 
         ThingVariable.Relation relation = unbound.constrain(visitRelation(ctx.relation()));
@@ -597,7 +597,7 @@ public class Parser extends TypeQLBaseVisitor {
     @Override
     public ThingVariable.Attribute visitVariable_attribute(TypeQLParser.Variable_attributeContext ctx) {
         UnboundConceptVariable unbound;
-        if (ctx.VAR_() != null) unbound = getVar(ctx.VAR_());
+        if (ctx.VAR_CONCEPT_() != null) unbound = getVarConcept(ctx.VAR_CONCEPT_());
         else unbound = hidden();
 
         ThingVariable.Attribute attribute = unbound.constrain(new ThingConstraint.Predicate(visitPredicate(ctx.predicate())));
@@ -633,10 +633,10 @@ public class Parser extends TypeQLBaseVisitor {
     @Override
     public ThingConstraint.Has visitAttribute(TypeQLParser.AttributeContext ctx) {
         if (ctx.label() != null) {
-            if (ctx.VAR_() != null) return new ThingConstraint.Has(ctx.label().getText(), getVar(ctx.VAR_()));
+            if (ctx.VAR_CONCEPT_() != null) return new ThingConstraint.Has(ctx.label().getText(), getVarConcept(ctx.VAR_CONCEPT_()));
             if (ctx.predicate() != null)
                 return new ThingConstraint.Has(ctx.label().getText(), new ThingConstraint.Predicate(visitPredicate(ctx.predicate())));
-        } else if (ctx.VAR_() != null) return new ThingConstraint.Has(getVar(ctx.VAR_()));
+        } else if (ctx.VAR_CONCEPT_() != null) return new ThingConstraint.Has(getVarConcept(ctx.VAR_CONCEPT_()));
         throw TypeQLException.of(ILLEGAL_GRAMMAR.message(ctx.getText()));
     }
 
@@ -647,7 +647,7 @@ public class Parser extends TypeQLBaseVisitor {
         List<ThingConstraint.Relation.RolePlayer> rolePlayers = new ArrayList<>();
 
         for (TypeQLParser.Role_playerContext rolePlayerCtx : ctx.role_player()) {
-            UnboundConceptVariable player = getVar(rolePlayerCtx.player().VAR_());
+            UnboundConceptVariable player = getVarConcept(rolePlayerCtx.player().VAR_CONCEPT_());
             if (rolePlayerCtx.type() != null) {
                 Either<String, UnboundConceptVariable> roleType = visitType(rolePlayerCtx.type());
                 rolePlayers.add(new ThingConstraint.Relation.RolePlayer(roleType, player));
@@ -662,7 +662,7 @@ public class Parser extends TypeQLBaseVisitor {
 
     @Override
     public Either<Pair<String, String>, UnboundConceptVariable> visitType_any(TypeQLParser.Type_anyContext ctx) {
-        if (ctx.VAR_() != null) return Either.second(getVar(ctx.VAR_()));
+        if (ctx.VAR_CONCEPT_() != null) return Either.second(getVarConcept(ctx.VAR_CONCEPT_()));
         else if (ctx.type() != null)
             return visitType(ctx.type()).apply(s -> Either.first(pair(null, s)), Either::second);
         else if (ctx.type_scoped() != null) return visitType_scoped(ctx.type_scoped());
@@ -672,14 +672,14 @@ public class Parser extends TypeQLBaseVisitor {
     @Override
     public Either<Pair<String, String>, UnboundConceptVariable> visitType_scoped(TypeQLParser.Type_scopedContext ctx) {
         if (ctx.label_scoped() != null) return Either.first(visitLabel_scoped(ctx.label_scoped()));
-        else if (ctx.VAR_() != null) return Either.second(getVar(ctx.VAR_()));
+        else if (ctx.VAR_CONCEPT_() != null) return Either.second(getVarConcept(ctx.VAR_CONCEPT_()));
         else return null;
     }
 
     @Override
     public Either<String, UnboundConceptVariable> visitType(TypeQLParser.TypeContext ctx) {
         if (ctx.label() != null) return Either.first(ctx.label().getText());
-        else if (ctx.VAR_() != null) return Either.second(getVar(ctx.VAR_()));
+        else if (ctx.VAR_CONCEPT_() != null) return Either.second(getVarConcept(ctx.VAR_CONCEPT_()));
         else return null;
     }
 
@@ -717,10 +717,10 @@ public class Parser extends TypeQLBaseVisitor {
         } else if (ctx.LPAREN() != null || ctx.RPAREN() != null) {
             assert ctx.LPAREN() != null && ctx.RPAREN() != null;
             return new ValueConstraint.Assignment.Expression.Bracketed(visitExpr(ctx.expr(0)));
-        } else if (ctx.VAR_() != null) {
-            return new ValueConstraint.Assignment.Expression.ThingVar(getVar(ctx.VAR_()).toThing());
-        } else if (ctx.VALVAR_() != null) {
-            return new ValueConstraint.Assignment.Expression.ValVar(getValVar(ctx.VALVAR_()).toValue());
+        } else if (ctx.VAR_CONCEPT_() != null) {
+            return new ValueConstraint.Assignment.Expression.ThingVar(getVarConcept(ctx.VAR_CONCEPT_()).toThing());
+        } else if (ctx.VAR_VALUE_NAMED_() != null) {
+            return new ValueConstraint.Assignment.Expression.ValVar(getVarValue(ctx.VAR_VALUE_NAMED_()).toValue());
         } else if (ctx.value() != null) {
             Object value = visitValue(ctx.value());
             if (value instanceof Long) {
@@ -765,14 +765,14 @@ public class Parser extends TypeQLBaseVisitor {
         if (ctx.value() != null) {
             predicate = TypeQLToken.Predicate.Equality.EQ;
             value = visitValue(ctx.value());
-        } else if (ctx.VALVAR_() != null) {
+        } else if (ctx.VAR_VALUE_NAMED_() != null) {
             predicate = TypeQLToken.Predicate.Equality.EQ;
-            value = getValVar(ctx.VALVAR_());
+            value = getVarValue(ctx.VAR_VALUE_NAMED_());
         } else if (ctx.predicate_equality() != null) {
             predicate = TypeQLToken.Predicate.Equality.of(ctx.predicate_equality().getText());
             if (ctx.predicate_value().value() != null) value = visitValue(ctx.predicate_value().value());
-            else if (ctx.predicate_value().VAR_() != null) value = getVar(ctx.predicate_value().VAR_());
-            else if (ctx.predicate_value().VALVAR_() != null) value = getValVar(ctx.predicate_value().VALVAR_());
+            else if (ctx.predicate_value().VAR_CONCEPT_() != null) value = getVarConcept(ctx.predicate_value().VAR_CONCEPT_());
+            else if (ctx.predicate_value().VAR_VALUE_NAMED_() != null) value = getVarValue(ctx.predicate_value().VAR_VALUE_NAMED_());
             else throw TypeQLException.of(ILLEGAL_STATE);
         } else if (ctx.predicate_substring() != null) {
             predicate = TypeQLToken.Predicate.SubString.of(ctx.predicate_substring().getText());
@@ -807,10 +807,9 @@ public class Parser extends TypeQLBaseVisitor {
         return unescapeRegex(unquoteString(string));
     }
 
-    @Override
-    public UnboundVariable visitEither_var(TypeQLParser.Either_varContext ctx) {
-        if (ctx.VALVAR_() != null) return getValVar(ctx.VALVAR_());
-        else if (ctx.VAR_() != null) return getVar(ctx.VAR_());
+    public UnboundVariable getVarEitherNamed(TypeQLParser.Var_eitherContext ctx) {
+        if (ctx.VAR_VALUE_NAMED_() != null) return getVarValue(ctx.VAR_VALUE_NAMED_());
+        else if (ctx.VAR_CONCEPT_() != null) return getVarConcept(ctx.VAR_CONCEPT_());
         else throw TypeQLException.of(ILLEGAL_STATE);
     }
 

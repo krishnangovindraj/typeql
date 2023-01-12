@@ -57,9 +57,9 @@ query_match_group_agg :   query_match   match_group       match_aggregate  ;
 
 modifiers             : ( filter ';' )? ( sort ';' )? ( offset ';' )? ( limit ';' )?;
 
-filter                :   GET         either_var    ( ',' either_var)*          ;
+filter                :   GET         var_either    ( ',' var_either)*          ;
 sort                  :   SORT        var_order     ( ',' var_order )*          ;
-var_order             :   either_var  ORDER_?                                   ;
+var_order             :   var_either  ORDER_?                                   ;
 offset                :   OFFSET      LONG_                                     ;
 limit                 :   LIMIT       LONG_                                     ;
 
@@ -69,7 +69,7 @@ limit                 :   LIMIT       LONG_                                     
 // An aggregate function is composed of 2 things:
 // The aggregate method name, followed by the variable to apply the function to
 
-match_aggregate       :   aggregate_method  either_var?  ';'            ;       // method and, optionally, a variable
+match_aggregate       :   aggregate_method  var_either?  ';'            ;       // method and, optionally, a variable
 aggregate_method      :   COUNT   |   MAX     |   MEAN    |   MEDIAN            // calculate statistical values
                       |   MIN     |   STD     |   SUM     ;
 
@@ -78,7 +78,11 @@ aggregate_method      :   COUNT   |   MAX     |   MEAN    |   MEDIAN            
 // An group function is composed of 2 things:
 // The 'GROUP' method name, followed by the variable to group the results by
 
-match_group           :   GROUP   VAR_    ';' ;
+match_group           :   GROUP   VAR_CONCEPT_    ';' ;
+
+// Convenience
+
+var_either            :   VAR_CONCEPT_     | VAR_VALUE_NAMED_ ;
 
 // SCHEMA QUERY ===============================================================
 
@@ -106,11 +110,9 @@ pattern_variable      :   variable_concept
                       |   variable_value
                       ;
 
-either_var            :   VAR_            |   VALVAR_         ;
-
 // CONCEPT VARAIBLES ===========================================================
 
-variable_concept      :   VAR_  IS  VAR_  ;
+variable_concept      :   VAR_CONCEPT_  IS  VAR_CONCEPT_  ;
 
 // TYPE VARIABLES ==============================================================
 
@@ -127,8 +129,8 @@ type_constraint       :   ABSTRACT
 
 // VALUE VARIABLES =============================================================
 
-variable_value            : VALVAR_ predicate
-                          | VALVAR_ ASSIGN expr;
+variable_value            : VAR_VALUE_NAMED_ predicate
+                          | VAR_VALUE_NAMED_ ASSIGN expr;
 
 // THING VARIABLES =============================================================
 
@@ -137,15 +139,15 @@ variable_thing_any    :   variable_thing
                       |   variable_relation
                       |   variable_attribute
                       ;
-variable_thing        :   VAR_            ISA_ type   ( ',' attributes )?
-                      |   VAR_            IID  IID_   ( ',' attributes )?
-                      |   VAR_            attributes
+variable_thing        :   VAR_CONCEPT_            ISA_ type   ( ',' attributes )?
+                      |   VAR_CONCEPT_            IID  IID_   ( ',' attributes )?
+                      |   VAR_CONCEPT_            attributes
                       ;
-variable_relation     :   VAR_? relation  ISA_ type   ( ',' attributes )?
-                      |   VAR_? relation  attributes?
+variable_relation     :   VAR_CONCEPT_? relation  ISA_ type   ( ',' attributes )?
+                      |   VAR_CONCEPT_? relation  attributes?
                       ;
-variable_attribute    :   VAR_? predicate ISA_ type   ( ',' attributes )?
-                      |   VAR_? predicate attributes?
+variable_attribute    :   VAR_CONCEPT_? predicate ISA_ type   ( ',' attributes )?
+                      |   VAR_CONCEPT_? predicate attributes?
                       ;
 
 // RELATION CONSTRUCT ==========================================================
@@ -153,24 +155,24 @@ variable_attribute    :   VAR_? predicate ISA_ type   ( ',' attributes )?
 relation              :   '(' role_player ( ',' role_player )* ')' ;            // A list of role players in a Relations
 role_player           :   type ':' player                                       // The Role type and and player variable
                       |            player ;                                     // Or just the player variable
-player                :   VAR_ ;                                                // A player is just a variable
+player                :   VAR_CONCEPT_ ;                                                // A player is just a variable
 
 // ATTRIBUTE CONSTRUCT =========================================================
 
 attributes            :   attribute ( ',' attribute )* ;
-attribute             :   HAS label ( VAR_ | predicate )                        // ownership by labeled variable or value
-                      |   HAS VAR_ ;                                            // or just value
+attribute             :   HAS label ( VAR_CONCEPT_ | predicate )                        // ownership by labeled variable or value
+                      |   HAS VAR_CONCEPT_ ;                                            // or just value
 
 // PREDICATE CONSTRUCTS ========================================================
 
-predicate             :   value |   VALVAR_   |
+predicate             :   value |   VAR_VALUE_NAMED_   |
                       |   predicate_equality   predicate_value
                       |   predicate_substring  STRING_
                       ;
 predicate_equality    :   EQ | NEQ | GT | GTE | LT | LTE ;
 predicate_substring   :   CONTAINS | LIKE ;
 
-predicate_value       :   value | VAR_  | VALVAR_ ;
+predicate_value       :   value | VAR_CONCEPT_  | VAR_VALUE_NAMED_ ;
 
 // ARITHMETIC EXPRESSION CONSTRUCTS ============================================
 
@@ -178,7 +180,7 @@ expr                      :  LPAREN expr RPAREN
                           |  <assoc=right> expr POW expr
                           |  expr  (TIMES | DIV | MOD)  expr
                           |  expr  (PLUS | MINUS) expr
-                          |  VAR_   | VALVAR_
+                          |  VAR_CONCEPT_   | VAR_VALUE_NAMED_
                           |  func   | value
                           ;
 func                      :  LABEL_ '('  arg_list? ')' ;
@@ -191,9 +193,9 @@ schema_rule           :   RULE label
 
 // TYPE, LABEL AND IDENTIFIER CONSTRUCTS =======================================
 
-type_any              :   type_scoped   | type          | VAR_          ;
-type_scoped           :   label_scoped                  | VAR_          ;
-type                  :   label                         | VAR_          ;       // A type can be a label or variable
+type_any              :   type_scoped   | type          | VAR_CONCEPT_          ;
+type_scoped           :   label_scoped                  | VAR_CONCEPT_          ;
+type                  :   label                         | VAR_CONCEPT_          ;       // A type can be a label or variable
 
 label_any             :   label_scoped  | label         ;
 label_scoped          :   LABEL_SCOPED_ ;
@@ -303,13 +305,13 @@ DATETIME_       : DATE_FRAGMENT_ 'T' TIME_              ;
 
 // TYPEQL INPUT TOKEN PATTERNS
 // All token names must end with an underscore ('_')
-VAR_            : VAR_ANONYMOUS_ | VAR_NAMED_ ;
-VAR_ANONYMOUS_  : '$_' ;
-VAR_NAMED_      : '$' [a-zA-Z0-9][a-zA-Z0-9_-]* ;
-VALVAR_         : '?' [a-zA-Z0-9][a-zA-Z0-9_-]* ;
-IID_            : '0x'[0-9a-f]+ ;
-LABEL_          : TYPE_CHAR_H_ TYPE_CHAR_T_* ;
-LABEL_SCOPED_   : LABEL_ ':' LABEL_ ;
+VAR_CONCEPT_            : VAR_CONCEPT_ANONYMOUS_ | VAR_CONCEPT_NAMED_ ;
+VAR_CONCEPT_ANONYMOUS_  : '$_' ;
+VAR_CONCEPT_NAMED_      : '$'  [a-zA-Z0-9][a-zA-Z0-9_-]* ;
+VAR_VALUE_NAMED_        : '?'  [a-zA-Z0-9][a-zA-Z0-9_-]* ;
+IID_                    : '0x' [0-9a-f]+ ;
+LABEL_                  : TYPE_CHAR_H_ TYPE_CHAR_T_* ;
+LABEL_SCOPED_           : LABEL_ ':' LABEL_ ;
 
 // FRAGMENTS OF KEYWORDS =======================================================
 
