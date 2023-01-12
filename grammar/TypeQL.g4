@@ -78,7 +78,7 @@ aggregate_method      :   COUNT   |   MAX     |   MEAN    |   MEDIAN            
 // An group function is composed of 2 things:
 // The 'GROUP' method name, followed by the variable to group the results by
 
-match_group           :   GROUP   VAR_CONCEPT_    ';' ;
+match_group           :   GROUP   var_either    ';' ;
 
 // Convenience
 

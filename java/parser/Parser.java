@@ -356,24 +356,24 @@ public class Parser extends TypeQLBaseVisitor {
 
         return visitQuery_match(ctx.query_match()).aggregate(
                 TypeQLToken.Aggregate.Method.of(function.aggregate_method().getText()),
-                function.var_either() != null ? getVarEitherNamed(function.var_either()) : null
+                function.var_either() != null ? getVarEither(function.var_either()) : null
         );
     }
 
     @Override
     public TypeQLMatch.Group visitQuery_match_group(TypeQLParser.Query_match_groupContext ctx) {
-        UnboundConceptVariable var = getVarConcept(ctx.match_group().VAR_CONCEPT_());
+        UnboundVariable var = getVarEither(ctx.match_group().var_either());
         return visitQuery_match(ctx.query_match()).group(var);
     }
 
     @Override
     public TypeQLMatch.Group.Aggregate visitQuery_match_group_agg(TypeQLParser.Query_match_group_aggContext ctx) {
-        UnboundConceptVariable var = getVarConcept(ctx.match_group().VAR_CONCEPT_());
+        UnboundVariable var = getVarEither(ctx.match_group().var_either());
         TypeQLParser.Match_aggregateContext function = ctx.match_aggregate();
 
         return visitQuery_match(ctx.query_match()).group(var).aggregate(
                 TypeQLToken.Aggregate.Method.of(function.aggregate_method().getText()),
-                function.var_either() != null ? getVarEitherNamed(function.var_either()) : null
+                function.var_either() != null ? getVarEither(function.var_either()) : null
         );
     }
 
@@ -381,7 +381,7 @@ public class Parser extends TypeQLBaseVisitor {
 
     @Override
     public List<UnboundVariable> visitFilter(TypeQLParser.FilterContext ctx) {
-        return ctx.var_either().stream().map(this::getVarEitherNamed).collect(toList());
+        return ctx.var_either().stream().map(this::getVarEither).collect(toList());
     }
 
     @Override
@@ -392,7 +392,7 @@ public class Parser extends TypeQLBaseVisitor {
 
     @Override
     public Pair<UnboundVariable, TypeQLArg.Order> visitVar_order(TypeQLParser.Var_orderContext ctx) {
-        return new Pair<>(getVarEitherNamed(ctx.var_either()), ctx.ORDER_() == null ? null : TypeQLArg.Order.of(ctx.ORDER_().getText()));
+        return new Pair<>(getVarEither(ctx.var_either()), ctx.ORDER_() == null ? null : TypeQLArg.Order.of(ctx.ORDER_().getText()));
     }
 
 
@@ -807,7 +807,7 @@ public class Parser extends TypeQLBaseVisitor {
         return unescapeRegex(unquoteString(string));
     }
 
-    public UnboundVariable getVarEitherNamed(TypeQLParser.Var_eitherContext ctx) {
+    public UnboundVariable getVarEither(TypeQLParser.Var_eitherContext ctx) {
         if (ctx.VAR_VALUE_NAMED_() != null) return getVarValue(ctx.VAR_VALUE_NAMED_());
         else if (ctx.VAR_CONCEPT_() != null) return getVarConcept(ctx.VAR_CONCEPT_());
         else throw TypeQLException.of(ILLEGAL_STATE);
