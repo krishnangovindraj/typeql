@@ -22,7 +22,6 @@
 package com.vaticle.typeql.lang.pattern.variable;
 
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
-import com.vaticle.typeql.lang.pattern.constraint.ConceptConstraint;
 import com.vaticle.typeql.lang.pattern.constraint.ThingConstraint;
 import com.vaticle.typeql.lang.pattern.variable.builder.ThingVariableBuilder;
 
@@ -38,11 +37,10 @@ import static com.vaticle.typeql.lang.common.TypeQLToken.Char.SPACE;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.ILLEGAL_CONSTRAINT_REPETITION;
 import static com.vaticle.typeql.lang.common.util.Strings.indent;
 
-public abstract class ThingVariable<T extends ThingVariable<T>> extends ConceptVariable {
+public abstract class ThingVariable<T extends ThingVariable<T>> extends BoundVariable {
 
     ThingConstraint.IID iidConstraint;
     ThingConstraint.Isa isaConstraint;
-    ConceptConstraint.Is isConstraint;
     ThingConstraint.Predicate predicateConstraint;
     ThingConstraint.Relation relationConstraint;
     List<ThingConstraint.Has> hasConstraints;
@@ -83,10 +81,6 @@ public abstract class ThingVariable<T extends ThingVariable<T>> extends ConceptV
 
     public Optional<ThingConstraint.Isa> isa() {
         return Optional.ofNullable(isaConstraint);
-    }
-
-    public Optional<ConceptConstraint.Is> is() {
-        return Optional.ofNullable(isConstraint);
     }
 
     public Optional<ThingConstraint.Predicate> predicate() {
@@ -161,7 +155,6 @@ public abstract class ThingVariable<T extends ThingVariable<T>> extends ConceptV
         private String thingSyntax() {
             if (isa().isPresent()) return isaSyntax();
             else if (iid().isPresent()) return iid().get().toString();
-            else if (is().isPresent()) return is().get().toString();
             else return "";
         }
 

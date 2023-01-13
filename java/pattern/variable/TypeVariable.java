@@ -40,7 +40,7 @@ import static com.vaticle.typeql.lang.common.TypeQLToken.Char.SPACE;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.ILLEGAL_CONSTRAINT_REPETITION;
 import static com.vaticle.typeql.lang.common.util.Strings.indent;
 
-public class TypeVariable extends ConceptVariable implements TypeVariableBuilder, Definable {
+public class TypeVariable extends BoundVariable implements TypeVariableBuilder, Definable {
 
     private TypeConstraint.Label labelConstraint;
     private TypeConstraint.Sub subConstraint;
