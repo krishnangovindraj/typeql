@@ -34,12 +34,6 @@ import static com.vaticle.typeql.lang.common.TypeQLToken.Predicate.Equality.EQ;
 
 public interface ThingVariableBuilder {
 
-    interface Root extends
-            ThingVariableBuilder.Common<ThingVariable.Thing>,
-            ThingVariableBuilder.Thing,
-            ThingVariableBuilder.Relation,
-            ThingVariableBuilder.Attribute { }
-
     interface Common<T> {
 
         default T isa(TypeQLToken.Type type) {
