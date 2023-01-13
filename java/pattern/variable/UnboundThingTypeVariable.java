@@ -36,14 +36,11 @@ import java.util.List;
 public class UnboundThingTypeVariable extends UnboundVariable implements
         ConceptVariableBuilder,
         TypeVariableBuilder,
-        ThingVariableBuilder.Common<ThingVariable.Thing>,
-        ThingVariableBuilder.Thing,
-        ThingVariableBuilder.Relation,
-        ThingVariableBuilder.Attribute {
+        ThingVariableBuilder.Root {
 
     UnboundThingTypeVariable(Reference reference) {
         super(reference);
-        assert reference.refersToConcept();
+        assert reference.refersToTypeThing();
     }
 
     public static UnboundThingTypeVariable named(String name) {

@@ -48,7 +48,7 @@ public abstract class ThingVariable<T extends ThingVariable<T>> extends BoundVar
 
     ThingVariable(Reference reference) {
         super(reference);
-        assert reference.refersToConcept();
+        assert reference.refersToTypeThing();
         this.hasConstraints = new LinkedList<>();
         this.constraints = new LinkedList<>();
     }

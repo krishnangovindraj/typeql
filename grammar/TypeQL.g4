@@ -100,7 +100,7 @@ pattern_negation      :   NOT '{' patterns '}'                        ;
 
 // VARIABLE PATTERNS ===========================================================
 
-pattern_variable      :   variable_concept
+pattern_variable      :   variable_thing_type
                       |   variable_type
                       |   variable_thing_any
                       |   variable_value
@@ -108,7 +108,7 @@ pattern_variable      :   variable_concept
 
 // CONCEPT VARAIBLES ===========================================================
 
-variable_concept      :   var_concept  IS  var_concept  ;
+variable_thing_type   :   var_thing_type  IS  var_thing_type    ;
 
 // TYPE VARIABLES ==============================================================
 
@@ -304,14 +304,14 @@ DATETIME_       : DATE_FRAGMENT_ 'T' TIME_              ;
 
 // TYPEQL INPUT TOKEN PATTERNS
 // All token names must end with an underscore ('_')
-var_concept             : VAR_CONCEPT_            ;
-var_thing               : VAR_CONCEPT_            ;
-var_type                : VAR_CONCEPT_            ;
-var_value               : VAR_VALUE_NAMED_        ;
-var_any                 : VAR_CONCEPT_            | VAR_VALUE_NAMED_  ;
-VAR_CONCEPT_            : VAR_CONCEPT_ANONYMOUS_ | VAR_CONCEPT_NAMED_ ;
-VAR_CONCEPT_ANONYMOUS_  : '$_' ;
-VAR_CONCEPT_NAMED_      : '$'  [a-zA-Z0-9][a-zA-Z0-9_-]* ;
+var_thing_type          : VAR_NATIVE_            ;
+var_thing               : VAR_NATIVE_            ;
+var_type                : VAR_NATIVE_            ;
+var_value               : VAR_VALUE_NAMED_       ;
+var_any                 : VAR_NATIVE_            | VAR_VALUE_NAMED_  ;
+VAR_NATIVE_             : VAR_NATIVE_ANONYMOUS_  | VAR_NATIVE_NAMED_  ;
+VAR_NATIVE_ANONYMOUS_   : '$_' ;
+VAR_NATIVE_NAMED_        : '$'  [a-zA-Z0-9][a-zA-Z0-9_-]* ;
 VAR_VALUE_NAMED_        : '?'  [a-zA-Z0-9][a-zA-Z0-9_-]* ;
 IID_                    : '0x' [0-9a-f]+ ;
 LABEL_                  : TYPE_CHAR_H_ TYPE_CHAR_T_* ;

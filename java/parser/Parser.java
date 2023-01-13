@@ -187,7 +187,7 @@ public class Parser extends TypeQLBaseVisitor {
 
     // GLOBAL HELPER METHODS ===================================================
 
-    private UnboundThingTypeVariable getVarConcept(TerminalNode variable) {
+    private UnboundThingTypeVariable getUnboundNative(TerminalNode variable) {
         // Remove '$' prefix
         String name = variable.getSymbol().getText().substring(1);
         if (name.equals(TypeQLToken.Char.UNDERSCORE.toString())) {
@@ -197,7 +197,7 @@ public class Parser extends TypeQLBaseVisitor {
         }
     }
 
-    private UnboundValueVariable getVarValue(TerminalNode variable) {
+    private UnboundValueVariable getUnboundValue(TerminalNode variable) {
         // Remove '?' prefix
         String name = variable.getSymbol().getText().substring(1);
         return UnboundValueVariable.named(name);
@@ -469,8 +469,8 @@ public class Parser extends TypeQLBaseVisitor {
             return this.visitVariable_thing_any(ctx.variable_thing_any());
         } else if (ctx.variable_type() != null) {
             return visitVariable_type(ctx.variable_type());
-        } else if (ctx.variable_concept() != null) {
-            return visitVariable_concept(ctx.variable_concept());
+        } else if (ctx.variable_thing_type() != null) {
+            return visitVariable_thing_type(ctx.variable_thing_type());
         } else if (ctx.variable_value() != null) {
             return visitVariable_value(ctx.variable_value());
         } else {
@@ -481,8 +481,8 @@ public class Parser extends TypeQLBaseVisitor {
     // CONCEPT VARIABLES =======================================================
 
     @Override
-    public ConceptVariable visitVariable_concept(TypeQLParser.Variable_conceptContext ctx) {
-        return visitVar_concept(ctx.var_concept(0)).is(visitVar_concept(ctx.var_concept(1)));
+    public ConceptVariable visitVariable_thing_type(TypeQLParser.Variable_thing_typeContext ctx) {
+        return visitVar_thing_type(ctx.var_thing_type(0)).is(visitVar_thing_type(ctx.var_thing_type(1)));
     }
 
     // TYPE VARIABLES ==========================================================
@@ -704,29 +704,29 @@ public class Parser extends TypeQLBaseVisitor {
 
     @Override
     public UnboundVariable visitVar_any(TypeQLParser.Var_anyContext ctx) {
-        if (ctx.VAR_VALUE_NAMED_() != null) return getVarValue(ctx.VAR_VALUE_NAMED_());
-        else if (ctx.VAR_CONCEPT_() != null) return getVarConcept(ctx.VAR_CONCEPT_());
+        if (ctx.VAR_VALUE_NAMED_() != null) return getUnboundValue(ctx.VAR_VALUE_NAMED_());
+        else if (ctx.VAR_NATIVE_() != null) return getUnboundNative(ctx.VAR_NATIVE_());
         else throw TypeQLException.of(ILLEGAL_STATE);
     }
 
     @Override
-    public UnboundThingTypeVariable visitVar_concept(TypeQLParser.Var_conceptContext ctx) {
-        return getVarConcept(ctx.VAR_CONCEPT_());
+    public UnboundThingTypeVariable visitVar_thing_type(TypeQLParser.Var_thing_typeContext ctx) {
+        return getUnboundNative(ctx.VAR_NATIVE_());
     }
 
     @Override
     public UnboundThingTypeVariable visitVar_thing(TypeQLParser.Var_thingContext ctx) {
-        return getVarConcept(ctx.VAR_CONCEPT_());
+        return getUnboundNative(ctx.VAR_NATIVE_());
     }
 
     @Override
     public UnboundThingTypeVariable visitVar_type(TypeQLParser.Var_typeContext ctx) {
-        return getVarConcept(ctx.VAR_CONCEPT_());
+        return getUnboundNative(ctx.VAR_NATIVE_());
     }
 
     @Override
     public UnboundValueVariable visitVar_value(TypeQLParser.Var_valueContext ctx) {
-        return getVarValue(ctx.VAR_VALUE_NAMED_());
+        return getUnboundValue(ctx.VAR_VALUE_NAMED_());
     }
 
     // ARITHMETIC EXPRESSIONS ==================================================

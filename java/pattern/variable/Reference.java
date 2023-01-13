@@ -29,7 +29,6 @@ import java.util.regex.Pattern;
 
 import static com.vaticle.typedb.common.util.Objects.className;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_CASTING;
-import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_VARIABLE_NAME;
 
 public abstract class Reference {
 
@@ -39,7 +38,7 @@ public abstract class Reference {
 
     enum Type {NAME, ANONYMOUS, LABEL}
 
-    enum RefersTo {CONCEPT, VALUE}
+    enum RefersTo {TYPE_THING, VALUE}
 
     Reference(Type type, RefersTo refersTo, boolean isVisible) {
         this.type = type;
@@ -48,7 +47,7 @@ public abstract class Reference {
     }
 
     public static Reference.Name namedConcept(String name) {
-        return new Name(name, RefersTo.CONCEPT);
+        return new Name(name, RefersTo.TYPE_THING);
     }
 
     public static Name namedValue(String name) {
@@ -67,8 +66,8 @@ public abstract class Reference {
         return type;
     }
 
-    public boolean refersToConcept() {
-        return refersTo == RefersTo.CONCEPT;
+    public boolean refersToTypeThing() {
+        return refersTo == RefersTo.TYPE_THING;
     }
 
     public boolean refersToValue() {
@@ -78,7 +77,7 @@ public abstract class Reference {
     public abstract String name();
 
     public String syntax() {
-        return (refersTo == RefersTo.CONCEPT ? TypeQLToken.Char.$ : TypeQLToken.Char.QUESTION_MARK) + name();
+        return (refersTo == RefersTo.TYPE_THING ? TypeQLToken.Char.$ : TypeQLToken.Char.QUESTION_MARK) + name();
     }
 
     protected boolean isVisible() {
@@ -184,7 +183,7 @@ public abstract class Reference {
         private final int hash;
 
         Label(String label) {
-            super(Type.LABEL, RefersTo.CONCEPT, false);
+            super(Type.LABEL, RefersTo.TYPE_THING, false);
             this.label = label;
             this.hash = Objects.hash(this.type, this.isVisible, this.label);
         }
@@ -224,7 +223,7 @@ public abstract class Reference {
         private final int hash;
 
         private Anonymous(boolean isVisible) {
-            super(Type.ANONYMOUS, RefersTo.CONCEPT, isVisible);
+            super(Type.ANONYMOUS, RefersTo.TYPE_THING, isVisible);
             this.hash = Objects.hash(this.type, this.isVisible);
         }
 

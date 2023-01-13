@@ -56,7 +56,7 @@ public class TypeVariable extends BoundVariable implements TypeVariableBuilder, 
 
     TypeVariable(Reference reference) {
         super(reference);
-        assert reference.refersToConcept();
+        assert reference.refersToTypeThing();
         this.ownsConstraints = new LinkedList<>();
         this.playsConstraints = new LinkedList<>();
         this.relatesConstraints = new LinkedList<>();
