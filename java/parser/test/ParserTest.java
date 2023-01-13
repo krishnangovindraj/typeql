@@ -414,7 +414,7 @@ public class ParserTest {
     public void testAttributeQueryByValueVariable() {
         final String query = "match\n" +
                 "?x = 5;\n" +
-                "$a ?x isa age;";
+                "$a == ?x isa age;";
         TypeQLMatch parsed = TypeQL.parseQuery(query).asMatch();
         TypeQLMatch expected = match(
                 valvar("x").assign(Expr.constant(5)),
@@ -1155,7 +1155,7 @@ public class ParserTest {
                 "        ?d = $a * 365;\n" +
                 "    }\n" +
                 "    then {\n" +
-                "        $x has days ?d;\n" +
+                "        $x has days == ?d;\n" +
                 "    };";
         TypeQLDefine parsed = TypeQL.parseQuery(query).asDefine();
 

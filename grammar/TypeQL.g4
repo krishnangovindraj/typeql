@@ -108,7 +108,7 @@ pattern_variable      :   variable_concept
 
 // CONCEPT VARAIBLES ===========================================================
 
-variable_concept      :   VAR_NATIVE_  IS  VAR_NATIVE_  ;
+variable_concept      :   var_concept  IS  var_concept  ;
 
 // TYPE VARIABLES ==============================================================
 
@@ -125,8 +125,8 @@ type_constraint       :   ABSTRACT
 
 // VALUE VARIABLES =============================================================
 
-variable_value        : VAR_VALUE_NAMED_ predicate
-                      | VAR_VALUE_NAMED_ ASSIGN expr;
+variable_value        : var_value predicate
+                      | var_value ASSIGN expr;
 
 // THING VARIABLES =============================================================
 
@@ -151,17 +151,17 @@ variable_attribute    :   var_thing? predicate ISA_ type   ( ',' attributes )?
 relation              :   '(' role_player ( ',' role_player )* ')' ;            // A list of role players in a Relations
 role_player           :   type ':' player                                       // The Role type and and player variable
                       |            player ;                                     // Or just the player variable
-player                :   var_thing       ;                                                // A player is just a variable
+player                :   var_thing       ;                                     // A player is just a variable
 
 // ATTRIBUTE CONSTRUCT =========================================================
 
 attributes            :   attribute ( ',' attribute )* ;
-attribute             :   HAS label ( var_thing | predicate )                        // ownership by labeled variable or value
-                      |   HAS var_thing ;                                            // or just value
+attribute             :   HAS label ( var_thing | var_value | predicate )       // ownership by labeled variable or value
+                      |   HAS var_thing ;                                       // or just value
 
 // PREDICATE CONSTRUCTS ========================================================
 
-predicate             :   value |   var_value   |
+predicate             :   value |
                       |   predicate_equality   predicate_value
                       |   predicate_substring  STRING_
                       ;
@@ -192,9 +192,9 @@ schema_rule           :   RULE label
 
 // TYPE, LABEL AND IDENTIFIER CONSTRUCTS =======================================
 
-type_any              :   type_scoped   | type          | VAR_NATIVE_          ;
-type_scoped           :   label_scoped                  | VAR_NATIVE_          ;
-type                  :   label                         | VAR_NATIVE_          ;       // A type can be a label or variable
+type_any              :   type_scoped   | type          | var_type      ;
+type_scoped           :   label_scoped                  | var_type      ;
+type                  :   label                         | var_type      ;       // A type can be a label or variable
 
 label_any             :   label_scoped  | label         ;
 label_scoped          :   LABEL_SCOPED_ ;
@@ -304,13 +304,14 @@ DATETIME_       : DATE_FRAGMENT_ 'T' TIME_              ;
 
 // TYPEQL INPUT TOKEN PATTERNS
 // All token names must end with an underscore ('_')
-var_thing               : VAR_NATIVE_       ;
-var_type                : VAR_NATIVE_       ;
-var_value               : VAR_VALUE_NAMED_  ;
-var_any                 : VAR_NATIVE_           | VAR_VALUE_NAMED_  ;
-VAR_NATIVE_             : VAR_NATIVE_ANONYMOUS_ | VAR_NATIVE_NAMED_ ;
-VAR_NATIVE_ANONYMOUS_   : '$_' ;
-VAR_NATIVE_NAMED_       : '$'  [a-zA-Z0-9][a-zA-Z0-9_-]* ;
+var_concept             : VAR_CONCEPT_            ;
+var_thing               : VAR_CONCEPT_            ;
+var_type                : VAR_CONCEPT_            ;
+var_value               : VAR_VALUE_NAMED_        ;
+var_any                 : VAR_CONCEPT_            | VAR_VALUE_NAMED_  ;
+VAR_CONCEPT_            : VAR_CONCEPT_ANONYMOUS_ | VAR_CONCEPT_NAMED_ ;
+VAR_CONCEPT_ANONYMOUS_  : '$_' ;
+VAR_CONCEPT_NAMED_      : '$'  [a-zA-Z0-9][a-zA-Z0-9_-]* ;
 VAR_VALUE_NAMED_        : '?'  [a-zA-Z0-9][a-zA-Z0-9_-]* ;
 IID_                    : '0x' [0-9a-f]+ ;
 LABEL_                  : TYPE_CHAR_H_ TYPE_CHAR_T_* ;

@@ -133,7 +133,7 @@ public abstract class Predicate<T> {
 
     @Override
     public java.lang.String toString() {
-        if (predicate.equals(EQ) && !isThingVariable()) return Strings.valueToString(value);
+        if (predicate.equals(EQ) && !isThingVariable() && !isValueVariable()) return Strings.valueToString(value);
         else return predicate.toString() + SPACE + Strings.valueToString(value);
     }
 
