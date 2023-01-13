@@ -25,7 +25,6 @@ import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.common.exception.ErrorMessage;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundConceptVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
 
 import java.util.AbstractList;
@@ -85,7 +84,7 @@ public class Conjunction<T extends Pattern> implements Pattern {
     @Override
     public void validateIsBoundedBy(Set<UnboundVariable> bounds) {
         Set<UnboundVariable> unboundConceptVariables = variables().map(BoundVariable::toUnbound)
-                .filter(UnboundVariable::isConceptVariable)
+                .filter(UnboundVariable::isThingTypeVariable)
                 .collect(Collectors.toSet());
         if (unboundConceptVariables.stream().noneMatch(bounds::contains)) {
             String str = toString().replace("\n", " ");

@@ -29,7 +29,7 @@ import com.vaticle.typeql.lang.pattern.Conjunction;
 import com.vaticle.typeql.lang.pattern.Pattern;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundConceptVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundThingTypeVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
 import com.vaticle.typeql.lang.query.builder.Aggregatable;
 import com.vaticle.typeql.lang.query.builder.Sortable;
@@ -220,7 +220,7 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
     }
 
     public Group group(String var) {
-        return group(UnboundConceptVariable.named(var));
+        return group(UnboundThingTypeVariable.named(var));
     }
 
     public Group group(UnboundVariable var) {
@@ -291,7 +291,7 @@ public class TypeQLMatch extends TypeQLQuery implements Aggregatable<TypeQLMatch
         }
 
         public TypeQLMatch.Filtered get(String var, String... vars) {
-            return get(concat(of(var), of(vars)).map(UnboundConceptVariable::named).collect(toList()));
+            return get(concat(of(var), of(vars)).map(UnboundThingTypeVariable::named).collect(toList()));
         }
 
         public TypeQLMatch.Filtered get(UnboundVariable var, UnboundVariable... vars) {

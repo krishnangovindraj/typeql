@@ -41,7 +41,7 @@ public abstract class BoundVariable extends Variable implements Conjunctable {
 
     @Override
     public void validateIsBoundedBy(Set<UnboundVariable> bounds) {
-        if (Stream.concat(Stream.of(this), variables()).map(BoundVariable::toUnbound).filter(UnboundVariable::isConceptVariable).noneMatch(v -> bounds.contains(v.asConceptVariable()))) {
+        if (Stream.concat(Stream.of(this), variables()).map(BoundVariable::toUnbound).filter(UnboundVariable::isThingTypeVariable).noneMatch(v -> bounds.contains(v.asThingTypeVariable()))) {
             throw TypeQLException.of(MATCH_HAS_UNBOUNDED_NESTED_PATTERN.message(toString()));
         }
     }

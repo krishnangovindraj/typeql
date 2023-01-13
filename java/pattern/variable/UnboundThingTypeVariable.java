@@ -33,7 +33,7 @@ import com.vaticle.typeql.lang.pattern.variable.builder.TypeVariableBuilder;
 import java.util.Collections;
 import java.util.List;
 
-public class UnboundConceptVariable extends UnboundVariable implements
+public class UnboundThingTypeVariable extends UnboundVariable implements
         ConceptVariableBuilder,
         TypeVariableBuilder,
         ThingVariableBuilder.Common<ThingVariable.Thing>,
@@ -41,30 +41,30 @@ public class UnboundConceptVariable extends UnboundVariable implements
         ThingVariableBuilder.Relation,
         ThingVariableBuilder.Attribute {
 
-    UnboundConceptVariable(Reference reference) {
+    UnboundThingTypeVariable(Reference reference) {
         super(reference);
         assert reference.refersToConcept();
     }
 
-    public static UnboundConceptVariable named(String name) {
-        return new UnboundConceptVariable(Reference.namedConcept(name));
+    public static UnboundThingTypeVariable named(String name) {
+        return new UnboundThingTypeVariable(Reference.namedConcept(name));
     }
 
-    public static UnboundConceptVariable anonymous() {
-        return new UnboundConceptVariable(Reference.anonymous(true));
+    public static UnboundThingTypeVariable anonymous() {
+        return new UnboundThingTypeVariable(Reference.anonymous(true));
     }
 
-    public static UnboundConceptVariable hidden() {
-        return new UnboundConceptVariable(Reference.anonymous(false));
+    public static UnboundThingTypeVariable hidden() {
+        return new UnboundThingTypeVariable(Reference.anonymous(false));
     }
 
     @Override
-    public boolean isConceptVariable() {
+    public boolean isThingTypeVariable() {
         return true;
     }
 
     @Override
-    public UnboundConceptVariable asConceptVariable() {
+    public UnboundThingTypeVariable asThingTypeVariable() {
         return this;
     }
 
@@ -176,7 +176,7 @@ public class UnboundConceptVariable extends UnboundVariable implements
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        UnboundConceptVariable that = (UnboundConceptVariable) o;
+        UnboundThingTypeVariable that = (UnboundThingTypeVariable) o;
         return this.reference.equals(that.reference);
     }
 

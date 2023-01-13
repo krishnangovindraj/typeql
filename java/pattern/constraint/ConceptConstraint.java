@@ -24,7 +24,7 @@ package com.vaticle.typeql.lang.pattern.constraint;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.ConceptVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundConceptVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundThingTypeVariable;
 
 import java.util.Objects;
 import java.util.Set;
@@ -65,7 +65,7 @@ public abstract class ConceptConstraint<T extends BoundVariable> extends Constra
         private final ConceptVariable variable;
         private final int hash;
 
-        public Is(UnboundConceptVariable variable) {
+        public Is(UnboundThingTypeVariable variable) {
             this(variable.toConcept());
         }
 

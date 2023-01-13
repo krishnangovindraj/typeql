@@ -22,7 +22,7 @@
 package com.vaticle.typeql.lang.query.builder;
 
 import com.vaticle.typeql.lang.common.TypeQLToken;
-import com.vaticle.typeql.lang.pattern.variable.UnboundConceptVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundThingTypeVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
 import com.vaticle.typeql.lang.query.TypeQLQuery;
 
@@ -33,7 +33,7 @@ public interface Aggregatable<T extends TypeQLQuery> {
     }
 
     default T max(String var) {
-        return max(UnboundConceptVariable.named(var));
+        return max(UnboundThingTypeVariable.named(var));
     }
 
     default T max(UnboundVariable var) {
@@ -41,7 +41,7 @@ public interface Aggregatable<T extends TypeQLQuery> {
     }
 
     default T mean(String var) {
-        return mean(UnboundConceptVariable.named(var));
+        return mean(UnboundThingTypeVariable.named(var));
     }
 
     default T mean(UnboundVariable var) {
@@ -49,7 +49,7 @@ public interface Aggregatable<T extends TypeQLQuery> {
     }
 
     default T median(String var) {
-        return median(UnboundConceptVariable.named(var));
+        return median(UnboundThingTypeVariable.named(var));
     }
 
     default T median(UnboundVariable var) {
@@ -57,7 +57,7 @@ public interface Aggregatable<T extends TypeQLQuery> {
     }
 
     default T min(String var) {
-        return min(UnboundConceptVariable.named(var));
+        return min(UnboundThingTypeVariable.named(var));
     }
 
     default T min(UnboundVariable var) {
@@ -65,7 +65,7 @@ public interface Aggregatable<T extends TypeQLQuery> {
     }
 
     default T std(String var) {
-        return std(UnboundConceptVariable.named(var));
+        return std(UnboundThingTypeVariable.named(var));
     }
 
     default T std(UnboundVariable var) {
@@ -73,7 +73,7 @@ public interface Aggregatable<T extends TypeQLQuery> {
     }
 
     default T sum(String var) {
-        return sum(UnboundConceptVariable.named(var));
+        return sum(UnboundThingTypeVariable.named(var));
     }
 
     default T sum(UnboundVariable var) {

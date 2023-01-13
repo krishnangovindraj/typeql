@@ -28,7 +28,7 @@ import com.vaticle.typeql.lang.common.exception.TypeQLException;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 import com.vaticle.typeql.lang.pattern.variable.TypeVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundConceptVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundThingTypeVariable;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ import static com.vaticle.typeql.lang.common.TypeQLToken.Type.RELATION;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_CASTING;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.INVALID_IID_STRING;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.MISSING_CONSTRAINT_RELATION_PLAYER;
-import static com.vaticle.typeql.lang.pattern.variable.UnboundConceptVariable.hidden;
+import static com.vaticle.typeql.lang.pattern.variable.UnboundThingTypeVariable.hidden;
 
 public abstract class ThingConstraint extends ConceptConstraint<BoundVariable> {
 
@@ -176,12 +176,12 @@ public abstract class ThingConstraint extends ConceptConstraint<BoundVariable> {
             this(hidden().type(type), isExplicit, false);
         }
 
-        public Isa(UnboundConceptVariable typeVar, boolean isExplicit) {
+        public Isa(UnboundThingTypeVariable typeVar, boolean isExplicit) {
             this(typeVar.toType(), isExplicit, false);
         }
 
-        public Isa(Either<String, UnboundConceptVariable> typeArg, boolean isExplicit) {
-            this(typeArg.apply(label -> hidden().type(label), UnboundConceptVariable::toType), isExplicit, false);
+        public Isa(Either<String, UnboundThingTypeVariable> typeArg, boolean isExplicit) {
+            this(typeArg.apply(label -> hidden().type(label), UnboundThingTypeVariable::toType), isExplicit, false);
         }
 
         private Isa(TypeVariable type, boolean isExplicit, boolean isDerived) {
@@ -330,20 +330,20 @@ public abstract class ThingConstraint extends ConceptConstraint<BoundVariable> {
             private final ThingVariable<?> player;
             private int repetition;
 
-            public RolePlayer(String roleType, UnboundConceptVariable playerVar) {
+            public RolePlayer(String roleType, UnboundThingTypeVariable playerVar) {
                 this(roleType == null ? null : hidden().type(roleType), playerVar.toThing());
             }
 
-            public RolePlayer(UnboundConceptVariable roleTypeVar, UnboundConceptVariable playerVar) {
+            public RolePlayer(UnboundThingTypeVariable roleTypeVar, UnboundThingTypeVariable playerVar) {
                 this(roleTypeVar == null ? null : roleTypeVar.toType(), playerVar.toThing());
             }
 
-            public RolePlayer(UnboundConceptVariable playerVar) {
+            public RolePlayer(UnboundThingTypeVariable playerVar) {
                 this(null, playerVar.toThing());
             }
 
-            public RolePlayer(Either<String, UnboundConceptVariable> roleTypeArg, UnboundConceptVariable playerVar) {
-                this(roleTypeArg == null ? null : roleTypeArg.apply(label -> hidden().type(label), UnboundConceptVariable::toType), playerVar.toThing());
+            public RolePlayer(Either<String, UnboundThingTypeVariable> roleTypeArg, UnboundThingTypeVariable playerVar) {
+                this(roleTypeArg == null ? null : roleTypeArg.apply(label -> hidden().type(label), UnboundThingTypeVariable::toType), playerVar.toThing());
             }
 
             private RolePlayer(@Nullable TypeVariable roleType, ThingVariable<?> player) {
@@ -414,11 +414,11 @@ public abstract class ThingConstraint extends ConceptConstraint<BoundVariable> {
             this(hidden().type(type), hidden().constrain(predicate));
         }
 
-        public Has(String type, UnboundConceptVariable var) {
+        public Has(String type, UnboundThingTypeVariable var) {
             this(hidden().type(type), var.toThing());
         }
 
-        public Has(UnboundConceptVariable var) {
+        public Has(UnboundThingTypeVariable var) {
             this(null, var.toThing());
         }
 

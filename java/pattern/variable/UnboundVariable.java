@@ -41,7 +41,7 @@ public abstract class UnboundVariable extends Variable {
         return this;
     }
 
-    public boolean isConceptVariable() {
+    public boolean isThingTypeVariable() {
         return false;
     }
 
@@ -49,8 +49,8 @@ public abstract class UnboundVariable extends Variable {
         return false;
     }
 
-    public UnboundConceptVariable asConceptVariable() {
-        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(UnboundConceptVariable.class)));
+    public UnboundThingTypeVariable asThingTypeVariable() {
+        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(UnboundThingTypeVariable.class)));
     }
 
     public UnboundValueVariable asValueVariable() {

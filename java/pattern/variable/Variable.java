@@ -65,7 +65,7 @@ public abstract class Variable {
     }
 
     public UnboundVariable asUnbound() {
-        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(UnboundConceptVariable.class)));
+        throw TypeQLException.of(INVALID_CASTING.message(className(this.getClass()), className(UnboundThingTypeVariable.class)));
     }
 
     public BoundVariable asBound() {

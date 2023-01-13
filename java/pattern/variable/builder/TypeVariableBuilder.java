@@ -25,7 +25,7 @@ import com.vaticle.typeql.lang.common.TypeQLArg;
 import com.vaticle.typeql.lang.common.TypeQLToken;
 import com.vaticle.typeql.lang.pattern.constraint.TypeConstraint;
 import com.vaticle.typeql.lang.pattern.variable.TypeVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundConceptVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundThingTypeVariable;
 
 public interface TypeVariableBuilder {
 
@@ -57,7 +57,7 @@ public interface TypeVariableBuilder {
         return constrain(new TypeConstraint.Sub(typeScope, typeLabel, false));
     }
 
-    default TypeVariable sub(UnboundConceptVariable typeVar) {
+    default TypeVariable sub(UnboundThingTypeVariable typeVar) {
         return constrain(new TypeConstraint.Sub(typeVar, false));
     }
 
@@ -73,7 +73,7 @@ public interface TypeVariableBuilder {
         return constrain(new TypeConstraint.Sub(typeScope, typeLabel, true));
     }
 
-    default TypeVariable subX(UnboundConceptVariable typeVar) {
+    default TypeVariable subX(UnboundThingTypeVariable typeVar) {
         return constrain(new TypeConstraint.Sub(typeVar, true));
     }
 
@@ -85,11 +85,11 @@ public interface TypeVariableBuilder {
         return constrain(new TypeConstraint.Owns(attributeType, isKey));
     }
 
-    default TypeVariable owns(UnboundConceptVariable attributeTypeVar) {
+    default TypeVariable owns(UnboundThingTypeVariable attributeTypeVar) {
         return constrain(new TypeConstraint.Owns(attributeTypeVar, false));
     }
 
-    default TypeVariable owns(UnboundConceptVariable attributeTypeVar, boolean isKey) {
+    default TypeVariable owns(UnboundThingTypeVariable attributeTypeVar, boolean isKey) {
         return constrain(new TypeConstraint.Owns(attributeTypeVar, isKey));
     }
 
@@ -101,27 +101,27 @@ public interface TypeVariableBuilder {
         return constrain(new TypeConstraint.Owns(attributeType, overriddenAttributeType, isKey));
     }
 
-    default TypeVariable owns(String attributeType, UnboundConceptVariable overriddenAttributeTypeVar) {
+    default TypeVariable owns(String attributeType, UnboundThingTypeVariable overriddenAttributeTypeVar) {
         return constrain(new TypeConstraint.Owns(attributeType, overriddenAttributeTypeVar, false));
     }
 
-    default TypeVariable owns(String attributeType, UnboundConceptVariable overriddenAttributeTypeVar, boolean isKey) {
+    default TypeVariable owns(String attributeType, UnboundThingTypeVariable overriddenAttributeTypeVar, boolean isKey) {
         return constrain(new TypeConstraint.Owns(attributeType, overriddenAttributeTypeVar, isKey));
     }
 
-    default TypeVariable owns(UnboundConceptVariable attributeTypeVar, String overriddenAttributeType) {
+    default TypeVariable owns(UnboundThingTypeVariable attributeTypeVar, String overriddenAttributeType) {
         return constrain(new TypeConstraint.Owns(attributeTypeVar, overriddenAttributeType, false));
     }
 
-    default TypeVariable owns(UnboundConceptVariable attributeTypeVar, String overriddenAttributeType, boolean isKey) {
+    default TypeVariable owns(UnboundThingTypeVariable attributeTypeVar, String overriddenAttributeType, boolean isKey) {
         return constrain(new TypeConstraint.Owns(attributeTypeVar, overriddenAttributeType, isKey));
     }
 
-    default TypeVariable owns(UnboundConceptVariable attributeTypeVar, UnboundConceptVariable overriddenAttributeTypeVar) {
+    default TypeVariable owns(UnboundThingTypeVariable attributeTypeVar, UnboundThingTypeVariable overriddenAttributeTypeVar) {
         return constrain(new TypeConstraint.Owns(attributeTypeVar, overriddenAttributeTypeVar, false));
     }
 
-    default TypeVariable owns(UnboundConceptVariable attributeTypeVar, UnboundConceptVariable overriddenAttributeTypeVar, boolean isKey) {
+    default TypeVariable owns(UnboundThingTypeVariable attributeTypeVar, UnboundThingTypeVariable overriddenAttributeTypeVar, boolean isKey) {
         return constrain(new TypeConstraint.Owns(attributeTypeVar, overriddenAttributeTypeVar, isKey));
     }
 
@@ -129,7 +129,7 @@ public interface TypeVariableBuilder {
         return constrain(new TypeConstraint.Plays(relationType, roleType));
     }
 
-    default TypeVariable plays(UnboundConceptVariable roleTypevar) {
+    default TypeVariable plays(UnboundThingTypeVariable roleTypevar) {
         return constrain(new TypeConstraint.Plays(roleTypevar));
     }
 
@@ -137,15 +137,15 @@ public interface TypeVariableBuilder {
         return constrain(new TypeConstraint.Plays(relationType, roleType, overriddenRoleType));
     }
 
-    default TypeVariable plays(String relationType, String roleType, UnboundConceptVariable overriddenRoleTypeVar) {
+    default TypeVariable plays(String relationType, String roleType, UnboundThingTypeVariable overriddenRoleTypeVar) {
         return constrain(new TypeConstraint.Plays(relationType, roleType, overriddenRoleTypeVar));
     }
 
-    default TypeVariable plays(UnboundConceptVariable roleTypeVar, String overriddenRoleType) {
+    default TypeVariable plays(UnboundThingTypeVariable roleTypeVar, String overriddenRoleType) {
         return constrain(new TypeConstraint.Plays(roleTypeVar, overriddenRoleType));
     }
 
-    default TypeVariable plays(UnboundConceptVariable roleTypeVar, UnboundConceptVariable overriddenRoleTypeVar) {
+    default TypeVariable plays(UnboundThingTypeVariable roleTypeVar, UnboundThingTypeVariable overriddenRoleTypeVar) {
         return constrain(new TypeConstraint.Plays(roleTypeVar, overriddenRoleTypeVar));
     }
 
@@ -153,7 +153,7 @@ public interface TypeVariableBuilder {
         return constrain(new TypeConstraint.Relates(roleType));
     }
 
-    default TypeVariable relates(UnboundConceptVariable roleTypeVar) {
+    default TypeVariable relates(UnboundThingTypeVariable roleTypeVar) {
         return constrain(new TypeConstraint.Relates(roleTypeVar));
     }
 
@@ -161,15 +161,15 @@ public interface TypeVariableBuilder {
         return constrain(new TypeConstraint.Relates(roleType, overriddenRoleType));
     }
 
-    default TypeVariable relates(String roleType, UnboundConceptVariable overriddenRoleTypeVar) {
+    default TypeVariable relates(String roleType, UnboundThingTypeVariable overriddenRoleTypeVar) {
         return constrain(new TypeConstraint.Relates(roleType, overriddenRoleTypeVar));
     }
 
-    default TypeVariable relates(UnboundConceptVariable roleTypeVar, String overriddenRoleType) {
+    default TypeVariable relates(UnboundThingTypeVariable roleTypeVar, String overriddenRoleType) {
         return constrain(new TypeConstraint.Relates(roleTypeVar, overriddenRoleType));
     }
 
-    default TypeVariable relates(UnboundConceptVariable roleTypeVar, UnboundConceptVariable overriddenRoleTypeVar) {
+    default TypeVariable relates(UnboundThingTypeVariable roleTypeVar, UnboundThingTypeVariable overriddenRoleTypeVar) {
         return constrain(new TypeConstraint.Relates(roleTypeVar, overriddenRoleTypeVar));
     }
 
