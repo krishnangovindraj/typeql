@@ -24,7 +24,7 @@ package com.vaticle.typeql.lang.query.builder;
 import com.vaticle.typedb.common.collection.Pair;
 import com.vaticle.typeql.lang.common.TypeQLArg;
 import com.vaticle.typeql.lang.common.exception.TypeQLException;
-import com.vaticle.typeql.lang.pattern.variable.UnboundThingTypeVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundConceptVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundVariable;
 
 import java.util.ArrayList;
@@ -42,8 +42,8 @@ public interface Sortable<S, O, L> {
 
     default S sort(String var, String... vars) {
         List<Pair<UnboundVariable, TypeQLArg.Order>> pairs = new ArrayList<>();
-        pairs.add(new Pair<>(UnboundThingTypeVariable.named(var), null));
-        for (String v : vars) pairs.add(new Pair<>(UnboundThingTypeVariable.named(v), null));
+        pairs.add(new Pair<>(UnboundConceptVariable.named(var), null));
+        for (String v : vars) pairs.add(new Pair<>(UnboundConceptVariable.named(v), null));
         return sort(pairs);
     }
 

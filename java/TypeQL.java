@@ -37,7 +37,7 @@ import com.vaticle.typeql.lang.pattern.schema.Rule;
 import com.vaticle.typeql.lang.pattern.variable.BoundVariable;
 import com.vaticle.typeql.lang.pattern.variable.ThingVariable;
 import com.vaticle.typeql.lang.pattern.variable.TypeVariable;
-import com.vaticle.typeql.lang.pattern.variable.UnboundThingTypeVariable;
+import com.vaticle.typeql.lang.pattern.variable.UnboundConceptVariable;
 import com.vaticle.typeql.lang.pattern.variable.UnboundValueVariable;
 import com.vaticle.typeql.lang.query.TypeQLDefine;
 import com.vaticle.typeql.lang.query.TypeQLInsert;
@@ -59,7 +59,7 @@ import static com.vaticle.typeql.lang.common.TypeQLToken.Predicate.Equality.NEQ;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Predicate.SubString.CONTAINS;
 import static com.vaticle.typeql.lang.common.TypeQLToken.Predicate.SubString.LIKE;
 import static com.vaticle.typeql.lang.common.exception.ErrorMessage.ILLEGAL_CHAR_IN_LABEL;
-import static com.vaticle.typeql.lang.pattern.variable.UnboundThingTypeVariable.hidden;
+import static com.vaticle.typeql.lang.pattern.variable.UnboundConceptVariable.hidden;
 
 public class TypeQL {
 
@@ -169,12 +169,12 @@ public class TypeQL {
         return new Rule(label);
     }
 
-    public static UnboundThingTypeVariable var() {
-        return UnboundThingTypeVariable.anonymous();
+    public static UnboundConceptVariable var() {
+        return UnboundConceptVariable.anonymous();
     }
 
-    public static UnboundThingTypeVariable var(String name) {
-        return UnboundThingTypeVariable.named(name);
+    public static UnboundConceptVariable var(String name) {
+        return UnboundConceptVariable.named(name);
     }
 
     public static UnboundValueVariable valvar(String name) {
@@ -193,7 +193,7 @@ public class TypeQL {
         return hidden().rel(playerVar);
     }
 
-    public static ThingVariable.Relation rel(UnboundThingTypeVariable playerVar) {
+    public static ThingVariable.Relation rel(UnboundConceptVariable playerVar) {
         return hidden().rel(playerVar);
     }
 
@@ -201,11 +201,11 @@ public class TypeQL {
         return hidden().rel(roleType, playerVar);
     }
 
-    public static ThingVariable.Relation rel(String roleType, UnboundThingTypeVariable playerVar) {
+    public static ThingVariable.Relation rel(String roleType, UnboundConceptVariable playerVar) {
         return hidden().rel(roleType, playerVar);
     }
 
-    public static ThingVariable.Relation rel(UnboundThingTypeVariable roleType, UnboundThingTypeVariable playerVar) {
+    public static ThingVariable.Relation rel(UnboundConceptVariable roleType, UnboundConceptVariable playerVar) {
         return hidden().rel(roleType, playerVar);
     }
 
@@ -229,7 +229,7 @@ public class TypeQL {
         return new ThingConstraint.Predicate(new Predicate.DateTime(EQ, value));
     }
 
-    public static ThingConstraint.Predicate eq(UnboundThingTypeVariable variable) {
+    public static ThingConstraint.Predicate eq(UnboundConceptVariable variable) {
         return new ThingConstraint.Predicate(new Predicate.ThingVariable(EQ, variable.toThing()));
     }
 
@@ -257,7 +257,7 @@ public class TypeQL {
         return new ThingConstraint.Predicate(new Predicate.DateTime(NEQ, value));
     }
 
-    public static ThingConstraint.Predicate neq(UnboundThingTypeVariable variable) {
+    public static ThingConstraint.Predicate neq(UnboundConceptVariable variable) {
         return new ThingConstraint.Predicate(new Predicate.ThingVariable(NEQ, variable.toThing()));
     }
 
@@ -285,7 +285,7 @@ public class TypeQL {
         return new ThingConstraint.Predicate(new Predicate.DateTime(GT, value));
     }
 
-    public static ThingConstraint.Predicate gt(UnboundThingTypeVariable variable) {
+    public static ThingConstraint.Predicate gt(UnboundConceptVariable variable) {
         return new ThingConstraint.Predicate(new Predicate.ThingVariable(GT, variable.toThing()));
     }
 
@@ -313,7 +313,7 @@ public class TypeQL {
         return new ThingConstraint.Predicate(new Predicate.DateTime(GTE, value));
     }
 
-    public static ThingConstraint.Predicate gte(UnboundThingTypeVariable variable) {
+    public static ThingConstraint.Predicate gte(UnboundConceptVariable variable) {
         return new ThingConstraint.Predicate(new Predicate.ThingVariable(GTE, variable.toThing()));
     }
 
@@ -341,7 +341,7 @@ public class TypeQL {
         return new ThingConstraint.Predicate(new Predicate.DateTime(LT, value));
     }
 
-    public static ThingConstraint.Predicate lt(UnboundThingTypeVariable variable) {
+    public static ThingConstraint.Predicate lt(UnboundConceptVariable variable) {
         return new ThingConstraint.Predicate(new Predicate.ThingVariable(LT, variable.toThing()));
     }
 
@@ -369,7 +369,7 @@ public class TypeQL {
         return new ThingConstraint.Predicate(new Predicate.DateTime(LTE, value));
     }
 
-    public static ThingConstraint.Predicate lte(UnboundThingTypeVariable variable) {
+    public static ThingConstraint.Predicate lte(UnboundConceptVariable variable) {
         return new ThingConstraint.Predicate(new Predicate.ThingVariable(LTE, variable.toThing()));
     }
 
@@ -418,7 +418,7 @@ public class TypeQL {
             return new ValueConstraint.Assignment.Expression.Bracketed(nestedExpr);
         }
 
-        public static ValueConstraint.Assignment.Expression.ThingVar thingVar(UnboundThingTypeVariable variable) {
+        public static ValueConstraint.Assignment.Expression.ThingVar thingVar(UnboundConceptVariable variable) {
             return new ValueConstraint.Assignment.Expression.ThingVar(variable.toThing());
         }
 

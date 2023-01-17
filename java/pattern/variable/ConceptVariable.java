@@ -48,8 +48,8 @@ public class ConceptVariable extends BoundVariable {
     }
 
     @Override
-    public UnboundThingTypeVariable toUnbound() {
-        return new UnboundThingTypeVariable(reference);
+    public UnboundConceptVariable toUnbound() {
+        return new UnboundConceptVariable(reference);
     }
 
     @Override

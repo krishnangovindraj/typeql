@@ -84,7 +84,7 @@ public class Conjunction<T extends Pattern> implements Pattern {
     @Override
     public void validateIsBoundedBy(Set<UnboundVariable> bounds) {
         Set<UnboundVariable> unboundConceptVariables = variables().map(BoundVariable::toUnbound)
-                .filter(UnboundVariable::isThingTypeVariable)
+                .filter(UnboundVariable::isConceptVariable)
                 .collect(Collectors.toSet());
         if (unboundConceptVariables.stream().noneMatch(bounds::contains)) {
             String str = toString().replace("\n", " ");

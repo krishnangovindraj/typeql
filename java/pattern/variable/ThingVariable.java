@@ -56,8 +56,8 @@ public abstract class ThingVariable<T extends ThingVariable<T>> extends BoundVar
     abstract T getThis();
 
     @Override
-    public UnboundThingTypeVariable toUnbound() {
-        return new UnboundThingTypeVariable(reference);
+    public UnboundConceptVariable toUnbound() {
+        return new UnboundConceptVariable(reference);
     }
 
     @Override

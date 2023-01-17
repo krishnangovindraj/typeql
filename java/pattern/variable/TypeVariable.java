@@ -64,8 +64,8 @@ public class TypeVariable extends BoundVariable implements TypeVariableBuilder, 
     }
 
     @Override
-    public UnboundThingTypeVariable toUnbound() {
-        return new UnboundThingTypeVariable(reference);
+    public UnboundConceptVariable toUnbound() {
+        return new UnboundConceptVariable(reference);
     }
 
     @Override
