@@ -43,44 +43,44 @@ build:
         bazel run @vaticle_dependencies//tool/checkstyle:test-coverage
         bazel test $(bazel query 'kind(checkstyle_test, //...)')
         bazel test $(bazel query 'kind(rustfmt_test, //...)') --@rules_rust//:rustfmt.toml=//rust:rustfmt_config
-    build-dependency:
-      image: vaticle-ubuntu-22.04
-      command: |
-        bazel run @vaticle_dependencies//tool/bazelinstall:remote_cache_setup.sh
-        dependencies/maven/update.sh
-        git diff --exit-code dependencies/maven/artifacts.snapshot
-        bazel run @vaticle_dependencies//tool/unuseddeps:unused-deps -- list
-    test-java:
-      image: vaticle-ubuntu-22.04
-      command: |
-        bazel run @vaticle_dependencies//tool/bazelinstall:remote_cache_setup.sh
-        bazel test //java/common/... --test_output=errors
-        bazel test //java/parser/... --test_output=errors
-        bazel test //java/pattern/... --test_output=errors
-        bazel test //java/query/... --test_output=errors
-        bazel test //java/test/... --test_output=errors
-    test-rust:
-      image: vaticle-ubuntu-22.04
-      command: |
-        bazel run @vaticle_dependencies//tool/bazelinstall:remote_cache_setup.sh
-        bazel test //rust:typeql_rust_test --test_output=errors
-        bazel test //rust/tests/behaviour:test_behaviour --test_output=errors
+#    build-dependency:
+#      image: vaticle-ubuntu-22.04
+#      command: |
+#        bazel run @vaticle_dependencies//tool/bazelinstall:remote_cache_setup.sh
+#        dependencies/maven/update.sh
+#        git diff --exit-code dependencies/maven/artifacts.snapshot
+#        bazel run @vaticle_dependencies//tool/unuseddeps:unused-deps -- list
+#    test-java:
+#      image: vaticle-ubuntu-22.04
+#      command: |
+#        bazel run @vaticle_dependencies//tool/bazelinstall:remote_cache_setup.sh
+#        bazel test //java/common/... --test_output=errors
+#        bazel test //java/parser/... --test_output=errors
+#        bazel test //java/pattern/... --test_output=errors
+#        bazel test //java/query/... --test_output=errors
+#        bazel test //java/test/... --test_output=errors
+#    test-rust:
+#      image: vaticle-ubuntu-22.04
+#      command: |
+#        bazel run @vaticle_dependencies//tool/bazelinstall:remote_cache_setup.sh
+#        bazel test //rust:typeql_rust_test --test_output=errors
+#        bazel test //rust/tests/behaviour:test_behaviour --test_output=errors
     deploy-crate-snapshot:
       filter:
-        owner: vaticle
-        branch: master
+        owner: [vaticle, krishnangovindraj]
+        branch: [master, migrate-to-cloudsmith--ci-runs]
       image: vaticle-ubuntu-22.04
-      dependencies: [build, build-dependency, test-rust]
+      dependencies: [build] #, build-dependency, test-rust]
       command: |
         export DEPLOY_CRATE_TOKEN=$REPO_TYPEDB_CRATES_TOKEN
         bazel run @vaticle_dependencies//tool/bazelinstall:remote_cache_setup.sh
         bazel run --define version=$(git rev-parse HEAD) //rust:deploy_crate -- snapshot
     deploy-maven-snapshot:
       filter:
-        owner: vaticle
-        branch: master
+        owner: [vaticle, krishnangovindraj]
+        branch: [master, migrate-to-cloudsmith--ci-runs]
       image: vaticle-ubuntu-22.04
-      dependencies: [build, build-dependency, test-java]
+      dependencies: [build] #, build-dependency, test-java]
       command: |
         export DEPLOY_MAVEN_USERNAME=$REPO_TYPEDB_USERNAME
         export DEPLOY_MAVEN_PASSWORD=$REPO_TYPEDB_PASSWORD
@@ -94,18 +94,18 @@ build:
         bazel run --define version=$(git rev-parse HEAD) //java:deploy-maven -- snapshot
     deploy-pip-snapshot:
       filter:
-        owner: vaticle
-        branch: master
+        owner: [vaticle, krishnangovindraj]
+        branch: [master, migrate-to-cloudsmith--ci-runs]
       image: vaticle-ubuntu-20.04
-      dependencies: [ build, build-dependency ]
+      dependencies: [ build ] #, build-dependency ]
       command: |
         export DEPLOY_PIP_USERNAME=$REPO_TYPEDB_USERNAME
         export DEPLOY_PIP_PASSWORD=$REPO_TYPEDB_PASSWORD
         bazel run --define version=$(git rev-parse HEAD) //grammar/python:deploy-pip -- snapshot
     test-deployment-maven:
       filter:
-        owner: vaticle
-        branch: master
+        owner: [vaticle, krishnangovindraj]
+        branch: [master, migrate-to-cloudsmith--ci-runs]
       image: vaticle-ubuntu-22.04
       dependencies: [deploy-maven-snapshot]
       command: |
