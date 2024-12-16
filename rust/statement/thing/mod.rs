@@ -18,6 +18,7 @@ use crate::{
     variable::Variable,
     TypeRef,
 };
+use crate::statement::comparison::Comparison;
 
 pub mod isa;
 
@@ -73,6 +74,9 @@ impl fmt::Display for Thing {
 pub enum Head {
     Variable(Variable),
     Relation(Option<TypeRef>, Relation),
+    AttributeComparison(TypeRef, Comparison),
+    AttributeExpression(TypeRef, Expression),
+    AttributeLiteral(TypeRef, Literal),
 }
 
 impl Pretty for Head {
@@ -81,6 +85,9 @@ impl Pretty for Head {
             Self::Variable(inner) => Pretty::fmt(inner, indent_level, f),
             Self::Relation(Some(type_ref), relation) => write!(f, "{} {}", type_ref, relation),
             Self::Relation(None, relation) => Pretty::fmt(relation, indent_level, f),
+            Self::AttributeComparison(type_ref, inner) => write!(f, "{} {}", type_ref, inner),
+            Self::AttributeExpression(type_ref, inner) => write!(f, "{} {}", type_ref, inner),
+            Self::AttributeLiteral(type_ref, inner) => write!(f, "{} {}", type_ref, inner),
         }
     }
 }
@@ -91,6 +98,9 @@ impl fmt::Display for Head {
             Self::Variable(inner) => fmt::Display::fmt(inner, f),
             Self::Relation(Some(type_ref), relation) => write!(f, "{} {}", type_ref, relation),
             Self::Relation(None, inner) => fmt::Display::fmt(inner, f),
+            Self::AttributeComparison(type_ref, inner) => write!(f, "{} {}", type_ref, inner),
+            Self::AttributeExpression(type_ref, inner) => write!(f, "{} {}", type_ref, inner),
+            Self::AttributeLiteral(type_ref, inner) => write!(f, "{} {}", type_ref, inner),
         }
     }
 }
