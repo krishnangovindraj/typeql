@@ -521,6 +521,7 @@ builtin_func_name = ${ ABS
                      | CEIL | FLOOR | ROUND
                      | LEN
                      | MAX | MIN
+                     | FUZZY_MATCH
                      | LABEL | IID
                      }
 ABS = @{ "abs" ~ WB }
@@ -528,6 +529,7 @@ CEIL = @{ "ceil" ~ WB }
 FLOOR = @{ "floor" ~ WB }
 LEN = @{ "len" ~ WB }
 ROUND = @{ "round" ~ WB }
+FUZZY_MATCH = @{ "fuzzy_match" ~ WB}
 
 // GROUP AND AGGREGATE QUERY KEYWORDS
 

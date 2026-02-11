@@ -204,6 +204,7 @@ string_enum! { Function
     Max = "max",
     Min = "min",
     Round = "round",
+    FuzzyMatch = "fuzzy_match",
 }
 
 string_enum! { Char

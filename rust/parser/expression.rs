@@ -166,6 +166,7 @@ fn visit_builtin_func_name(node: Node<'_>) -> BuiltinFunctionName {
         Rule::MAX => token::Function::Max,
         Rule::MIN => token::Function::Min,
         Rule::ROUND => token::Function::Round,
+        Rule::FUZZY_MATCH => token::Function::FuzzyMatch,
         _ => unreachable!("{}", TypeQLError::IllegalGrammar { input: child.as_str().to_owned() }),
     };
     BuiltinFunctionName::new(span, token)
