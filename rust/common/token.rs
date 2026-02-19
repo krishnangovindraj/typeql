@@ -205,6 +205,7 @@ string_enum! { Function
     Min = "min",
     Round = "round",
     FuzzyMatch = "fuzzy_match",
+    Similarity = "similarity",
 }
 
 string_enum! { Char

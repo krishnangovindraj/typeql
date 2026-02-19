@@ -522,6 +522,7 @@ builtin_func_name = ${ ABS
                      | LEN
                      | MAX | MIN
                      | FUZZY_MATCH
+                     | SIMILARITY
                      | LABEL | IID
                      }
 ABS = @{ "abs" ~ WB }
@@ -530,6 +531,7 @@ FLOOR = @{ "floor" ~ WB }
 LEN = @{ "len" ~ WB }
 ROUND = @{ "round" ~ WB }
 FUZZY_MATCH = @{ "fuzzy_match" ~ WB}
+SIMILARITY = @{ "similarity" ~ WB}
 
 // GROUP AND AGGREGATE QUERY KEYWORDS
 
