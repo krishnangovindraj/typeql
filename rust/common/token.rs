@@ -121,6 +121,7 @@ string_enum! { Keyword
     Has = "has",
     IID = "iid",
     In = "in",
+    Inputs = "inputs",
     Is = "is",
     Isa = "isa",
     IsaX = "isa!",
