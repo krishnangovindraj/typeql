@@ -150,7 +150,7 @@ fn visit_function_output_single(node: Node<'_>) -> Single {
     Single::new(span, node.into_children().map(visit_named_type_any).collect())
 }
 
-fn visit_function_arguments(node: Node<'_>) -> Vec<Argument> {
+pub(crate) fn visit_function_arguments(node: Node<'_>) -> Vec<Argument> {
     debug_assert_eq!(node.as_rule(), Rule::function_arguments);
     node.into_children().map(visit_function_argument).collect()
 }

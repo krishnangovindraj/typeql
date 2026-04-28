@@ -22,7 +22,7 @@ use crate::{
         error::TypeQLError,
         token::{Order, ReduceOperatorCollect, ReduceOperatorStat},
     },
-    parser::define::function::visit_function_block,
+    parser::define::function::{visit_function_arguments, visit_function_block},
     pattern::{Conjunction, Disjunction, Negation, Optional, Pattern},
     query::{
         Pipeline,
@@ -32,6 +32,7 @@ use crate::{
                 Delete, Fetch, Insert, Match, Operator, Put, Reduce, Stage, Update,
                 delete::{Deletable, DeletableKind},
                 fetch::FetchSome,
+                inputs::Inputs,
                 modifier::{Distinct, Limit, Offset, OrderedVariable, Require, Select, Sort},
                 reduce::{Collect, Count, Reducer, Stat},
             },
@@ -61,11 +62,23 @@ pub(super) fn visit_query_pipeline_preambled(node: Node<'_>) -> Pipeline {
 fn visit_query_pipeline(node: Node<'_>) -> Vec<Stage> {
     debug_assert_eq!(node.as_rule(), Rule::query_pipeline);
     let mut children = node.into_children();
-    let mut stages =
-        children.take_while_ref(|child| child.as_rule() == Rule::query_stage).map(visit_query_stage).collect_vec();
+    let mut stages = Vec::new();
+    stages.extend(children.try_consume_expected(Rule::query_stage_initial).map(visit_query_stage_initial));
+    stages.extend(
+        children.take_while_ref(|child| child.as_rule() == Rule::query_stage).map(visit_query_stage).collect_vec(),
+    );
     stages.extend(children.try_consume_expected(Rule::query_stage_terminal).map(visit_query_stage_terminal));
     debug_assert_eq!(children.try_consume_any(), None);
     stages
+}
+
+fn visit_query_stage_initial(node: Node<'_>) -> Stage {
+    debug_assert_eq!(node.as_rule(), Rule::query_stage_initial);
+    let span = node.span();
+    let mut children = node.into_children();
+    let variables = visit_function_arguments(children.skip_expected(Rule::INPUTS).consume_expected(Rule::function_arguments));
+    debug_assert_eq!(children.try_consume_any(), None);
+    Stage::Inputs(Inputs::new(span, variables))
 }
 
 fn visit_preamble(node: Node<'_>) -> Preamble {
@@ -353,7 +366,10 @@ fn visit_fetch_stream(node: Node<'_>) -> FetchStream {
     match child.as_rule() {
         Rule::fetch_attribute => FetchStream::Attribute(visit_fetch_attribute(child)),
         Rule::function_block => FetchStream::SubQueryFunctionBlock(visit_function_block(child)),
-        Rule::query_pipeline => FetchStream::SubQueryFetch(visit_query_pipeline(child)),
+        Rule::query_pipeline => {
+            let stages = visit_query_pipeline(child);
+            FetchStream::SubQueryFetch(stages)
+        }
         Rule::expression_function => FetchStream::Function(visit_expression_function(child)),
         _ => unreachable!("{}", TypeQLError::IllegalGrammar { input: child.as_str().to_owned() }),
     }
