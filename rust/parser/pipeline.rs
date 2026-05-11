@@ -63,7 +63,7 @@ fn visit_query_pipeline(node: Node<'_>) -> Vec<Stage> {
     debug_assert_eq!(node.as_rule(), Rule::query_pipeline);
     let mut children = node.into_children();
     let mut stages = Vec::new();
-    stages.extend(children.try_consume_expected(Rule::query_stage_initial).map(visit_query_stage_initial));
+    stages.extend(children.try_consume_expected(Rule::query_stage_given).map(visit_query_stage_given));
     stages.extend(
         children.take_while_ref(|child| child.as_rule() == Rule::query_stage).map(visit_query_stage).collect_vec(),
     );
@@ -72,8 +72,8 @@ fn visit_query_pipeline(node: Node<'_>) -> Vec<Stage> {
     stages
 }
 
-fn visit_query_stage_initial(node: Node<'_>) -> Stage {
-    debug_assert_eq!(node.as_rule(), Rule::query_stage_initial);
+fn visit_query_stage_given(node: Node<'_>) -> Stage {
+    debug_assert_eq!(node.as_rule(), Rule::query_stage_given);
     let span = node.span();
     let mut children = node.into_children();
     let variables = visit_function_arguments(children.skip_expected(Rule::GIVEN).consume_expected(Rule::function_arguments));

@@ -20,11 +20,11 @@ query_end = { END ~ SEMICOLON }
 // QUERY PIPELINES =============================================================
 
 query_pipeline_preambled = { preamble* ~ query_pipeline }
-query_pipeline = { query_stage_initial? ~ query_stage+ ~ query_stage_terminal? }
+query_pipeline = { query_stage_given? ~ query_stage+ ~ query_stage_terminal? }
 
 preamble = { WITH ~ definition_function }
 
-query_stage_initial = { GIVEN ~ function_arguments ~ SEMICOLON }
+query_stage_given = { GIVEN ~ function_arguments ~ SEMICOLON }
 
 query_stage = { clause_match | clause_insert | clause_put | clause_update | clause_delete | operator_stream }
 

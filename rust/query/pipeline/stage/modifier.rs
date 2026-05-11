@@ -13,7 +13,6 @@ use crate::{
     },
     pretty::Pretty,
     query::stage::Reduce,
-    token::Clause,
     util::write_joined,
     value::IntegerLiteral,
     variable::Variable,
