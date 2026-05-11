@@ -32,7 +32,7 @@ use crate::{
                 Delete, Fetch, Insert, Match, Operator, Put, Reduce, Stage, Update,
                 delete::{Deletable, DeletableKind},
                 fetch::FetchSome,
-                inputs::Inputs,
+                given::Given,
                 modifier::{Distinct, Limit, Offset, OrderedVariable, Require, Select, Sort},
                 reduce::{Collect, Count, Reducer, Stat},
             },
@@ -76,9 +76,9 @@ fn visit_query_stage_initial(node: Node<'_>) -> Stage {
     debug_assert_eq!(node.as_rule(), Rule::query_stage_initial);
     let span = node.span();
     let mut children = node.into_children();
-    let variables = visit_function_arguments(children.skip_expected(Rule::INPUTS).consume_expected(Rule::function_arguments));
+    let variables = visit_function_arguments(children.skip_expected(Rule::GIVEN).consume_expected(Rule::function_arguments));
     debug_assert_eq!(children.try_consume_any(), None);
-    Stage::Inputs(Inputs::new(span, variables))
+    Stage::Given(Given::new(span, variables))
 }
 
 fn visit_preamble(node: Node<'_>) -> Preamble {
