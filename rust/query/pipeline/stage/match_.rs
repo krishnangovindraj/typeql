@@ -7,9 +7,9 @@
 use std::fmt::{self, Write};
 
 use crate::{
-    common::{Span, Spanned, token},
+    common::{token, Span, Spanned},
     pattern::Pattern,
-    pretty::{Pretty, indent},
+    pretty::{indent, Pretty},
 };
 
 #[derive(Debug, Clone, Eq, PartialEq)]

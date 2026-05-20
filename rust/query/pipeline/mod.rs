@@ -9,7 +9,7 @@ use std::fmt;
 use self::stage::Stage;
 use crate::{
     common::{Span, Spanned},
-    pretty::{Pretty, indent},
+    pretty::{indent, Pretty},
     schema::definable,
     token,
 };

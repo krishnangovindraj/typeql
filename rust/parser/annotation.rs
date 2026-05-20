@@ -5,16 +5,15 @@
  */
 
 use super::{
-    IntoChildNodes, Node, Rule, RuleMatcher,
     literal::{visit_integer_literal, visit_quoted_string_literal, visit_value_literal},
-    visit_identifier,
+    visit_identifier, IntoChildNodes, Node, Rule, RuleMatcher,
 };
 use crate::{
     annotation::{
         Abstract, Annotation, Cardinality, CardinalityRange, Cascade, Distinct, Independent, Key, Range, Regex, Subkey,
         Unique, Values,
     },
-    common::{Spanned, error::TypeQLError},
+    common::{error::TypeQLError, Spanned},
     value::Literal,
 };
 

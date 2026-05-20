@@ -8,8 +8,8 @@ use std::fmt::{self, Write};
 
 use crate::{
     annotation::Annotation,
-    common::{Span, Spanned, token},
-    pretty::{Pretty, indent},
+    common::{token, Span, Spanned},
+    pretty::{indent, Pretty},
     type_::{Label, NamedType, ScopedLabel, TypeRef, TypeRefAny},
 };
 

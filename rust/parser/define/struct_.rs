@@ -5,13 +5,12 @@
  */
 
 use crate::{
-    common::{Spanned, error::TypeQLError},
+    common::{error::TypeQLError, Spanned},
     parser::{
-        IntoChildNodes, Node, Rule, RuleMatcher,
         type_::{visit_value_type, visit_value_type_optional},
-        visit_identifier,
+        visit_identifier, IntoChildNodes, Node, Rule, RuleMatcher,
     },
-    schema::definable::{Struct, struct_::Field},
+    schema::definable::{struct_::Field, Struct},
     type_::NamedTypeAny,
 };
 

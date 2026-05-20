@@ -7,17 +7,16 @@
 use itertools::Itertools;
 
 use crate::{
-    common::{Spanned, error::TypeQLError, identifier::Identifier},
+    common::{error::TypeQLError, identifier::Identifier, Spanned},
     expression::Expression,
     parser::{
-        IntoChildNodes, Node, Rule, RuleMatcher,
         expression::{visit_expression, visit_expression_function, visit_expression_list, visit_expression_value},
         statement::visit_comparison,
-        visit_identifier, visit_var, visit_vars_assignment,
+        visit_identifier, visit_var, visit_vars_assignment, IntoChildNodes, Node, Rule, RuleMatcher,
     },
     statement::{
-        Assignment, AssignmentPattern, DeconstructField, InIterable, Is, Statement, StructDeconstruct,
-        comparison::ComparisonStatement,
+        comparison::ComparisonStatement, Assignment, AssignmentPattern, DeconstructField, InIterable, Is, Statement,
+        StructDeconstruct,
     },
 };
 

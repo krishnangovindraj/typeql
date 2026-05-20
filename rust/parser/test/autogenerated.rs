@@ -17,7 +17,7 @@ use crate::{parse_definition_function, parse_definition_struct};
 #[allow(unused)]
 use crate::{
     parse_label, parse_query,
-    parser::{Rule, parse_single},
+    parser::{parse_single, Rule},
 };
 
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq)]
@@ -358,7 +358,11 @@ fn generate(rules: &HashMap<String, Expansion>, rule_name: &str, max_depth: usiz
                 };
                 if num > 0 {
                     let reps = (0..num).map(|_| &**rule);
-                    if *is_atomic { stack.extend(reps) } else { stack.extend(Itertools::intersperse(reps, &space)) }
+                    if *is_atomic {
+                        stack.extend(reps)
+                    } else {
+                        stack.extend(Itertools::intersperse(reps, &space))
+                    }
                 }
             }
             Expansion::Rule(rule) => {

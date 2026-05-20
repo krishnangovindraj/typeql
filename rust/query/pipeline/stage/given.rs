@@ -1,10 +1,13 @@
 use std::fmt;
-use crate::common::{Span, Spanned};
-use crate::pretty::Pretty;
-use crate::schema::definable::function::Argument;
-use crate::token::Keyword;
-use crate::util::write_joined;
-use crate::Variable;
+
+use crate::{
+    common::{Span, Spanned},
+    pretty::Pretty,
+    schema::definable::function::Argument,
+    token::Keyword,
+    util::write_joined,
+    Variable,
+};
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Given {

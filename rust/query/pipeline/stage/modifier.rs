@@ -8,8 +8,8 @@ use std::fmt::{self, Write};
 
 use crate::{
     common::{
-        Span, Spanned,
         token::{self, Order},
+        Span, Spanned,
     },
     pretty::Pretty,
     query::stage::Reduce,

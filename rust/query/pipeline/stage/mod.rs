@@ -7,8 +7,8 @@
 use std::fmt;
 
 pub use self::{
-    delete::Delete, fetch::Fetch, given::Given, insert::Insert, match_::Match, modifier::Operator,
-    put::Put, reduce::Reduce, update::Update,
+    delete::Delete, fetch::Fetch, given::Given, insert::Insert, match_::Match, modifier::Operator, put::Put,
+    reduce::Reduce, update::Update,
 };
 use crate::{
     common::{Span, Spanned},

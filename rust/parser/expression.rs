@@ -6,9 +6,9 @@
 
 use pest::pratt_parser::{Assoc, Op, PrattParser};
 
-use super::{IntoChildNodes, Node, Rule, RuleMatcher, literal::visit_value_literal, visit_identifier, visit_var};
+use super::{literal::visit_value_literal, visit_identifier, visit_var, IntoChildNodes, Node, Rule, RuleMatcher};
 use crate::{
-    common::{Spanned, error::TypeQLError, token},
+    common::{error::TypeQLError, token, Spanned},
     expression::{
         BuiltinFunctionName, Expression, FunctionCall, FunctionName, List, ListIndex, ListIndexRange, Operation, Paren,
     },

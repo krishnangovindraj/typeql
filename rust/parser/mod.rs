@@ -13,12 +13,10 @@ use self::{
     undefine::visit_query_undefine,
 };
 use crate::{
-    Result,
     common::{
-        Span, Spanned,
-        error::{TypeQLError, syntax_error},
+        error::{syntax_error, TypeQLError},
         identifier::Identifier,
-        token,
+        token, Span, Spanned,
     },
     parser::{literal::visit_value_literal, pipeline::visit_query_pipeline_preambled, redefine::visit_query_redefine},
     query::{Query, QueryStructure, SchemaQuery},
@@ -26,6 +24,7 @@ use crate::{
     type_::Label,
     value::ValueLiteral,
     variable::{Optional, Variable},
+    Result,
 };
 
 mod annotation;

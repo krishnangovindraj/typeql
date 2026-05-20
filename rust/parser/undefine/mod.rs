@@ -6,7 +6,7 @@
 
 use super::{IntoChildNodes, Node, Rule, RuleMatcher};
 use crate::{
-    common::{Spanned, error::TypeQLError, token},
+    common::{error::TypeQLError, token, Spanned},
     parser::{
         define::type_::{visit_relates_declaration, visit_type_capability_base},
         type_::visit_label,

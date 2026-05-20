@@ -8,7 +8,7 @@ use std::fmt;
 
 use super::definable::type_::CapabilityBase;
 use crate::{
-    common::{Span, Spanned, identifier::Identifier, token},
+    common::{identifier::Identifier, token, Span, Spanned},
     pretty::Pretty,
     schema::definable::type_::capability::Relates,
     type_::Label,

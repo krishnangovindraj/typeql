@@ -7,19 +7,18 @@
 use itertools::Itertools;
 
 use crate::{
-    common::{Spanned, error::TypeQLError},
+    common::{error::TypeQLError, Spanned},
     parser::{
-        IntoChildNodes, Node, Rule, RuleMatcher,
         pipeline::{visit_query_stage, visit_reducer},
         type_::visit_named_type_any,
-        visit_identifier, visit_var, visit_vars,
+        visit_identifier, visit_var, visit_vars, IntoChildNodes, Node, Rule, RuleMatcher,
     },
     schema::definable::{
-        Function,
         function::{
             Argument, Check, FunctionBlock, Output, ReturnReduction, ReturnSingle, ReturnStatement, ReturnStream,
             Signature, Single, SingleSelector, Stream,
         },
+        Function,
     },
 };
 

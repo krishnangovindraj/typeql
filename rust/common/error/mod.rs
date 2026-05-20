@@ -8,7 +8,7 @@ use std::{error::Error as StdError, fmt};
 
 use pest::error::{Error as PestError, LineColLocation};
 
-use crate::{Identifier, common::Spannable, error_messages, util::write_joined};
+use crate::{common::Spannable, error_messages, util::write_joined, Identifier};
 
 #[macro_use]
 mod macros;
@@ -65,7 +65,11 @@ impl fmt::Display for Error {
 
 pub fn collect_err(i: impl IntoIterator<Item = Result<(), Error>>) -> Result<(), Error> {
     let errors = i.into_iter().filter_map(Result::err).flat_map(|e| e.errors).collect::<Vec<_>>();
-    if errors.is_empty() { Ok(()) } else { Err(Error { errors }) }
+    if errors.is_empty() {
+        Ok(())
+    } else {
+        Err(Error { errors })
+    }
 }
 
 error_messages! { TypeQLError

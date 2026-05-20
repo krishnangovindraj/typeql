@@ -9,9 +9,9 @@ use std::{collections::HashMap, fmt};
 use self::comparison::ComparisonStatement;
 pub use self::{thing::Thing, type_::Type};
 use crate::{
-    common::{Span, Spanned, identifier::Identifier, token},
+    common::{identifier::Identifier, token, Span, Spanned},
     expression::Expression,
-    pretty::{Pretty, indent},
+    pretty::{indent, Pretty},
     util::write_joined,
     variable::Variable,
 };

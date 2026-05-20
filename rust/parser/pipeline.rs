@@ -7,35 +7,32 @@
 use itertools::Itertools;
 
 use super::{
-    IntoChildNodes, Node, Rule, RuleMatcher,
     define::function::visit_definition_function,
     expression::{visit_expression, visit_expression_function},
     literal::{visit_integer_literal, visit_quoted_string_literal},
     statement::{thing::visit_relation, visit_statement},
     type_::{visit_label, visit_label_list},
-    visit_reduce_assignment_var, visit_var, visit_var_named, visit_vars,
+    visit_reduce_assignment_var, visit_var, visit_var_named, visit_vars, IntoChildNodes, Node, Rule, RuleMatcher,
 };
 use crate::{
-    TypeRef, TypeRefAny,
     common::{
-        Spanned,
         error::TypeQLError,
         token::{Order, ReduceOperatorCollect, ReduceOperatorStat},
+        Spanned,
     },
     parser::define::function::{visit_function_arguments, visit_function_block},
     pattern::{Conjunction, Disjunction, Negation, Optional, Pattern},
     query::{
-        Pipeline,
         pipeline::{
-            Preamble,
             stage::{
-                Delete, Fetch, Insert, Match, Operator, Put, Reduce, Stage, Update,
                 delete::{Deletable, DeletableKind},
                 fetch::FetchSome,
                 given::Given,
                 modifier::{Distinct, Limit, Offset, OrderedVariable, Require, Select, Sort},
                 reduce::{Collect, Count, Reducer, Stat},
+                Delete, Fetch, Insert, Match, Operator, Put, Reduce, Stage, Update,
             },
+            Preamble,
         },
         stage::{
             fetch::{
@@ -43,8 +40,10 @@ use crate::{
             },
             reduce::ReduceAssign,
         },
+        Pipeline,
     },
     value::StringLiteral,
+    TypeRef, TypeRefAny,
 };
 
 pub(super) fn visit_query_pipeline_preambled(node: Node<'_>) -> Pipeline {
@@ -76,7 +75,8 @@ fn visit_query_stage_given(node: Node<'_>) -> Stage {
     debug_assert_eq!(node.as_rule(), Rule::query_stage_given);
     let span = node.span();
     let mut children = node.into_children();
-    let variables = visit_function_arguments(children.skip_expected(Rule::GIVEN).consume_expected(Rule::function_arguments));
+    let variables =
+        visit_function_arguments(children.skip_expected(Rule::GIVEN).consume_expected(Rule::function_arguments));
     debug_assert_eq!(children.try_consume_any(), None);
     Stage::Given(Given::new(span, variables))
 }
@@ -366,10 +366,7 @@ fn visit_fetch_stream(node: Node<'_>) -> FetchStream {
     match child.as_rule() {
         Rule::fetch_attribute => FetchStream::Attribute(visit_fetch_attribute(child)),
         Rule::function_block => FetchStream::SubQueryFunctionBlock(visit_function_block(child)),
-        Rule::query_pipeline => {
-            let stages = visit_query_pipeline(child);
-            FetchStream::SubQueryFetch(stages)
-        }
+        Rule::query_pipeline => FetchStream::SubQueryFetch(visit_query_pipeline(child)),
         Rule::expression_function => FetchStream::Function(visit_expression_function(child)),
         _ => unreachable!("{}", TypeQLError::IllegalGrammar { input: child.as_str().to_owned() }),
     }
