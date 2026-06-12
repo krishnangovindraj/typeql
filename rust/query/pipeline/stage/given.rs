@@ -1,12 +1,12 @@
 use std::fmt;
 
 use crate::{
+    Variable,
     common::{Span, Spanned},
     pretty::Pretty,
     schema::definable::function::Argument,
     token::Keyword,
     util::write_joined,
-    Variable,
 };
 
 #[derive(Debug, Clone, Eq, PartialEq)]
