@@ -39,6 +39,7 @@ impl fmt::Display for Given {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{} ", Keyword::Given)?;
         write_joined!(f, ", ", self.variables)?;
+        write!(f, ";")?;
         Ok(())
     }
 }
