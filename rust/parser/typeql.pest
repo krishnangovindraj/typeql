@@ -24,7 +24,7 @@ query_pipeline = { query_stage_given? ~ query_stage+ ~ query_stage_terminal? }
 
 preamble = { WITH ~ definition_function }
 
-query_stage_given = { GIVEN ~ function_arguments ~ SEMICOLON }
+query_stage_given = { GIVEN ~ pipeline_arguments ~ SEMICOLON }
 
 query_stage = { clause_match | clause_insert | clause_put | clause_update | clause_delete | operator_stream }
 
@@ -224,10 +224,10 @@ relates_declaration = { RELATES ~ label_list ~ ( AS ~ label_list )?
 
 definition_function = { FUN ~ function_signature ~ COLON ~ function_block }
 
-function_signature = { identifier ~ PAREN_OPEN ~ function_arguments ~ PAREN_CLOSE ~ ARROW ~ function_output }
+function_signature = { identifier ~ PAREN_OPEN ~ pipeline_arguments ~ PAREN_CLOSE ~ ARROW ~ function_output }
 
-function_arguments = { ( function_argument ~ ( COMMA ~ function_argument )* ~ COMMA? )? }
-function_argument = { var ~ COLON ~ named_type_any }
+pipeline_arguments = { ( pipeline_argument ~ ( COMMA ~ pipeline_argument )* ~ COMMA? )? }
+pipeline_argument = { var ~ COLON ~ named_type_any }
 
 function_block = { query_stage+ ~ return_statement }
 

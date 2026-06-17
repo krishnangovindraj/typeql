@@ -22,7 +22,7 @@ use crate::{
         error::TypeQLError,
         token::{Order, ReduceOperatorCollect, ReduceOperatorStat},
     },
-    parser::define::function::{visit_function_arguments, visit_function_block},
+    parser::define::function::{visit_pipeline_arguments, visit_function_block},
     pattern::{Conjunction, Disjunction, Negation, Optional, Pattern},
     query::{
         Pipeline,
@@ -77,7 +77,7 @@ fn visit_query_stage_given(node: Node<'_>) -> Stage {
     let span = node.span();
     let mut children = node.into_children();
     let variables =
-        visit_function_arguments(children.skip_expected(Rule::GIVEN).consume_expected(Rule::function_arguments));
+        visit_pipeline_arguments(children.skip_expected(Rule::GIVEN).consume_expected(Rule::pipeline_arguments));
     debug_assert_eq!(children.try_consume_any(), None);
     Stage::Given(Given::new(span, variables))
 }
