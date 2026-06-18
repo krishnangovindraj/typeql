@@ -22,7 +22,7 @@ use crate::{
         error::TypeQLError,
         token::{Order, ReduceOperatorCollect, ReduceOperatorStat},
     },
-    parser::define::function::{visit_pipeline_arguments, visit_function_block},
+    parser::define::function::{visit_function_block, visit_pipeline_arguments},
     pattern::{Conjunction, Disjunction, Negation, Optional, Pattern},
     query::{
         Pipeline,
