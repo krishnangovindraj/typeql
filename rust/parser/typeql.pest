@@ -24,7 +24,7 @@ query_pipeline = { query_stage_given? ~ query_stage+ ~ query_stage_terminal? }
 
 preamble = { WITH ~ definition_function }
 
-query_stage_given = { GIVEN ~ pipeline_arguments ~ SEMICOLON }
+query_stage_given = { GIVEN ~ pipeline_arguments ~ (IN ~ given_rows_inline)? ~ SEMICOLON }
 
 query_stage = { clause_match | clause_insert | clause_put | clause_update | clause_delete | operator_stream }
 
@@ -168,6 +168,15 @@ list_range = { SQ_BRACKET_OPEN ~ expression_value ~ DOUBLE_DOT ~ expression_valu
 
 expression_struct = { CURLY_OPEN ~ struct_key ~ COLON ~ struct_value ~ CURLY_CLOSE }
 struct_value = { expression_value | expression_struct }
+
+
+// GIVEN ROWS ==================================================================
+
+given_rows_inline = { SQ_BRACKET_OPEN ~ given_rows? ~ SQ_BRACKET_CLOSE }
+given_rows = { given_row ~ (COMMA ~ given_row)* ~ COMMA? }
+given_row = { SQ_BRACKET_OPEN ~ given_row_entries? ~ SQ_BRACKET_CLOSE }
+given_row_entries = { given_row_entry  ~ (COMMA ~ given_row_entry)* ~ COMMA? }
+given_row_entry = { iid_value | value_literal | NONE }
 
 // FETCH QUERY =================================================================
 
@@ -566,6 +575,8 @@ STRUCT = @{ "struct" ~ WB }
 boolean_literal = ${ TRUE | FALSE } // order of lexer declaration matters
 TRUE = @{ "true" ~ WB }
 FALSE = @{ "false" ~ WB }
+
+NONE = @{ "none" ~ WB }
 
 integer_literal = @{ ASCII_DIGIT+ }
 decimal_literal = @{ ASCII_DIGIT+ ~ ( "." ~ ASCII_DIGIT+ )? ~ "dec" }

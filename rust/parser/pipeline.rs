@@ -78,8 +78,13 @@ fn visit_query_stage_given(node: Node<'_>) -> Stage {
     let mut children = node.into_children();
     let variables =
         visit_pipeline_arguments(children.skip_expected(Rule::GIVEN).consume_expected(Rule::pipeline_arguments));
+    let inline_rows = if let Some(_in) = children.try_consume_expected(Rule::IN) {
+        Some(visit_given_rows_inline(children.consume_expected(Rule::given_rows_inline)));
+    } else {
+        None
+    };
     debug_assert_eq!(children.try_consume_any(), None);
-    Stage::Given(Given::new(span, variables))
+    Stage::Given(Given::new(span, variables, inline_rows))
 }
 
 fn visit_preamble(node: Node<'_>) -> Preamble {

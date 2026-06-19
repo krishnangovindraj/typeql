@@ -31,6 +31,22 @@ $y isa person,
 }
 
 #[test]
+fn test_data_pipeline_with_inline_given() {
+    {
+        let query = r#"given $p: person, $n: string, $a: integer in [
+    [0x1e00000000001234567890, "alice", 12],
+    [0x1e00000000009876543210, "bob", 34]
+];
+insert
+$y isa person,
+    has name == $name;"#;
+
+        let parsed = parse_query(query).unwrap();
+        assert_valid_eq_repr!(expected, parsed, query);
+    }
+}
+
+#[test]
 fn test_parsing_two_pipelines() {
     let queries = r#"match
 $x isa movie;
