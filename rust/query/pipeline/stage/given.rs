@@ -6,8 +6,15 @@
 
 use std::fmt;
 
-use crate::{common::{Span, Spanned}, pretty::Pretty, schema::definable::function::Argument, token::Keyword, util::write_joined, Literal};
-use crate::statement::thing::Iid;
+use crate::{
+    Literal,
+    common::{Span, Spanned},
+    pretty::Pretty,
+    schema::definable::function::Argument,
+    statement::thing::Iid,
+    token::Keyword,
+    util::write_joined,
+};
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum GivenRowEntry {
@@ -17,7 +24,13 @@ pub enum GivenRowEntry {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-pub struct  GivenRow(Vec<GivenRowEntry>);
+pub struct GivenRow(Vec<GivenRowEntry>);
+
+impl GivenRow {
+    pub fn new(entries: Vec<GivenRowEntry>) -> Self {
+        Self(entries)
+    }
+}
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Given {
@@ -38,6 +51,24 @@ impl Spanned for Given {
     }
 }
 
+impl fmt::Display for GivenRowEntry {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::None => write!(f, "none"),
+            Self::Iid(iid) => write!(f, "{}", iid.iid),
+            Self::Literal(lit) => write!(f, "{}", lit),
+        }
+    }
+}
+
+impl fmt::Display for GivenRow {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "    [")?;
+        write_joined!(f, ", ", self.0)?;
+        write!(f, "]")
+    }
+}
+
 impl Pretty for Given {}
 
 impl fmt::Display for Given {
@@ -45,9 +76,9 @@ impl fmt::Display for Given {
         write!(f, "{} ", Keyword::Given)?;
         write_joined!(f, ", ", self.variables)?;
         if let Some(rows) = &self.inline_rows {
-            writeln!(f, "{} [", Keyword::In)?;
+            write!(f, " {} [\n", Keyword::In)?;
             write_joined!(f, ",\n", rows)?;
-            writeln!(f, "];")?;
+            write!(f, "\n]")?;
         }
         write!(f, ";")?;
         Ok(())

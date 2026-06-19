@@ -10,7 +10,7 @@ use super::{
     IntoChildNodes, Node, Rule, RuleMatcher,
     define::function::visit_definition_function,
     expression::{visit_expression, visit_expression_function},
-    literal::{visit_integer_literal, visit_quoted_string_literal},
+    literal::{visit_integer_literal, visit_quoted_string_literal, visit_value_literal},
     statement::{thing::visit_relation, visit_statement},
     type_::{visit_label, visit_label_list},
     visit_reduce_assignment_var, visit_var, visit_var_named, visit_vars,
@@ -41,9 +41,11 @@ use crate::{
             fetch::{
                 FetchAttribute, FetchList, FetchObject, FetchObjectBody, FetchObjectEntry, FetchSingle, FetchStream,
             },
+            given::{GivenRow, GivenRowEntry},
             reduce::ReduceAssign,
         },
     },
+    statement::thing::Iid,
     value::StringLiteral,
 };
 
@@ -79,12 +81,50 @@ fn visit_query_stage_given(node: Node<'_>) -> Stage {
     let variables =
         visit_pipeline_arguments(children.skip_expected(Rule::GIVEN).consume_expected(Rule::pipeline_arguments));
     let inline_rows = if let Some(_in) = children.try_consume_expected(Rule::IN) {
-        Some(visit_given_rows_inline(children.consume_expected(Rule::given_rows_inline)));
+        Some(visit_given_rows_inline(children.consume_expected(Rule::given_rows_inline)))
     } else {
         None
     };
     debug_assert_eq!(children.try_consume_any(), None);
     Stage::Given(Given::new(span, variables, inline_rows))
+}
+
+fn visit_given_rows_inline(node: Node<'_>) -> Vec<GivenRow> {
+    debug_assert_eq!(node.as_rule(), Rule::given_rows_inline);
+    let mut children = node.into_children();
+    let rows = children.try_consume_expected(Rule::given_rows).map(visit_given_rows).unwrap_or_default();
+    debug_assert_eq!(children.try_consume_any(), None);
+    rows
+}
+
+fn visit_given_rows(node: Node<'_>) -> Vec<GivenRow> {
+    debug_assert_eq!(node.as_rule(), Rule::given_rows);
+    node.into_children().map(visit_given_row).collect()
+}
+
+fn visit_given_row(node: Node<'_>) -> GivenRow {
+    debug_assert_eq!(node.as_rule(), Rule::given_row);
+    let mut children = node.into_children();
+    let entries =
+        children.try_consume_expected(Rule::given_row_entries).map(visit_given_row_entries).unwrap_or_default();
+    debug_assert_eq!(children.try_consume_any(), None);
+    GivenRow::new(entries)
+}
+
+fn visit_given_row_entries(node: Node<'_>) -> Vec<GivenRowEntry> {
+    debug_assert_eq!(node.as_rule(), Rule::given_row_entries);
+    node.into_children().map(visit_given_row_entry).collect()
+}
+
+fn visit_given_row_entry(node: Node<'_>) -> GivenRowEntry {
+    debug_assert_eq!(node.as_rule(), Rule::given_row_entry);
+    let child = node.into_child();
+    match child.as_rule() {
+        Rule::iid_value => GivenRowEntry::Iid(Iid::new(child.span(), child.as_str().to_owned())),
+        Rule::value_literal => GivenRowEntry::Literal(visit_value_literal(child)),
+        Rule::NONE => GivenRowEntry::None,
+        _ => unreachable!("{}", TypeQLError::IllegalGrammar { input: child.as_str().to_owned() }),
+    }
 }
 
 fn visit_preamble(node: Node<'_>) -> Preamble {
