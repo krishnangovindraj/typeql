@@ -200,3 +200,11 @@ person label user;"#;
     let parsed = parse_query(query).unwrap();
     assert_valid_eq_repr!(expected, parsed, query);
 }
+
+#[test]
+fn redefine_role_type() {
+    let query = r#"redefine
+rel:old-role label new-role;"#;
+    let parsed = parse_query(query).unwrap();
+    assert_valid_eq_repr!(expected, parsed, query);
+}

@@ -7,8 +7,12 @@
 use std::fmt;
 
 pub use self::{function::Function, struct_::Struct, type_::Type};
-use crate::{Label, common::Span, pretty::Pretty, token};
-use crate::common::Spanned;
+use crate::{
+    Label, ScopedLabel,
+    common::{Span, Spanned},
+    pretty::Pretty,
+    token,
+};
 
 pub mod function;
 pub mod struct_;
@@ -17,6 +21,7 @@ pub mod type_;
 #[derive(Debug, Eq, PartialEq)]
 pub enum Definable {
     TypeRename(TypeRename),
+    RoleTypeRename(RoleTypeRename),
     TypeDeclaration(Type),
     Function(Function),
     Struct(Struct),
@@ -32,6 +37,7 @@ impl Pretty for Definable {
     fn fmt(&self, indent_level: usize, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::TypeRename(declaration) => Pretty::fmt(declaration, indent_level, f),
+            Self::RoleTypeRename(declaration) => Pretty::fmt(declaration, indent_level, f),
             Self::TypeDeclaration(declaration) => Pretty::fmt(declaration, indent_level, f),
             Self::Function(declaration) => Pretty::fmt(declaration, indent_level, f),
             Self::Struct(declaration) => Pretty::fmt(declaration, indent_level, f),
@@ -43,6 +49,7 @@ impl fmt::Display for Definable {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::TypeRename(declaration) => fmt::Display::fmt(declaration, f),
+            Self::RoleTypeRename(declaration) => fmt::Display::fmt(declaration, f),
             Self::TypeDeclaration(declaration) => fmt::Display::fmt(declaration, f),
             Self::Function(declaration) => fmt::Display::fmt(declaration, f),
             Self::Struct(declaration) => fmt::Display::fmt(declaration, f),
@@ -81,5 +88,30 @@ impl fmt::Display for TypeRename {
         }
         write!(f, "{} {} {};", self.from, token::Keyword::Label, self.to)?;
         Ok(())
+    }
+}
+
+#[derive(Debug, Eq, PartialEq)]
+pub struct RoleTypeRename {
+    pub span: Option<Span>,
+    pub from: ScopedLabel,
+    pub to: Label,
+}
+
+impl Spanned for RoleTypeRename {
+    fn span(&self) -> Option<Span> {
+        self.span
+    }
+}
+
+impl Pretty for RoleTypeRename {
+    fn fmt(&self, _indent_level: usize, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{} {} {};", self.from, token::Keyword::Label, self.to)
+    }
+}
+
+impl fmt::Display for RoleTypeRename {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{} {} {};", self.from, token::Keyword::Label, self.to)
     }
 }
