@@ -11,7 +11,7 @@ use crate::{
     common::{Spanned, error::TypeQLError},
     parser::{annotation::visit_annotations, define::function::visit_definition_function},
     query::schema::Redefine,
-    schema::definable::{Definable, Type},
+    schema::definable::{Definable, Type, TypeRename},
 };
 
 pub(super) fn visit_query_redefine(node: Node<'_>) -> Redefine {
@@ -25,13 +25,23 @@ fn visit_redefinable(node: Node<'_>) -> Definable {
     debug_assert_eq!(node.as_rule(), Rule::redefinable);
     let child = node.into_child();
     match child.as_rule() {
-        Rule::redefinable_type => visit_redefinable_kind(child),
+        Rule::redefinable_label => visit_redefinable_label(child),
+        Rule::redefinable_type => visit_redefinable_type(child),
         Rule::definition_function => Definable::Function(visit_definition_function(child)),
         _ => unreachable!("{}", TypeQLError::IllegalGrammar { input: child.as_str().to_owned() }),
     }
 }
+fn visit_redefinable_label(node: Node<'_>) -> Definable {
+    let span = node.span();
+    let mut children = node.into_children();
+    let kind = children.try_consume_expected(Rule::kind).map(visit_kind);
+    let from = visit_label(children.consume_expected(Rule::label));
+    children.skip_expected(Rule::LABEL);
+    let to = visit_label(children.consume_expected(Rule::label));
+    Definable::TypeRename(TypeRename { kind, from, to, span })
+}
 
-fn visit_redefinable_kind(node: Node<'_>) -> Definable {
+fn visit_redefinable_type(node: Node<'_>) -> Definable {
     let span = node.span();
     let mut children = node.into_children();
     let kind = children.try_consume_expected(Rule::kind).map(visit_kind);
