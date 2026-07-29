@@ -8,6 +8,7 @@ use std::fmt;
 
 pub use self::{function::Function, struct_::Struct, type_::Type};
 use crate::{Label, common::Span, pretty::Pretty, token};
+use crate::common::Spanned;
 
 pub mod function;
 pub mod struct_;
@@ -55,6 +56,12 @@ pub struct TypeRename {
     pub kind: Option<token::Kind>,
     pub from: Label,
     pub to: Label,
+}
+
+impl Spanned for TypeRename {
+    fn span(&self) -> Option<Span> {
+        self.span
+    }
 }
 
 impl Pretty for TypeRename {
