@@ -11,9 +11,8 @@ use crate::{
     common::{Spanned, error::TypeQLError},
     parser::{annotation::visit_annotations, define::function::visit_definition_function, type_::visit_label_scoped},
     query::schema::Redefine,
-    schema::definable::{Definable, Type, TypeRename},
+    schema::definable::{Definable, RoleTypeRename, Type, TypeRename},
 };
-use crate::schema::definable::RoleTypeRename;
 
 pub(super) fn visit_query_redefine(node: Node<'_>) -> Redefine {
     debug_assert_eq!(node.as_rule(), Rule::query_redefine);
@@ -44,15 +43,15 @@ fn visit_redefinable_label(node: Node<'_>) -> Definable {
             let from = visit_label(children.consume_expected(Rule::label));
             children.skip_expected(Rule::LABEL);
             let to = visit_label(children.consume_expected(Rule::label));
-            Definable::TypeRename(TypeRename { kind , from, to, span })
-        },
+            Definable::TypeRename(TypeRename { kind, from, to, span })
+        }
         Rule::label => {
             let kind = None;
             let from = visit_label(first_child);
             children.skip_expected(Rule::LABEL);
             let to = visit_label(children.consume_expected(Rule::label));
-            Definable::TypeRename(TypeRename { kind , from, to, span })
-        },
+            Definable::TypeRename(TypeRename { kind, from, to, span })
+        }
         Rule::label_scoped => {
             let from = visit_label_scoped(first_child);
             children.skip_expected(Rule::LABEL);
