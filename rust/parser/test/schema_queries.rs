@@ -192,3 +192,19 @@ fun greet($p: person, $g: string,) -> string:
     match $p has name $n; return first $n;"#;
     parse_query(query).unwrap();
 }
+
+#[test]
+fn redefine_rename_type() {
+    let query = r#"redefine
+person label user;"#;
+    let parsed = parse_query(query).unwrap();
+    assert_valid_eq_repr!(expected, parsed, query);
+}
+
+#[test]
+fn redefine_role_type() {
+    let query = r#"redefine
+rel:old-role label new-role;"#;
+    let parsed = parse_query(query).unwrap();
+    assert_valid_eq_repr!(expected, parsed, query);
+}
