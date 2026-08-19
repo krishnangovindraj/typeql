@@ -8,6 +8,7 @@ use std::{collections::HashMap, fmt};
 
 use self::comparison::ComparisonStatement;
 pub use self::{thing::Thing, type_::Type};
+pub use crate::query::pipeline::stage::modifier::Require;
 use crate::{
     common::{Span, Spanned, identifier::Identifier, token},
     expression::Expression,
@@ -186,6 +187,7 @@ pub enum Statement {
     InIterable(InIterable),
     Comparison(ComparisonStatement),
     Assignment(Assignment),
+    Require(Require),
     Thing(Thing),
     Type(Type),
 }
@@ -197,6 +199,7 @@ impl Spanned for Statement {
             Statement::InIterable(inner) => inner.span(),
             Statement::Comparison(inner) => inner.span(),
             Statement::Assignment(inner) => inner.span(),
+            Statement::Require(inner) => inner.span(),
             Statement::Thing(inner) => inner.span(),
             Statement::Type(inner) => inner.span(),
         }
@@ -210,6 +213,7 @@ impl Pretty for Statement {
             Statement::InIterable(inner) => Pretty::fmt(inner, indent_level, f),
             Statement::Comparison(inner) => Pretty::fmt(inner, indent_level, f),
             Statement::Assignment(inner) => Pretty::fmt(inner, indent_level, f),
+            Statement::Require(inner) => Pretty::fmt(inner, indent_level, f),
             Statement::Thing(inner) => Pretty::fmt(inner, indent_level, f),
             Statement::Type(inner) => Pretty::fmt(inner, indent_level, f),
         }
@@ -223,6 +227,7 @@ impl fmt::Display for Statement {
             Statement::InIterable(inner) => fmt::Display::fmt(inner, f),
             Statement::Comparison(inner) => fmt::Display::fmt(inner, f),
             Statement::Assignment(inner) => fmt::Display::fmt(inner, f),
+            Statement::Require(inner) => fmt::Display::fmt(inner, f),
             Statement::Thing(inner) => fmt::Display::fmt(inner, f),
             Statement::Type(inner) => fmt::Display::fmt(inner, f),
         }
