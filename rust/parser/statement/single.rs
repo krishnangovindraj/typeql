@@ -16,10 +16,11 @@ use crate::{
         visit_identifier, visit_var, visit_vars_assignment,
     },
     statement::{
-        Assignment, AssignmentPattern, DeconstructField, InIterable, Is, StructDeconstruct,
+        Assignment, AssignmentPattern, DeconstructField, InIterable, Is, Require, StructDeconstruct,
         comparison::ComparisonStatement,
     },
 };
+use crate::parser::visit_vars;
 
 pub fn visit_statement_assignment(node: Node<'_>) -> Assignment {
     debug_assert_eq!(node.as_rule(), Rule::statement_assignment);
@@ -109,4 +110,13 @@ pub fn visit_statement_in(node: Node<'_>) -> InIterable {
     };
     debug_assert_eq!(children.try_consume_any(), None);
     InIterable::new(span, lhs, rhs)
+}
+
+pub fn visit_statement_require(node: Node<'_>) -> Require {
+    debug_assert_eq!(node.as_rule(), Rule::statement_require);
+    let span = node.span();
+    let mut children = node.into_children();
+    children.skip_expected(Rule::REQUIRE);
+    let vars = visit_vars(children.consume_expected(Rule::vars));
+    Require::new(span, vars)
 }
