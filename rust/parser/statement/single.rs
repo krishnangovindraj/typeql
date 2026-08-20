@@ -16,7 +16,7 @@ use crate::{
         visit_identifier, visit_var, visit_vars_assignment,
     },
     statement::{
-        Assignment, AssignmentPattern, DeconstructField, InIterable, Is, Require, StructDeconstruct,
+        Assignment, AssignmentPattern, DeconstructField, InIterable, Is, IsSet, StructDeconstruct,
         comparison::ComparisonStatement,
     },
 };
@@ -112,11 +112,11 @@ pub fn visit_statement_in(node: Node<'_>) -> InIterable {
     InIterable::new(span, lhs, rhs)
 }
 
-pub fn visit_statement_require(node: Node<'_>) -> Require {
-    debug_assert_eq!(node.as_rule(), Rule::statement_require);
+pub fn visit_statement_isset(node: Node<'_>) -> IsSet {
+    debug_assert_eq!(node.as_rule(), Rule::statement_isset);
     let span = node.span();
     let mut children = node.into_children();
-    children.skip_expected(Rule::REQUIRE);
+    children.skip_expected(Rule::ISSET);
     let vars = visit_vars(children.consume_expected(Rule::vars));
-    Require::new(span, vars)
+    IsSet::new(span, vars)
 }

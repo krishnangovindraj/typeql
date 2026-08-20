@@ -75,7 +75,7 @@ pattern_try = { TRY ~ CURLY_OPEN ~ patterns ~ CURLY_CLOSE }
 
 statement = { statement_assignment
             | statement_in
-            | statement_require
+            | statement_isset
             | statement_thing_basic
             | statement_is
             | statement_type
@@ -134,7 +134,7 @@ pattern_try_deletable = { TRY ~ CURLY_OPEN ~ ( statement_deletable ~ SEMICOLON )
 // SINGLE STATEMENTS ===========================================================
 
 statement_is = { var ~ IS ~ var }
-statement_require = { REQUIRE ~ vars }
+statement_isset = { ISSET ~ vars }
 statement_comparison = { expression_value ~ comparison }
 statement_assignment = { LET ~ assignment_left ~ ASSIGN ~ expression }
 assignment_left = { vars_assignment | struct_destructor }
@@ -493,7 +493,10 @@ ISAX = @{ "isa!" ~ WB }
 LINKS = @{ "links" ~ WB }
 HAS = @{ "has" ~ WB }
 VALUE = @{ "value" ~ WB }
+
+// GENERAL CONSTRAINTS
 IS = @{ "is" ~ WB }
+ISSET = @{ "isset" }
 
 // PATTERN KEYWORDS
 
