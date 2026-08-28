@@ -218,10 +218,6 @@ fn visit_clause_delete(node: Node<'_>) -> Delete {
         .map(|child| match child.as_rule() {
             Rule::statement_deletable => visit_statement_deletable(child),
             Rule::pattern_try_deletable => visit_pattern_try_deletable(child),
-            Rule::statement_isset => {
-                let variables = visit_statement_isset(child).variables;
-                Deletable::new(span, DeletableKind::IsSet { variables })
-            }
             _ => unreachable!(
                 "Unrecognised statement inside delete clause: {:?}",
                 TypeQLError::IllegalGrammar { input: child.as_str().to_owned() }
@@ -252,6 +248,10 @@ fn visit_statement_deletable(node: Node<'_>) -> Deletable {
             children.skip_expected(Rule::OF);
             let relation = visit_var(children.consume_expected(Rule::var));
             DeletableKind::Links { players, relation }
+        }
+        Rule::statement_isset => {
+            let variables = visit_statement_isset(children.consume_expected(Rule::statement_isset)).variables;
+            DeletableKind::IsSet { variables }
         }
         _ => unreachable!("{}", TypeQLError::IllegalGrammar { input: children.as_str().to_owned() }),
     };
