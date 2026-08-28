@@ -13,14 +13,13 @@ use crate::{
         IntoChildNodes, Node, Rule, RuleMatcher,
         expression::{visit_expression, visit_expression_function, visit_expression_list, visit_expression_value},
         statement::visit_comparison,
-        visit_identifier, visit_var, visit_vars_assignment,
+        visit_identifier, visit_var, visit_vars, visit_vars_assignment,
     },
     statement::{
         Assignment, AssignmentPattern, DeconstructField, InIterable, Is, IsSet, StructDeconstruct,
         comparison::ComparisonStatement,
     },
 };
-use crate::parser::visit_vars;
 
 pub fn visit_statement_assignment(node: Node<'_>) -> Assignment {
     debug_assert_eq!(node.as_rule(), Rule::statement_assignment);

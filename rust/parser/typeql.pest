@@ -36,7 +36,7 @@ clause_insert = { INSERT ~ patterns }
 clause_put = { PUT ~ patterns }
 clause_update = { UPDATE ~ patterns }
 
-clause_delete = { DELETE ~ ( ( statement_deletable | pattern_try_deletable ) ~ SEMICOLON )+ }
+clause_delete = { DELETE ~ ( ( statement_deletable | pattern_try_deletable | statement_isset ) ~ SEMICOLON )+ }
 
 // STREAM OPERATORS  ===========================================================
 

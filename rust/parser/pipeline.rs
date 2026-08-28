@@ -22,7 +22,10 @@ use crate::{
         error::TypeQLError,
         token::{Order, ReduceOperatorCollect, ReduceOperatorStat},
     },
-    parser::define::function::{visit_function_block, visit_pipeline_arguments},
+    parser::{
+        define::function::{visit_function_block, visit_pipeline_arguments},
+        statement::single::visit_statement_isset,
+    },
     pattern::{Conjunction, Disjunction, Negation, Optional, Pattern},
     query::{
         Pipeline,
@@ -215,6 +218,10 @@ fn visit_clause_delete(node: Node<'_>) -> Delete {
         .map(|child| match child.as_rule() {
             Rule::statement_deletable => visit_statement_deletable(child),
             Rule::pattern_try_deletable => visit_pattern_try_deletable(child),
+            Rule::statement_isset => {
+                let variables = visit_statement_isset(child).variables;
+                Deletable::new(span, DeletableKind::IsSet { variables })
+            }
             _ => unreachable!(
                 "Unrecognised statement inside delete clause: {:?}",
                 TypeQLError::IllegalGrammar { input: child.as_str().to_owned() }
