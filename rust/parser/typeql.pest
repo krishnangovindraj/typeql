@@ -537,7 +537,6 @@ FLOOR = @{ "floor" ~ WB }
 LEN = @{ "len" ~ WB }
 ROUND = @{ "round" ~ WB }
 
-// NAMESPACED FUNCTIONS
 NAMESPACE_SEP = @{ "::" }
 
 // GROUP AND AGGREGATE QUERY KEYWORDS
