@@ -218,3 +218,12 @@ rbac typedb-bots,
     let parsed = parse_query(query).unwrap();
     assert_valid_eq_repr!(expected, parsed, query);
 }
+
+#[test]
+fn undefine_rbac() {
+    let query = r#"undefine
+rbac typedb-bots;
+writes { release-artifacts, release-notes } from typedb-bots;"#;
+    let parsed = parse_query(query).unwrap();
+    assert_valid_eq_repr!(expected, parsed, query);
+}

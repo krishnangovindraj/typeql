@@ -301,12 +301,12 @@ undefine_struct = { STRUCT ~ identifier }
 RBAC = @{ "rbac" ~ WB }
 READS = @{ "reads"  ~ WB }
 WRITES = @{ "writes"  ~ WB }
-definition_rbac = { RBAC ~ LABEL ~ COMMA? ~ rbac_access ~ ( COMMA ~ rbac_access )* ~ COMMA? };
+definition_rbac = { RBAC ~ label ~ COMMA? ~ rbac_access ~ ( COMMA ~ rbac_access )* ~ COMMA? }
 
 rbac_access = { (READS | WRITES) ~ CURLY_OPEN ~ label ~ ( COMMA ~ label )* ~ COMMA? ~ CURLY_CLOSE }
 
-undefine_rbac = { RBAC ~ label };
-undefine_rbac_from = {  rbac_access ~ FROM ~ label };
+undefine_rbac = { RBAC ~ label }
+undefine_rbac_from = { rbac_access ~ FROM ~ label }
 
 // TYPE, LABEL AND IDENTIFIER CONSTRUCTS =======================================
 

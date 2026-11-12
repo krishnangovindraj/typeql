@@ -8,15 +8,18 @@ use super::{IntoChildNodes, Node, Rule, RuleMatcher};
 use crate::{
     common::{Spanned, error::TypeQLError},
     parser::{
-        define::type_::{visit_relates_declaration, visit_type_capability_base},
+        define::{
+            rbac::visit_rbac_access,
+            type_::{visit_relates_declaration, visit_type_capability_base},
+        },
         literal::visit_quoted_string_literal,
         type_::visit_label,
         visit_identifier,
     },
     query::schema::Undefine,
     schema::undefinable::{
-        AnnotationCapability, AnnotationCategory, AnnotationType, CapabilityType, Function, Specialise, Struct,
-        Undefinable,
+        AnnotationCapability, AnnotationCategory, AnnotationType, CapabilityType, Function, RBACAccessFrom, Specialise,
+        Struct, Undefinable,
     },
 };
 
@@ -42,6 +45,8 @@ fn visit_undefinable(node: Node<'_>) -> Undefinable {
         Rule::undefine_from => visit_undefine_from(child),
         Rule::undefine_struct => Undefinable::Struct(visit_undefine_struct(child)),
         Rule::undefine_function => Undefinable::Function(visit_undefine_function(child)),
+        Rule::undefine_rbac => visit_undefine_rbac(child),
+        Rule::undefine_rbac_from => visit_undefine_rbac_from(child),
         Rule::label => Undefinable::Type(visit_label(child)),
         _ => unreachable!("{}", TypeQLError::IllegalGrammar { input: child.as_str().to_owned() }),
     }
@@ -134,6 +139,26 @@ fn visit_undefine_specialise(node: Node<'_>) -> Specialise {
     let relates = visit_relates_declaration(children.consume_expected(Rule::relates_declaration));
     debug_assert_eq!(children.try_consume_any(), None);
     Specialise::new(span, specialised, type_, relates)
+}
+
+fn visit_undefine_rbac(node: Node<'_>) -> Undefinable {
+    debug_assert_eq!(node.as_rule(), Rule::undefine_rbac);
+    let mut children = node.into_children();
+    children.skip_expected(Rule::RBAC);
+    let label = visit_label(children.consume_expected(Rule::label));
+    debug_assert_eq!(children.try_consume_any(), None);
+    Undefinable::RBACRole(label)
+}
+
+fn visit_undefine_rbac_from(node: Node<'_>) -> Undefinable {
+    debug_assert_eq!(node.as_rule(), Rule::undefine_rbac_from);
+    let span = node.span();
+    let mut children = node.into_children();
+    let access = visit_rbac_access(children.consume_expected(Rule::rbac_access));
+    children.skip_expected(Rule::FROM);
+    let from = visit_label(children.consume_expected(Rule::label));
+    debug_assert_eq!(children.try_consume_any(), None);
+    Undefinable::RBACAccess(RBACAccessFrom::new(span, access, from))
 }
 
 fn visit_undefine_struct(node: Node<'_>) -> Struct {

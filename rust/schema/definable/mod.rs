@@ -6,7 +6,7 @@
 
 use std::fmt;
 
-pub use self::{function::Function, struct_::Struct, type_::Type};
+pub use self::{function::Function, rbac::RBAC, struct_::Struct, type_::Type};
 use crate::{
     Label, ScopedLabel,
     common::{Span, Spanned},
@@ -43,6 +43,7 @@ impl Pretty for Definable {
             Self::TypeDeclaration(declaration) => Pretty::fmt(declaration, indent_level, f),
             Self::Function(declaration) => Pretty::fmt(declaration, indent_level, f),
             Self::Struct(declaration) => Pretty::fmt(declaration, indent_level, f),
+            Self::RBACDeclaration(declaration) => Pretty::fmt(declaration, indent_level, f),
         }
     }
 }
@@ -55,6 +56,7 @@ impl fmt::Display for Definable {
             Self::TypeDeclaration(declaration) => fmt::Display::fmt(declaration, f),
             Self::Function(declaration) => fmt::Display::fmt(declaration, f),
             Self::Struct(declaration) => fmt::Display::fmt(declaration, f),
+            Self::RBACDeclaration(declaration) => fmt::Display::fmt(declaration, f),
         }
     }
 }

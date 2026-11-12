@@ -4,7 +4,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-use self::{function::visit_definition_function, struct_::visit_definition_struct, type_::visit_definition_type};
+use self::{
+    function::visit_definition_function, rbac::visit_definition_rbac, struct_::visit_definition_struct,
+    type_::visit_definition_type,
+};
 use super::{IntoChildNodes, Node, Rule, RuleMatcher};
 use crate::{
     common::{Spanned, error::TypeQLError},
@@ -13,6 +16,7 @@ use crate::{
 };
 
 pub(super) mod function;
+pub(super) mod rbac;
 pub(super) mod struct_;
 pub(super) mod type_;
 
@@ -38,6 +42,7 @@ pub(super) fn visit_definable(node: Node<'_>) -> Definable {
         Rule::definition_type => Definable::TypeDeclaration(visit_definition_type(child)),
         Rule::definition_function => Definable::Function(visit_definition_function(child)),
         Rule::definition_struct => Definable::Struct(visit_definition_struct(child)),
+        Rule::definition_rbac => Definable::RBACDeclaration(visit_definition_rbac(child)),
         _ => unreachable!("{}", TypeQLError::IllegalGrammar { input: child.as_str().to_owned() }),
     }
 }

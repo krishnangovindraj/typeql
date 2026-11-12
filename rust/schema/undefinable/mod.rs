@@ -10,14 +10,10 @@ use super::definable::type_::CapabilityBase;
 use crate::{
     common::{Span, Spanned, identifier::Identifier, token},
     pretty::Pretty,
-    schema::definable::{
-        rbac::RBAC,
-        type_::capability::Relates
-    },
+    schema::definable::{rbac::RBACTypeAccess, type_::capability::Relates},
     type_::Label,
     value::StringLiteral,
 };
-use crate::schema::definable::rbac::RBACTypeAccess;
 
 #[derive(Debug, Eq, PartialEq)]
 pub enum Undefinable {
@@ -30,8 +26,35 @@ pub enum Undefinable {
     Function(Function), // undefine fun reachable;
     Struct(Struct),     // undefine struct coords;
 
-    RBACRole(Label),
-    RBACAccess(RBACTypeAccess),
+    RBACRole(Label),            // undefine rbac typedb-bots;
+    RBACAccess(RBACAccessFrom), // undefine writes { release-artifacts } from typedb-bots;
+}
+
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub struct RBACAccessFrom {
+    pub span: Option<Span>,
+    pub access: RBACTypeAccess,
+    pub from: Label,
+}
+
+impl RBACAccessFrom {
+    pub fn new(span: Option<Span>, access: RBACTypeAccess, from: Label) -> Self {
+        Self { span, access, from }
+    }
+}
+
+impl Spanned for RBACAccessFrom {
+    fn span(&self) -> Option<Span> {
+        self.span
+    }
+}
+
+impl Pretty for RBACAccessFrom {}
+
+impl fmt::Display for RBACAccessFrom {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{} {} {}", self.access, token::Keyword::From, self.from)
+    }
 }
 
 impl Pretty for Undefinable {}
@@ -46,6 +69,8 @@ impl fmt::Display for Undefinable {
             Self::Specialise(inner) => fmt::Display::fmt(inner, f),
             Self::Function(inner) => fmt::Display::fmt(inner, f),
             Self::Struct(inner) => fmt::Display::fmt(inner, f),
+            Self::RBACRole(label) => write!(f, "{} {}", token::Keyword::Rbac, label),
+            Self::RBACAccess(inner) => fmt::Display::fmt(inner, f),
         }
     }
 }
