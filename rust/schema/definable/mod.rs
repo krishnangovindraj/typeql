@@ -15,6 +15,7 @@ use crate::{
 };
 
 pub mod function;
+pub mod rbac;
 pub mod struct_;
 pub mod type_;
 
@@ -25,6 +26,7 @@ pub enum Definable {
     TypeDeclaration(Type),
     Function(Function),
     Struct(Struct),
+    RBACDeclaration(RBAC),
 }
 
 impl From<Type> for Definable {

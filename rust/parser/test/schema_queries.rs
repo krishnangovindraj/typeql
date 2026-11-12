@@ -208,3 +208,13 @@ rel:old-role label new-role;"#;
     let parsed = parse_query(query).unwrap();
     assert_valid_eq_repr!(expected, parsed, query);
 }
+
+#[test]
+fn define_rbac() {
+    let query = r#"define
+rbac typedb-bots,
+    writes { release-artifacts, release-notes },
+    reads { source-code };"#;
+    let parsed = parse_query(query).unwrap();
+    assert_valid_eq_repr!(expected, parsed, query);
+}

@@ -10,10 +10,14 @@ use super::definable::type_::CapabilityBase;
 use crate::{
     common::{Span, Spanned, identifier::Identifier, token},
     pretty::Pretty,
-    schema::definable::type_::capability::Relates,
+    schema::definable::{
+        rbac::RBAC,
+        type_::capability::Relates
+    },
     type_::Label,
     value::StringLiteral,
 };
+use crate::schema::definable::rbac::RBACTypeAccess;
 
 #[derive(Debug, Eq, PartialEq)]
 pub enum Undefinable {
@@ -25,6 +29,9 @@ pub enum Undefinable {
 
     Function(Function), // undefine fun reachable;
     Struct(Struct),     // undefine struct coords;
+
+    RBACRole(Label),
+    RBACAccess(RBACTypeAccess),
 }
 
 impl Pretty for Undefinable {}

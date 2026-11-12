@@ -211,7 +211,7 @@ query_schema = { query_define | query_undefine | query_redefine }
 query_define = { DEFINE ~ definables }
 
 definables = { (!query_end ~ definable)* } // !query_end to avoid ambiguity
-definable = { ( definition_type ~ SEMICOLON ) | definition_function | definition_struct }
+definable = { ( definition_type ~ SEMICOLON ) | definition_function | definition_struct | (definition_rbac ~ SEMICOLON) }
 
 // TYPE DEFINITION =============================================================
 
@@ -281,7 +281,7 @@ redefinable_type = { kind? ~ label ~ COMMA? ~ ( annotations | type_capability ) 
 query_undefine = { UNDEFINE ~ undefinables }
 
 undefinables = { ( !query_end ~ undefinable ~ SEMICOLON )* } // !query_end to avoid ambiguity
-undefinable = { undefine_from | undefine_function | undefine_struct | label }
+undefinable = { undefine_from | undefine_function | undefine_struct | undefine_rbac_from | undefine_rbac | label }
 
 undefine_from = { undefine_annotation_from_capability
                 | undefine_annotation_from_type
@@ -295,6 +295,18 @@ undefine_specialise = { AS ~ label ~ FROM ~ label ~ relates_declaration }
 
 undefine_function = { FUN ~ identifier }
 undefine_struct = { STRUCT ~ identifier }
+
+// RBAC DEFINITION QUERIES
+// TODO: This is ideally a role, but we should avoid the overload.
+RBAC = @{ "rbac" ~ WB }
+READS = @{ "reads"  ~ WB }
+WRITES = @{ "writes"  ~ WB }
+definition_rbac = { RBAC ~ LABEL ~ COMMA? ~ rbac_access ~ ( COMMA ~ rbac_access )* ~ COMMA? };
+
+rbac_access = { (READS | WRITES) ~ CURLY_OPEN ~ label ~ ( COMMA ~ label )* ~ COMMA? ~ CURLY_CLOSE }
+
+undefine_rbac = { RBAC ~ label };
+undefine_rbac_from = {  rbac_access ~ FROM ~ label };
 
 // TYPE, LABEL AND IDENTIFIER CONSTRUCTS =======================================
 
