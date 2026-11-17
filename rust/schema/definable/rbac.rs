@@ -57,15 +57,15 @@ impl fmt::Display for RBAC {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum RBACTypeAccess {
-    Reads(Vec<Label>),
-    Writes(Vec<Label>),
+    ReadTypes(Vec<Label>),
+    WriteTypes(Vec<Label>),
 }
 
 impl fmt::Display for RBACTypeAccess {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let (access, labels) = match self {
-            Self::Reads(labels) => (token::Keyword::Reads, labels),
-            Self::Writes(labels) => (token::Keyword::Writes, labels),
+            Self::ReadTypes(labels) => (token::Keyword::Reads, labels),
+            Self::WriteTypes(labels) => (token::Keyword::Writes, labels),
         };
 
         write!(f, "{} {{ {}", access, labels[0])?;

@@ -26,8 +26,8 @@ pub(in crate::parser) fn visit_rbac_access(node: Node<'_>) -> RBACTypeAccess {
     let keyword = children.consume_any();
     let labels = children.map(visit_label).collect();
     match keyword.as_rule() {
-        Rule::READS => RBACTypeAccess::Reads(labels),
-        Rule::WRITES => RBACTypeAccess::Writes(labels),
+        Rule::READS => RBACTypeAccess::ReadTypes(labels),
+        Rule::WRITES => RBACTypeAccess::WriteTypes(labels),
         _ => unreachable!("{}", TypeQLError::IllegalGrammar { input: keyword.as_str().to_owned() }),
     }
 }
