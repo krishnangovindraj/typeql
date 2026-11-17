@@ -21,8 +21,8 @@ pub struct RBAC {
 }
 
 impl RBAC {
-    pub fn new(span: Option<Span>, label: Label, type_access: Vec<RBACTypeAccess>) -> Self {
-        Self { span, kind: None, label, type_access }
+    pub fn new(span: Option<Span>, kind: Option<()>, label: Label, type_access: Vec<RBACTypeAccess>) -> Self {
+        Self { span, kind, label, type_access }
     }
 }
 

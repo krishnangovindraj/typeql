@@ -14,10 +14,10 @@ pub(in crate::parser) fn visit_definition_rbac(node: Node<'_>) -> RBAC {
     debug_assert_eq!(node.as_rule(), Rule::definition_rbac);
     let span = node.span();
     let mut children = node.into_children();
-    children.skip_expected(Rule::RBAC);
+    let kind = children.try_consume_expected(Rule::RBAC).map(|_| ());
     let label = visit_label(children.consume_expected(Rule::label));
     let type_access = children.map(visit_rbac_access).collect();
-    RBAC::new(span, label, type_access)
+    RBAC::new(span, kind, label, type_access)
 }
 
 pub(in crate::parser) fn visit_rbac_access(node: Node<'_>) -> RBACTypeAccess {
